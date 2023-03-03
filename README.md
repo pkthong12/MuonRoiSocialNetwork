@@ -1,8 +1,12 @@
-Personal project
+#Personal project
+
 This is repo is for Muonroi social network
-Author
+
+#Author
 Phi Le (MuonRoi)
-Development Setup
+
+#Development Setup
+
 STEP 1: Download and install .NET 6.0 at (https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
 STEP 2: Open solution (MuonRoiSocialNetwork.sln)
 STEP 3: Go to "appssetting.json" then change "connectionString" to your connection

@@ -10,6 +10,14 @@
 
   <ItemGroup>
     <PackageReference Include="MediatR" Version="12.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.11" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.11" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.11" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.11" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.11">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.2" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
@@ -17,19 +25,21 @@
   <ItemGroup>
     <Folder Include="Application\Commands\" />
     <Folder Include="Application\InternalEventsHandlers\" />
-    <Folder Include="Controllers\" />
-    <Folder Include="Domains\DomainObjects\" />
     <Folder Include="Domains\Interfaces\" />
     <Folder Include="Domains\InternalEvents\" />
-    <Folder Include="Infrastructure\EFConfigs\" />
-    <Folder Include="Infrastructure\Extentions\" />
     <Folder Include="Infrastructure\Map\" />
     <Folder Include="Infrastructure\Services\" />
     <Folder Include="Infrastructure\Repositories\" />
     <Folder Include="Infrastructure\Queries\" />
+    <Folder Include="Migrations\" />
     <Folder Include="Validators\" />
     <Folder Include="Stores\" />
     <Folder Include="Resources\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BaseConfig\BaseConfig.csproj" />
+    <ProjectReference Include="..\MuonRoiSocialNetwork.Common\MuonRoiSocialNetwork.Common.csproj" />
   </ItemGroup>
 
 </Project>

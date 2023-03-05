@@ -9,15 +9,27 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Controllers\**" />
-    <Content Remove="Controllers\**" />
-    <EmbeddedResource Remove="Controllers\**" />
-    <None Remove="Controllers\**" />
+    <PackageReference Include="MediatR" Version="12.0.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.2" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.2" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+    <Folder Include="Application\Commands\" />
+    <Folder Include="Application\InternalEventsHandlers\" />
+    <Folder Include="Controllers\" />
+    <Folder Include="Domains\DomainObjects\" />
+    <Folder Include="Domains\Interfaces\" />
+    <Folder Include="Domains\InternalEvents\" />
+    <Folder Include="Infrastructure\EFConfigs\" />
+    <Folder Include="Infrastructure\Extentions\" />
+    <Folder Include="Infrastructure\Map\" />
+    <Folder Include="Infrastructure\Services\" />
+    <Folder Include="Infrastructure\Repositories\" />
+    <Folder Include="Infrastructure\Queries\" />
+    <Folder Include="Validators\" />
+    <Folder Include="Stores\" />
+    <Folder Include="Resources\" />
   </ItemGroup>
 
 </Project>

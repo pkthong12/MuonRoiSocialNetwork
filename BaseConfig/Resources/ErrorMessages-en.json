@@ -74,6 +74,7 @@
   "USRC35C": "Giới tính lựa chọn không hợp lệ",
   "USRC36C": "Token không hợp lệ hoặc đã hết hạn",
   "USRC37C": "Cập nhật trạng thái xác minh thất bại",
+  "USRC38C": "Ngày sinh không được trống",
   //--------------------\
 
   //Role

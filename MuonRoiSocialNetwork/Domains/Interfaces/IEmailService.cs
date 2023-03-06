@@ -2,11 +2,23 @@
 
 namespace MuonRoiSocialNetwork.Domains.Interfaces
 {
+    /// <summary>
+    /// Declare interface mail services
+    /// </summary>
     public interface IEmailService
     {
-        Task SendTestEmail(UserEmailOptions userEmailOptions);
+        /// <summary>
+        /// Send mail confirm
+        /// </summary>
+        /// <param name="userEmailOptions"></param>
+        /// <returns></returns>
 
         Task SendEmailForEmailConfirmation(UserEmailOptions userEmailOptions);
+        /// <summary>
+        /// Send mail reset password
+        /// </summary>
+        /// <param name="userEmailOptions"></param>
+        /// <returns></returns>
 
         Task SendEmailForForgotPassword(UserEmailOptions userEmailOptions);
     }

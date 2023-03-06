@@ -1,8 +1,8 @@
 ﻿using BaseConfig.EntityObject.Entity;
-using ConnectVN.Social_Network.Users;
+using MuonRoi.Social_Network.Users;
 using MuonRoiSocialNetwork.Domains.DomainObjects.Groups;
 
-namespace ConnectVN.Social_Network.Roles
+namespace MuonRoi.Social_Network.Roles
 {
     /// <summary>
     /// Table of group user

@@ -1,8 +1,8 @@
 ﻿using BaseConfig.EntityObject.Entity;
-using ConnectVN.Social_Network.Storys;
+using MuonRoi.Social_Network.Storys;
 using System.ComponentModel.DataAnnotations;
 
-namespace ConnectVN.Social_Network.Chapters
+namespace MuonRoi.Social_Network.Chapters
 {
     /// <summary>
     /// Table Chapter

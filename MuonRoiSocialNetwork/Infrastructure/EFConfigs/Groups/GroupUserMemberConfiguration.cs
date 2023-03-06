@@ -1,8 +1,8 @@
-﻿using ConnectVN.Social_Network.Roles;
+﻿using MuonRoi.Social_Network.Roles;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
 
-namespace ConnectVN.Social_Network.Configurations.Roles
+namespace MuonRoi.Social_Network.Configurations.Roles
 {
     public class GroupUserMemberConfiguration : IEntityTypeConfiguration<GroupUserMember>
     {

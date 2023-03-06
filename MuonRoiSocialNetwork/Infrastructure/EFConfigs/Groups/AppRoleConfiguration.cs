@@ -1,4 +1,4 @@
-﻿using ConnectVN.Social_Network.Roles;
+﻿using MuonRoi.Social_Network.Roles;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
 using MuonRoiSocialNetwork.Domains.DomainObjects.Groups;

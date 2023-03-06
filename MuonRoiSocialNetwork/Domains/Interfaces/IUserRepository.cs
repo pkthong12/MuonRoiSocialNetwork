@@ -1,4 +1,4 @@
-﻿using ConnectVN.Social_Network.Users;
+﻿using MuonRoi.Social_Network.Users;
 
 namespace MuonRoiSocialNetwork.Domains.Interfaces
 {

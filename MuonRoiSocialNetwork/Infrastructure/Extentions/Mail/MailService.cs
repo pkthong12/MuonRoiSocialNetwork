@@ -6,6 +6,7 @@ using System.Net.Mail;
 using System.Net;
 using System.Text;
 using Azure.Storage.Blobs;
+using MuonRoiSocialNetwork.Common.Settings.Appsettings;
 
 namespace MuonRoiSocialNetwork.Infrastructure.Extentions.Mail
 {
@@ -16,17 +17,29 @@ namespace MuonRoiSocialNetwork.Infrastructure.Extentions.Mail
     {
         private const string templatePath = @"EmailTemplate/{0}.html";
         private readonly SMTPConfigModel _smtpConfig;
+        private readonly IConfiguration _configuration;
+        /// <summary>
+        /// Send email confirm
+        /// </summary>
+        /// <param name="userEmailOptions"></param>
+        /// <returns></returns>
         public async Task SendEmailForEmailConfirmation(UserEmailOptions userEmailOptions)
         {
             userEmailOptions.Subject = UpdatePlaceHolders("Xin chào! {{UserName}}, Vui lòng xác nhận email của bạn", userEmailOptions.PlaceHolders);
 
-            userEmailOptions.Body = UpdatePlaceHolders(GetEmailBody("EmailConfirm"), userEmailOptions.PlaceHolders);
+            userEmailOptions.Body = UpdatePlaceHolders(GetEmailBody("EmailConfirm", _configuration), userEmailOptions.PlaceHolders);
 
             await SendEmail(userEmailOptions);
         }
-        public MailService(IOptions<SMTPConfigModel> smtpConfig)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="smtpConfig"></param>
+        /// <param name="configuration"></param>
+        public MailService(IOptions<SMTPConfigModel> smtpConfig, IConfiguration configuration)
         {
             _smtpConfig = smtpConfig.Value;
+            _configuration = configuration;
         }
         private async Task SendEmail(UserEmailOptions userEmailOptions)
         {
@@ -58,10 +71,10 @@ namespace MuonRoiSocialNetwork.Infrastructure.Extentions.Mail
 
             await smtpClient.SendMailAsync(mail);
         }
-        private static string GetEmailBody(string templateName)
+        private static string GetEmailBody(string templateName, IConfiguration config)
         {
-            string containerStr = "connectvnimages";
-            string connecttionStr = @"DefaultEndpointsProtocol=https;AccountName=connectvnimages;AccountKey=twrISSTrmAYmEaK7RQ+ZNZ9ZWSnDvPdu3IDHAgBawk0hLiBo45n0AHim/DDgitX6nXvpIUHiIu3w+AStoT7/jA==;EndpointSuffix=core.windows.net";
+            string containerStr = config.GetSection(ConstAppSettings.ENV_CONTAINERNAME).Value;
+            string connecttionStr = config.GetSection(ConstAppSettings.APPLICATIONENVCONNECTION).Value;
             BlobServiceClient blobServiceClient = new(connecttionStr);
             BlobContainerClient blobContainerClient = blobServiceClient.GetBlobContainerClient(containerStr);
             BlobClient blobClient = blobContainerClient.GetBlobClient(string.Format(templatePath, templateName));
@@ -85,12 +98,13 @@ namespace MuonRoiSocialNetwork.Infrastructure.Extentions.Mail
             }
             return text;
         }
+        /// <summary>
+        /// Handle send mail reset password
+        /// </summary>
+        /// <param name="userEmailOptions"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
         public Task SendEmailForForgotPassword(UserEmailOptions userEmailOptions)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task SendTestEmail(UserEmailOptions userEmailOptions)
         {
             throw new NotImplementedException();
         }

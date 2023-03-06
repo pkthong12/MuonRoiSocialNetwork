@@ -1,9 +1,9 @@
 ﻿using BaseConfig.EntityObject.Entity;
-using ConnectVN.Social_Network.Tags;
-using ConnectVN.Social_Network.Users;
+using MuonRoi.Social_Network.Tags;
+using MuonRoi.Social_Network.Users;
 using System.ComponentModel.DataAnnotations;
 
-namespace ConnectVN.Social_Network.Storys
+namespace MuonRoi.Social_Network.Storys
 {
     /// <summary>
     /// Table StoryPublished

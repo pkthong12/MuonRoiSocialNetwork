@@ -1,5 +1,5 @@
 using AutoMapper;
-using ConnectVN.Social_Network.Users;
+using MuonRoi.Social_Network.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -11,7 +11,6 @@ using MuonRoiSocialNetwork.Infrastructure;
 using MuonRoiSocialNetwork.Infrastructure.Extentions.Mail;
 using MuonRoiSocialNetwork.Infrastructure.Map.Users;
 using MuonRoiSocialNetwork.Infrastructure.Repositories;
-using System;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddMediatR(config => config.RegisterServicesFromAssembly(typeof(Program).Assembly));
@@ -44,11 +43,11 @@ builder.Services.AddScoped<IEmailService, MailService>();
 builder.Services.AddIdentity<AppUser, AppRole>()
        .AddEntityFrameworkStores<MuonRoiSocialNetworkDbContext>()
        .AddDefaultTokenProviders();
-builder.Services.Configure<SMTPConfigModel>(builder.Configuration.GetSection($"{NameAppSetting.SMTPConfig}"));
-IConfiguration configuration = new ConfigurationBuilder().AddJsonFile($"{NameAppSetting.appsettings}.json").Build();
+builder.Services.Configure<SMTPConfigModel>(builder.Configuration.GetSection($"{NameAppSetting.SMTPCONFIG}"));
+IConfiguration configuration = new ConfigurationBuilder().AddJsonFile($"{NameAppSetting.APPSETTINGS}.json").Build();
 builder.Services.AddDbContext<MuonRoiSocialNetworkDbContext>(opt =>
 {
-    opt.UseSqlServer(configuration["ConnectionStrings:MuonRoi"]);
+    opt.UseSqlServer(configuration[ConstAppSettings.CONNECTIONSTRING]);
 });
 var mapperCfg = new MapperConfiguration(x =>
 {

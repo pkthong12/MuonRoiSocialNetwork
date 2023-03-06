@@ -1,5 +1,4 @@
-﻿
-namespace ConnectVN.Social_Network.Storys
+﻿namespace MuonRoi.Social_Network.Storys
 {
     /// <summary>
     /// Enum Notifications

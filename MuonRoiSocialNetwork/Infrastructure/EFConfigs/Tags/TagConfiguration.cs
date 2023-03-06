@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
-using ConnectVN.Social_Network.Tags;
+using MuonRoi.Social_Network.Tags;
 
-namespace ConnectVN.Social_Network.Configurations.Tags
+namespace MuonRoi.Social_Network.Configurations.Tags
 {
     public class TagConfiguration : IEntityTypeConfiguration<Tag>
     {

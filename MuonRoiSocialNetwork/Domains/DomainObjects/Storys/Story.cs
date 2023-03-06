@@ -1,10 +1,10 @@
 ﻿using BaseConfig.EntityObject.Entity;
-using ConnectVN.Social_Network.Categories;
-using ConnectVN.Social_Network.Chapters;
-using ConnectVN.Social_Network.Tags;
+using MuonRoi.Social_Network.Categories;
+using MuonRoi.Social_Network.Chapters;
+using MuonRoi.Social_Network.Tags;
 using System.ComponentModel.DataAnnotations;
 
-namespace ConnectVN.Social_Network.Storys
+namespace MuonRoi.Social_Network.Storys
 {
     /// <summary>
     /// Table Story

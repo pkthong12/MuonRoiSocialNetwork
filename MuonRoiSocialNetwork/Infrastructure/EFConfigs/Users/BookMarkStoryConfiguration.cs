@@ -1,8 +1,8 @@
-﻿using ConnectVN.Social_Network.Users;
+﻿using MuonRoi.Social_Network.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace ConnectVN.Social_Network.Configurations.Users
+namespace MuonRoi.Social_Network.Configurations.Users
 {
     public class BookMarkStoryConfiguration : IEntityTypeConfiguration<BookMarkStory>
     {

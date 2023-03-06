@@ -22,7 +22,7 @@ namespace MuonRoiSocialNetwork.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("ConnectVN.Social_Network.Categories.Category", b =>
+            modelBuilder.Entity("MuonRoi.Social_Network.Categories.Category", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -120,7 +120,7 @@ namespace MuonRoiSocialNetwork.Migrations
                         });
                 });
 
-            modelBuilder.Entity("ConnectVN.Social_Network.Chapters.Chapter", b =>
+            modelBuilder.Entity("MuonRoi.Social_Network.Chapters.Chapter", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -246,7 +246,7 @@ namespace MuonRoiSocialNetwork.Migrations
                         });
                 });
 
-            modelBuilder.Entity("ConnectVN.Social_Network.Roles.GroupUserMember", b =>
+            modelBuilder.Entity("MuonRoi.Social_Network.Roles.GroupUserMember", b =>
                 {
                     b.Property<Guid>("AppUserKey")
                         .HasColumnType("uniqueidentifier");
@@ -349,7 +349,7 @@ namespace MuonRoiSocialNetwork.Migrations
                         });
                 });
 
-            modelBuilder.Entity("ConnectVN.Social_Network.Storys.Story", b =>
+            modelBuilder.Entity("MuonRoi.Social_Network.Storys.Story", b =>
                 {
                     b.Property<Guid>("Guid")
                         .ValueGeneratedOnAdd()
@@ -462,7 +462,7 @@ namespace MuonRoiSocialNetwork.Migrations
                             CreatedUserId = 1,
                             CreatedUserName = "muonroi",
                             Id = 0,
-                            Img_Url = "aacd50da-4e0d-47e4-939c-a4ace0f707ea.image/jpeg*Stories/ConnectVn_ta-co-mot-toa-khi-van-te-dan-cbde5bc2e8.jpg",
+                            Img_Url = "aacd50da-4e0d-47e4-939c-a4ace0f707ea.image/jpeg*Stories/MuonRoi_ta-co-mot-toa-khi-van-te-dan-cbde5bc2e8.jpg",
                             IsDeleted = false,
                             IsShow = true,
                             Rating = 0.0,
@@ -481,7 +481,7 @@ namespace MuonRoiSocialNetwork.Migrations
                             CreatedUserId = 1,
                             CreatedUserName = "muonroi",
                             Id = 0,
-                            Img_Url = "079dec71-43fd-4701-8450-a1ad1e6c39ff.image/jpeg*Stories/ConnectVn_nhan-sinh-tuy-tien-bat-dau-tu-tuoi-ba-muoi-ban-dic-7a54bfe686.jpg",
+                            Img_Url = "079dec71-43fd-4701-8450-a1ad1e6c39ff.image/jpeg*Stories/MuonRoi_nhan-sinh-tuy-tien-bat-dau-tu-tuoi-ba-muoi-ban-dic-7a54bfe686.jpg",
                             IsDeleted = false,
                             IsShow = true,
                             Rating = 0.0,
@@ -494,7 +494,7 @@ namespace MuonRoiSocialNetwork.Migrations
                         });
                 });
 
-            modelBuilder.Entity("ConnectVN.Social_Network.Storys.StoryNotifications", b =>
+            modelBuilder.Entity("MuonRoi.Social_Network.Storys.StoryNotifications", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -595,7 +595,7 @@ namespace MuonRoiSocialNetwork.Migrations
                     b.ToTable("StoryNotifications", (string)null);
                 });
 
-            modelBuilder.Entity("ConnectVN.Social_Network.Storys.StoryPublish", b =>
+            modelBuilder.Entity("MuonRoi.Social_Network.Storys.StoryPublish", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -668,7 +668,7 @@ namespace MuonRoiSocialNetwork.Migrations
                     b.ToTable("StoryPublish", (string)null);
                 });
 
-            modelBuilder.Entity("ConnectVN.Social_Network.Storys.StoryReview", b =>
+            modelBuilder.Entity("MuonRoi.Social_Network.Storys.StoryReview", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -748,7 +748,7 @@ namespace MuonRoiSocialNetwork.Migrations
                     b.ToTable("StoryReview", (string)null);
                 });
 
-            modelBuilder.Entity("ConnectVN.Social_Network.Tags.Tag", b =>
+            modelBuilder.Entity("MuonRoi.Social_Network.Tags.Tag", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -849,7 +849,7 @@ namespace MuonRoiSocialNetwork.Migrations
                         });
                 });
 
-            modelBuilder.Entity("ConnectVN.Social_Network.Tags.TagInStory", b =>
+            modelBuilder.Entity("MuonRoi.Social_Network.Tags.TagInStory", b =>
                 {
                     b.Property<Guid>("StoryGuid")
                         .HasColumnType("uniqueidentifier");
@@ -922,7 +922,7 @@ namespace MuonRoiSocialNetwork.Migrations
                     b.ToTable("TagInStory", (string)null);
                 });
 
-            modelBuilder.Entity("ConnectVN.Social_Network.Users.AppUser", b =>
+            modelBuilder.Entity("MuonRoi.Social_Network.Users.AppUser", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -1054,7 +1054,7 @@ namespace MuonRoiSocialNetwork.Migrations
                         });
                 });
 
-            modelBuilder.Entity("ConnectVN.Social_Network.Users.BookMarkStory", b =>
+            modelBuilder.Entity("MuonRoi.Social_Network.Users.BookMarkStory", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1130,7 +1130,7 @@ namespace MuonRoiSocialNetwork.Migrations
                     b.ToTable("BookMarkStory", (string)null);
                 });
 
-            modelBuilder.Entity("ConnectVN.Social_Network.Users.FollowingAuthor", b =>
+            modelBuilder.Entity("MuonRoi.Social_Network.Users.FollowingAuthor", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1347,9 +1347,9 @@ namespace MuonRoiSocialNetwork.Migrations
                         });
                 });
 
-            modelBuilder.Entity("ConnectVN.Social_Network.Chapters.Chapter", b =>
+            modelBuilder.Entity("MuonRoi.Social_Network.Chapters.Chapter", b =>
                 {
-                    b.HasOne("ConnectVN.Social_Network.Storys.Story", "Story")
+                    b.HasOne("MuonRoi.Social_Network.Storys.Story", "Story")
                         .WithMany("Chapters")
                         .HasForeignKey("StoryGuid")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1358,7 +1358,7 @@ namespace MuonRoiSocialNetwork.Migrations
                     b.Navigation("Story");
                 });
 
-            modelBuilder.Entity("ConnectVN.Social_Network.Roles.GroupUserMember", b =>
+            modelBuilder.Entity("MuonRoi.Social_Network.Roles.GroupUserMember", b =>
                 {
                     b.HasOne("MuonRoiSocialNetwork.Domains.DomainObjects.Groups.AppRole", "AppRole")
                         .WithMany("GroupUserMember")
@@ -1366,7 +1366,7 @@ namespace MuonRoiSocialNetwork.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ConnectVN.Social_Network.Users.AppUser", "UserMember")
+                    b.HasOne("MuonRoi.Social_Network.Users.AppUser", "UserMember")
                         .WithMany("GroupUserMember")
                         .HasForeignKey("AppUserKey")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1377,9 +1377,9 @@ namespace MuonRoiSocialNetwork.Migrations
                     b.Navigation("UserMember");
                 });
 
-            modelBuilder.Entity("ConnectVN.Social_Network.Storys.Story", b =>
+            modelBuilder.Entity("MuonRoi.Social_Network.Storys.Story", b =>
                 {
-                    b.HasOne("ConnectVN.Social_Network.Categories.Category", "Category")
+                    b.HasOne("MuonRoi.Social_Network.Categories.Category", "Category")
                         .WithMany("Storys")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1388,15 +1388,15 @@ namespace MuonRoiSocialNetwork.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("ConnectVN.Social_Network.Storys.StoryNotifications", b =>
+            modelBuilder.Entity("MuonRoi.Social_Network.Storys.StoryNotifications", b =>
                 {
-                    b.HasOne("ConnectVN.Social_Network.Storys.Story", "Story")
+                    b.HasOne("MuonRoi.Social_Network.Storys.Story", "Story")
                         .WithMany("StoryNotifications")
                         .HasForeignKey("StoryGuid")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ConnectVN.Social_Network.Users.AppUser", "UserMember")
+                    b.HasOne("MuonRoi.Social_Network.Users.AppUser", "UserMember")
                         .WithMany("StoryNotifications")
                         .HasForeignKey("UserGuid")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1407,9 +1407,9 @@ namespace MuonRoiSocialNetwork.Migrations
                     b.Navigation("UserMember");
                 });
 
-            modelBuilder.Entity("ConnectVN.Social_Network.Storys.StoryPublish", b =>
+            modelBuilder.Entity("MuonRoi.Social_Network.Storys.StoryPublish", b =>
                 {
-                    b.HasOne("ConnectVN.Social_Network.Users.AppUser", "UserMember")
+                    b.HasOne("MuonRoi.Social_Network.Users.AppUser", "UserMember")
                         .WithMany("StoryPublish")
                         .HasForeignKey("UserGuid")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1418,9 +1418,9 @@ namespace MuonRoiSocialNetwork.Migrations
                     b.Navigation("UserMember");
                 });
 
-            modelBuilder.Entity("ConnectVN.Social_Network.Storys.StoryReview", b =>
+            modelBuilder.Entity("MuonRoi.Social_Network.Storys.StoryReview", b =>
                 {
-                    b.HasOne("ConnectVN.Social_Network.Users.AppUser", "UserMember")
+                    b.HasOne("MuonRoi.Social_Network.Users.AppUser", "UserMember")
                         .WithMany("StoryReview")
                         .HasForeignKey("UserGuid")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1429,15 +1429,15 @@ namespace MuonRoiSocialNetwork.Migrations
                     b.Navigation("UserMember");
                 });
 
-            modelBuilder.Entity("ConnectVN.Social_Network.Tags.TagInStory", b =>
+            modelBuilder.Entity("MuonRoi.Social_Network.Tags.TagInStory", b =>
                 {
-                    b.HasOne("ConnectVN.Social_Network.Storys.Story", "Story")
+                    b.HasOne("MuonRoi.Social_Network.Storys.Story", "Story")
                         .WithMany("TagInStory")
                         .HasForeignKey("StoryGuid")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ConnectVN.Social_Network.Tags.Tag", "Tag")
+                    b.HasOne("MuonRoi.Social_Network.Tags.Tag", "Tag")
                         .WithMany("TagInStory")
                         .HasForeignKey("TagId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1448,9 +1448,9 @@ namespace MuonRoiSocialNetwork.Migrations
                     b.Navigation("Tag");
                 });
 
-            modelBuilder.Entity("ConnectVN.Social_Network.Users.BookMarkStory", b =>
+            modelBuilder.Entity("MuonRoi.Social_Network.Users.BookMarkStory", b =>
                 {
-                    b.HasOne("ConnectVN.Social_Network.Users.AppUser", "UserMember")
+                    b.HasOne("MuonRoi.Social_Network.Users.AppUser", "UserMember")
                         .WithMany("BookMarkStory")
                         .HasForeignKey("UserGuid")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1459,9 +1459,9 @@ namespace MuonRoiSocialNetwork.Migrations
                     b.Navigation("UserMember");
                 });
 
-            modelBuilder.Entity("ConnectVN.Social_Network.Users.FollowingAuthor", b =>
+            modelBuilder.Entity("MuonRoi.Social_Network.Users.FollowingAuthor", b =>
                 {
-                    b.HasOne("ConnectVN.Social_Network.Users.AppUser", "UserMember")
+                    b.HasOne("MuonRoi.Social_Network.Users.AppUser", "UserMember")
                         .WithMany("FollowingAuthor")
                         .HasForeignKey("UserGuid")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1481,7 +1481,7 @@ namespace MuonRoiSocialNetwork.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
-                    b.HasOne("ConnectVN.Social_Network.Users.AppUser", null)
+                    b.HasOne("MuonRoi.Social_Network.Users.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1490,7 +1490,7 @@ namespace MuonRoiSocialNetwork.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
-                    b.HasOne("ConnectVN.Social_Network.Users.AppUser", null)
+                    b.HasOne("MuonRoi.Social_Network.Users.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1505,7 +1505,7 @@ namespace MuonRoiSocialNetwork.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ConnectVN.Social_Network.Users.AppUser", null)
+                    b.HasOne("MuonRoi.Social_Network.Users.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1514,19 +1514,19 @@ namespace MuonRoiSocialNetwork.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
-                    b.HasOne("ConnectVN.Social_Network.Users.AppUser", null)
+                    b.HasOne("MuonRoi.Social_Network.Users.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ConnectVN.Social_Network.Categories.Category", b =>
+            modelBuilder.Entity("MuonRoi.Social_Network.Categories.Category", b =>
                 {
                     b.Navigation("Storys");
                 });
 
-            modelBuilder.Entity("ConnectVN.Social_Network.Storys.Story", b =>
+            modelBuilder.Entity("MuonRoi.Social_Network.Storys.Story", b =>
                 {
                     b.Navigation("Chapters");
 
@@ -1535,12 +1535,12 @@ namespace MuonRoiSocialNetwork.Migrations
                     b.Navigation("TagInStory");
                 });
 
-            modelBuilder.Entity("ConnectVN.Social_Network.Tags.Tag", b =>
+            modelBuilder.Entity("MuonRoi.Social_Network.Tags.Tag", b =>
                 {
                     b.Navigation("TagInStory");
                 });
 
-            modelBuilder.Entity("ConnectVN.Social_Network.Users.AppUser", b =>
+            modelBuilder.Entity("MuonRoi.Social_Network.Users.AppUser", b =>
                 {
                     b.Navigation("BookMarkStory");
 

@@ -1,6 +1,4 @@
-﻿
-
-namespace ConnectVN.Social_Network.User
+﻿namespace MuonRoi.Social_Network.User
 {
     /// <summary>
     /// Enum User

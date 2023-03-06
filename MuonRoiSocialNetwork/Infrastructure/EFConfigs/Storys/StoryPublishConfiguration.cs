@@ -1,8 +1,8 @@
-﻿using ConnectVN.Social_Network.Storys;
+﻿using MuonRoi.Social_Network.Storys;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
 
-namespace ConnectVN.Social_Network.Configurations.Storys
+namespace MuonRoi.Social_Network.Configurations.Storys
 {
     public class StoryPublishConfiguration : IEntityTypeConfiguration<StoryPublish>
     {

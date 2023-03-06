@@ -1,19 +1,19 @@
 ﻿using AutoMapper;
 using BaseConfig.EntityObject.Entity;
 using BaseConfig.Exeptions;
+using BaseConfig.Extentions;
 using BaseConfig.MethodResult;
-using ConnectVN.Social_Network.Users;
+using MuonRoi.Social_Network.Users;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
 using MuonRoiSocialNetwork.Application.Commands.Base;
 using MuonRoiSocialNetwork.Common.Models.Users;
 using MuonRoiSocialNetwork.Common.Requests.Users;
+using MuonRoiSocialNetwork.Common.Settings.Appsettings;
 using MuonRoiSocialNetwork.Domains.Interfaces;
 using MuonRoiSocialNetwork.Infrastructure.Extentions.Mail;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace MuonRoiSocialNetwork.Application.Commands.Users
@@ -58,7 +58,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
             {
                 #region Validation
                 AppUser newUser = _mapper.Map<AppUser>(request);
-                newUser.LastLogin = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+                newUser.LastLogin = DateTime.UtcNow;
                 if (!newUser.IsValid())
                 {
                     methodResult.StatusCode = StatusCodes.Status400BadRequest;
@@ -66,26 +66,26 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                     return methodResult;
                 }
                 string pwdPattern = @"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$";
-                bool isComplex = Regex.IsMatch(request.PasswordHash, pwdPattern);
+                bool isComplex = Regex.IsMatch(request.PasswordHash ?? "", pwdPattern);
                 if (!isComplex)
                 {
                     methodResult.StatusCode = StatusCodes.Status400BadRequest;
                     methodResult.AddApiErrorMessage(
                         nameof(EnumUserErrorCodes.USR17C),
-                        new[] { Helpers.GenerateErrorResult(nameof(request.PasswordHash), request.PasswordHash) }
+                        new[] { Helpers.GenerateErrorResult(nameof(request.PasswordHash), request.PasswordHash ?? "") }
                     );
                     return methodResult;
                 }
                 #endregion
 
                 #region Check is exist user
-                bool appUser = await _userRepository.ExistUserByUsernameAsync(newUser.UserName);
+                bool appUser = await _userRepository.ExistUserByUsernameAsync(newUser.UserName ?? "");
                 if (appUser)
                 {
                     methodResult.StatusCode = StatusCodes.Status400BadRequest;
                     methodResult.AddApiErrorMessage(
                         nameof(EnumUserErrorCodes.USR13C),
-                        new[] { Helpers.GenerateErrorResult(nameof(newUser.UserName), newUser.UserName) }
+                        new[] { Helpers.GenerateErrorResult(nameof(newUser.UserName), newUser.UserName ?? "") }
                     );
                     return methodResult;
                 }
@@ -93,16 +93,22 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
 
                 #region Genarate salt and password
                 newUser.Salt = GenarateSalt();
-                newUser.PasswordHash = HashPassword(request.PasswordHash, newUser.Salt);
+                newUser.PasswordHash = HashPassword(request.PasswordHash ?? "", newUser.Salt);
                 #endregion
 
                 #region Create new user
+                FormatString.WithRegex(newUser.Name ?? "");
+                FormatString.WithRegex(newUser.Surname ?? "");
+                FormatString.WithRegex(newUser.Address ?? "");
+                newUser.Status = EnumAccountStatus.UnConfirm;
+                CheckDateTime.IsValidDateTime(newUser.BirthDate ?? DateTime.MinValue);
+                newUser.Avatar ??= newUser.Avatar ?? "".Trim();
                 if (await _userRepository.CreateNewUserAsync(newUser) <= 0)
                 {
                     methodResult.StatusCode = StatusCodes.Status400BadRequest;
                     methodResult.AddApiErrorMessage(
                         nameof(EnumUserErrorCodes.USR29C),
-                        new[] { Helpers.GenerateErrorResult(nameof(newUser.UserName), newUser.UserName) }
+                        new[] { Helpers.GenerateErrorResult(nameof(newUser.UserName), newUser.UserName ?? "") }
                     );
                     return methodResult;
                 }
@@ -119,7 +125,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                     methodResult.StatusCode = StatusCodes.Status400BadRequest;
                     methodResult.AddApiErrorMessage(
                         nameof(EnumUserErrorCodes.USR02C),
-                        new[] { Helpers.GenerateErrorResult(nameof(newUser.UserName), newUser.UserName) }
+                        new[] { Helpers.GenerateErrorResult(nameof(newUser.UserName), newUser.UserName ?? "") }
                     );
                     return methodResult;
                 };
@@ -151,18 +157,18 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
         public async Task GenerateEmailConfirmationTokenAsync(AppUser identityUser)
         {
 
-            var symmetricKey = new SymmetricSecurityKey(Convert.FromBase64String(_configuration.GetSection("Application:SERECT").Value.ToString()));
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var myIssuer = _configuration.GetSection("Application:ENV_CONNECTIONSTRING").Value.ToString();
-            var myAudience = _configuration.GetSection("Application:AppDomain").Value.ToString();
-            var now = DateTime.UtcNow;
-            var tokenDescriptor = new SecurityTokenDescriptor
+            SymmetricSecurityKey symmetricKey = new SymmetricSecurityKey(Convert.FromBase64String(_configuration.GetSection(ConstAppSettings.APPLICATIONSERECT).Value));
+            JwtSecurityTokenHandler tokenHandler = new();
+            string? myIssuer = _configuration.GetSection(ConstAppSettings.APPLICATIONENVCONNECTION).Value;
+            string? myAudience = _configuration.GetSection(ConstAppSettings.APPLICATIONAPPDOMAIN).Value;
+            DateTime now = DateTime.UtcNow;
+            SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-                    new Claim(ClaimTypes.Name, identityUser.UserName),
-                    new Claim(ClaimTypes.Email, identityUser.Email),
-                    new Claim(ClaimTypes.MobilePhone,identityUser.PhoneNumber)
+                    new Claim(ClaimTypes.Name, identityUser.UserName ?? ""),
+                    new Claim(ClaimTypes.Email, identityUser.Email ?? ""),
+                    new Claim(ClaimTypes.MobilePhone,identityUser.PhoneNumber ?? "")
                 }),
 
                 Expires = now.AddMinutes(Convert.ToInt32(5)),
@@ -172,7 +178,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                 SecurityAlgorithms.HmacSha256Signature)
             };
 
-            var stoken = tokenHandler.CreateToken(tokenDescriptor);
+            SecurityToken? stoken = tokenHandler.CreateToken(tokenDescriptor);
             string token = tokenHandler.WriteToken(stoken);
             if (!string.IsNullOrEmpty(token))
             {
@@ -181,15 +187,15 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
         }
         private async Task SendEmailConfirmationEmail(AppUser user, string token)
         {
-            string appDomain = _configuration.GetSection("Application:AppDomain").Value;
-            string confirmationLink = _configuration.GetSection("Application:EmailConfirmation").Value;
+            string appDomain = _configuration.GetSection(ConstAppSettings.APPLICATIONAPPDOMAIN).Value;
+            string confirmationLink = _configuration.GetSection(ConstAppSettings.APPLICATIONEMAILCONFIRMED).Value;
 
             UserEmailOptions options = new()
             {
-                ToEmails = new List<string>() { user.Email },
+                ToEmails = new List<string>() { user.Email ?? "" },
                 PlaceHolders = new List<KeyValuePair<string, string>>()
                 {
-                    new KeyValuePair<string, string>("{{UserName}}", user.UserName),
+                    new KeyValuePair<string, string>("{{UserName}}", user.UserName ?? ""),
                     new KeyValuePair<string, string>("{{Link}}",
                         string.Format(appDomain + confirmationLink, user.Id, token))
                 }

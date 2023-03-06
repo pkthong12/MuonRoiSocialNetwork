@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ConnectVN.Social_Network.Users
+﻿namespace MuonRoi.Social_Network.Users
 {
     public enum EnumUserErrorCodes
     {
@@ -180,5 +176,9 @@ namespace ConnectVN.Social_Network.Users
         /// Cập nhật trạng thái xác minh thất bại
         /// </summary>
         USRC37C,
+        /// <summary>
+        /// Ngày sinh không được trống
+        /// </summary>
+        USRC38C,
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace ConnectVN.Social_Network.Chapters
+﻿namespace MuonRoi.Social_Network.Chapters
 {
     public enum EnumChapterErrorCode
     {

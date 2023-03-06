@@ -1,4 +1,4 @@
-﻿namespace ConnectVN.Social_Network.Roles
+﻿namespace MuonRoi.Social_Network.Roles
 {
     /// <summary>
     /// Group Guest

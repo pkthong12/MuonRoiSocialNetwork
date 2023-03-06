@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using ConnectVN.Social_Network.Users;
+using MuonRoi.Social_Network.Users;
 using MuonRoiSocialNetwork.Application.Commands.Users;
 using MuonRoiSocialNetwork.Common.Models.Users;
 

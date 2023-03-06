@@ -1,14 +1,13 @@
 ﻿using AutoMapper;
 using BaseConfig.EntityObject.Entity;
 using BaseConfig.MethodResult;
-using ConnectVN.Social_Network.Users;
+using MuonRoi.Social_Network.Users;
 using MediatR;
 using Microsoft.IdentityModel.Tokens;
 using MuonRoiSocialNetwork.Application.Commands.Base;
+using MuonRoiSocialNetwork.Common.Settings.Appsettings;
 using MuonRoiSocialNetwork.Domains.Interfaces;
-using MuonRoiSocialNetwork.Infrastructure.Repositories;
 using System.IdentityModel.Tokens.Jwt;
-using System.Text;
 
 namespace MuonRoiSocialNetwork.Application.Commands.Email
 {
@@ -67,10 +66,10 @@ namespace MuonRoiSocialNetwork.Application.Commands.Email
                     );
                     return methodResult;
                 }
-                var symmetricKey = new SymmetricSecurityKey(Convert.FromBase64String(_configuration.GetSection("Application:SERECT").Value.ToString()));
+                var symmetricKey = new SymmetricSecurityKey(Convert.FromBase64String(_configuration.GetSection(ConstAppSettings.APPLICATIONSERECT).Value));
                 var tokenHandler = new JwtSecurityTokenHandler();
-                var myIssuer = _configuration.GetSection("Application:ENV_CONNECTIONSTRING").Value.ToString();
-                var myAudience = _configuration.GetSection("Application:AppDomain").Value.ToString();
+                var myIssuer = _configuration.GetSection(ConstAppSettings.APPLICATIONENVCONNECTION).Value;
+                var myAudience = _configuration.GetSection(ConstAppSettings.APPLICATIONAPPDOMAIN).Value;
                 try
                 {
                     tokenHandler.ValidateToken(request.TokenJWT, new TokenValidationParameters
@@ -94,6 +93,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Email
                     return methodResult;
                 }
                 checkUser.EmailConfirmed = true;
+                checkUser.Status = EnumAccountStatus.Confirmed;
                 if (await _userRepository.ConfirmedEmail(checkUser) == -1)
                 {
                     methodResult.Result = false;

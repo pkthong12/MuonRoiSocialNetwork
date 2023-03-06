@@ -1,4 +1,4 @@
-﻿namespace ConnectVN.Social_Network.Categories
+﻿namespace MuonRoi.Social_Network.Categories
 {
     public enum EnumCategoriesErrorCode
     {

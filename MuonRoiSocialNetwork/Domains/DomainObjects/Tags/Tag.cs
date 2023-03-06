@@ -1,7 +1,7 @@
 ﻿using BaseConfig.EntityObject.Entity;
 using System.ComponentModel.DataAnnotations;
 
-namespace ConnectVN.Social_Network.Tags
+namespace MuonRoi.Social_Network.Tags
 {
     /// <summary>
     /// Table for Tag

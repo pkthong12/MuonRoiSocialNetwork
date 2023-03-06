@@ -1,8 +1,8 @@
 ﻿using BaseConfig.EntityObject.Entity;
-using ConnectVN.Social_Network.Tags;
+using MuonRoi.Social_Network.Tags;
 using System.ComponentModel.DataAnnotations;
 
-namespace ConnectVN.Social_Network.Users
+namespace MuonRoi.Social_Network.Users
 {
     /// <summary>
     /// Table follow

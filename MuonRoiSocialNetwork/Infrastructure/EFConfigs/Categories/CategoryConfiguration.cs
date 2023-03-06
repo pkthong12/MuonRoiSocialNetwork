@@ -1,8 +1,8 @@
-﻿using ConnectVN.Social_Network.Categories;
+﻿using MuonRoi.Social_Network.Categories;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
 
-namespace ConnectVN.Social_Network.Configurations.Categories
+namespace MuonRoi.Social_Network.Configurations.Categories
 {
     public class CategoryConfiguration : IEntityTypeConfiguration<Category>
     {

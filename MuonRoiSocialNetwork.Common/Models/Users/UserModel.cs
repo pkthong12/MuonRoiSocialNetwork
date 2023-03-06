@@ -1,5 +1,5 @@
-﻿using ConnectVN.Social_Network.User;
-using ConnectVN.Social_Network.Users;
+﻿using MuonRoi.Social_Network.User;
+using MuonRoi.Social_Network.Users;
 
 namespace MuonRoiSocialNetwork.Common.Models.Users
 {

@@ -1,10 +1,10 @@
 ﻿using BaseConfig.Extentions;
-using ConnectVN.Social_Network.Categories;
-using ConnectVN.Social_Network.Chapters;
-using ConnectVN.Social_Network.Roles;
-using ConnectVN.Social_Network.Storys;
-using ConnectVN.Social_Network.Tags;
-using ConnectVN.Social_Network.Users;
+using MuonRoi.Social_Network.Categories;
+using MuonRoi.Social_Network.Chapters;
+using MuonRoi.Social_Network.Roles;
+using MuonRoi.Social_Network.Storys;
+using MuonRoi.Social_Network.Tags;
+using MuonRoi.Social_Network.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MuonRoiSocialNetwork.Domains.DomainObjects.Groups;
@@ -22,7 +22,7 @@ namespace MuonRoiSocialNetwork.Infrastructure.Extentions
                     Guid = new Guid("32048316-149B-4838-BD27-1B5DA11BD4FD"),
                     Story_Title = "Ta Có Một Tòa Khí Vận Tế Đàn",
                     Story_Synopsis = "Bình An huyện nha dịch Trần Uyên xuyên qua mà đến, trong đầu cất giấu một tòa khí vận tế đàn .  Chỉ cần hiến tế khí vận, liền có thể thu được thiên cơ chỉ dẫn, thần thông, công pháp, tà thuật, thiên tài địa bảo ...  Mọi loại đều là hạ phẩm, chỉ có tập võ cao!  Đại Tấn những năm cuối, Tây vực Phật môn truyền đạo Trung Nguyên, Nam Cương yêu tộc nhìn chằm chằm .  Bắc man thiết kỵ 300 ngàn, uy áp biên cảnh .  Đạo môn chân nhân, Kiếm Tông kiếm tiên, ma đạo cự phách, giang hồ danh túc ... Thiên hạ đem loạn!  Đây là xấu nhất thời đại, cũng là tốt nhất thời đại ...  Ta gọi Trần Uyên, đến từ vực sâu!  Sát phạt quả đoán .  Chúc bạn có những giây phút vui vẻ khi đọc truyện Ta Có Một Tòa Khí Vận Tế Đàn!",
-                    Img_Url = "aacd50da-4e0d-47e4-939c-a4ace0f707ea.image/jpeg*Stories/ConnectVn_ta-co-mot-toa-khi-van-te-dan-cbde5bc2e8.jpg",
+                    Img_Url = "aacd50da-4e0d-47e4-939c-a4ace0f707ea.image/jpeg*Stories/MuonRoi_ta-co-mot-toa-khi-van-te-dan-cbde5bc2e8.jpg",
                     IsShow = true,
                     TotalView = 0,
                     TotalFavorite = 0,
@@ -40,7 +40,7 @@ namespace MuonRoiSocialNetwork.Infrastructure.Extentions
                     Guid = new Guid("C5C9CE29-28B5-4121-A1CE-7D03D8C22839"),
                     Story_Title = "Nhân Sinh Tùy Tiện Bắt Đầu Từ Tuổi Ba Mươi (Bản Dịch)",
                     Story_Synopsis = "Người khác xuyên việt trẻ thêm vài tuổi, Trần Tự xuyên việt thành ông chú 30.  Tưởng đâu đã có mái ấm êm đềm, ai ngờ xuyên đến lại đúng dịp ly hôn  Nếu như đã không có gì để mà lo lắng, vậy thì sống cho thật thoải mái đi.",
-                    Img_Url = "079dec71-43fd-4701-8450-a1ad1e6c39ff.image/jpeg*Stories/ConnectVn_nhan-sinh-tuy-tien-bat-dau-tu-tuoi-ba-muoi-ban-dic-7a54bfe686.jpg",
+                    Img_Url = "079dec71-43fd-4701-8450-a1ad1e6c39ff.image/jpeg*Stories/MuonRoi_nhan-sinh-tuy-tien-bat-dau-tu-tuoi-ba-muoi-ban-dic-7a54bfe686.jpg",
                     IsShow = true,
                     TotalView = 0,
                     TotalFavorite = 0,

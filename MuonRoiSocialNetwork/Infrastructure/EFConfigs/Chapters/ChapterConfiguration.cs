@@ -1,8 +1,8 @@
-﻿using ConnectVN.Social_Network.Chapters;
+﻿using MuonRoi.Social_Network.Chapters;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
 
-namespace ConnectVN.Social_Network.Configurations.Chapters
+namespace MuonRoi.Social_Network.Configurations.Chapters
 {
     public class ChapterConfiguration : IEntityTypeConfiguration<Chapter>
     {

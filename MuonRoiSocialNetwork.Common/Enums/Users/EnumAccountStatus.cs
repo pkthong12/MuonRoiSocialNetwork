@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ConnectVN.Social_Network.Users
+﻿namespace MuonRoi.Social_Network.Users
 {
     public enum EnumAccountStatus
     {
@@ -19,6 +15,14 @@ namespace ConnectVN.Social_Network.Users
         /// <summary>
         /// Lock account
         /// </summary>
-        Locked = 3
+        Locked = 3,
+        /// <summary>
+        /// Confirmed email
+        /// </summary>
+        Confirmed = 4,
+        /// <summary>
+        /// Non confirm email
+        /// </summary>
+        UnConfirm = 5,
     }
 }

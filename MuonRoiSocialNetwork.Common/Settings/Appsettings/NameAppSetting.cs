@@ -2,6 +2,6 @@
 {
     public enum NameAppSetting
     {
-        appsettings, SMTPConfig
+        APPSETTINGS, SMTPCONFIG
     }
 }

@@ -1,14 +1,14 @@
 ﻿using BaseConfig.EntityObject.Entity;
 using BaseConfig.EntityObject.EntityObject;
-using ConnectVN.Social_Network.Roles;
-using ConnectVN.Social_Network.Storys;
-using ConnectVN.Social_Network.User;
+using MuonRoi.Social_Network.Roles;
+using MuonRoi.Social_Network.Storys;
+using MuonRoi.Social_Network.User;
 using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using System.Text.Json.Serialization;
 
-namespace ConnectVN.Social_Network.Users
+namespace MuonRoi.Social_Network.Users
 {
     /// <summary>
     /// Table User Members
@@ -28,21 +28,46 @@ namespace ConnectVN.Social_Network.Users
         [MaxLength(100, ErrorMessage = nameof(EnumUserErrorCodes.USR09C))]
         public string? Surname { get; set; }
         /// <summary>
+        /// Tên đăng nhập
+        /// </summary>
+        /// <value></value>
+        [Required(ErrorMessage = nameof(EnumUserErrorCodes.USR05C))]
+        [MaxLength(100, ErrorMessage = nameof(EnumUserErrorCodes.USR10C))]
+        [MinLength(5, ErrorMessage = nameof(EnumUserErrorCodes.USR15C))]
+        [RegularExpression(@"^[a-zA-Z][a-zA-Z0-9_\.]{3,99}[a-z0-9](\@([a-zA-Z0-9][a-zA-Z0-9\.]+[a-zA-Z0-9]{2,}){1,5})?$", ErrorMessage = nameof(EnumUserErrorCodes.USR14C))]
+        public override string? UserName { get; set; }
+        /// <summary>
+        /// Mật khẩu
+        /// </summary>
+        /// <value></value>
+        [Required(ErrorMessage = nameof(EnumUserErrorCodes.USR06C))]
+        [MaxLength(1000, ErrorMessage = nameof(EnumUserErrorCodes.USR11C))]
+        [MinLength(8, ErrorMessage = nameof(EnumUserErrorCodes.USR26C))]
+        [RegularExpression(@"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$", ErrorMessage = nameof(EnumUserErrorCodes.USR17C))]
+        public override string? PasswordHash { get; set; }
+        /// <summary>
+        /// Email address
+        /// </summary>
+        /// <value></value>
+        [MaxLength(1000, ErrorMessage = nameof(EnumUserErrorCodes.USR20C))]
+        [EmailAddress(ErrorMessage = nameof(EnumUserErrorCodes.USR19C))]
+        [RegularExpression(@"^(([^<>()[\]\\.,;:\s@\""]+(\.[^<>()[\]\\.,;:\s@\""]+)*)|(\"".+\""))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$", ErrorMessage = nameof(EnumUserErrorCodes.USR19C))]
+        public override string? Email { get; set; }
+        /// <summary>
         /// Address''s User
         /// </summary>
-        [Required(ErrorMessage = nameof(EnumUserErrorCodes.USR32C))]
         [MaxLength(1000, ErrorMessage = nameof(EnumUserErrorCodes.USR18C))]
-        public string Address { get; set; }
+        public string? Address { get; set; }
         /// <summary>
         /// BirthDate''s User
         /// </summary>
+        [Required(ErrorMessage = nameof(EnumUserErrorCodes.USRC38C))]
         public DateTime? BirthDate { get; set; }
         /// <summary>
         /// Key hash password
         /// </summary>
-        [Required(ErrorMessage = nameof(EnumUserErrorCodes.USR07C))]
         [MaxLength(1000, ErrorMessage = nameof(EnumUserErrorCodes.USR12C))]
-        public string Salt { get; set; }
+        public string? Salt { get; set; }
         /// <summary>
         /// Gender''s User
         /// </summary>

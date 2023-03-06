@@ -1,8 +1,8 @@
 ﻿using BaseConfig.EntityObject.Entity;
-using ConnectVN.Social_Network.Storys;
+using MuonRoi.Social_Network.Storys;
 using System.ComponentModel.DataAnnotations;
 
-namespace ConnectVN.Social_Network.Tags
+namespace MuonRoi.Social_Network.Tags
 {
     /// <summary>
     /// Table Tag for story

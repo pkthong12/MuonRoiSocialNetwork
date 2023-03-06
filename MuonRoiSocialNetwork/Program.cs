@@ -1,11 +1,17 @@
 using AutoMapper;
+using ConnectVN.Social_Network.Users;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.OpenApi.Models;
+using MuonRoiSocialNetwork.Common.Models;
+using MuonRoiSocialNetwork.Common.Settings.Appsettings;
+using MuonRoiSocialNetwork.Domains.DomainObjects.Groups;
 using MuonRoiSocialNetwork.Domains.Interfaces;
 using MuonRoiSocialNetwork.Infrastructure;
+using MuonRoiSocialNetwork.Infrastructure.Extentions.Mail;
 using MuonRoiSocialNetwork.Infrastructure.Map.Users;
 using MuonRoiSocialNetwork.Infrastructure.Repositories;
+using System;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddMediatR(config => config.RegisterServicesFromAssembly(typeof(Program).Assembly));
@@ -29,13 +35,20 @@ builder.Services.AddSwaggerGen(x =>
             Email = "muonroi@outlook.com"
         }
     });
-    var filePath = Path.Combine(AppContext.BaseDirectory, "MuonRoiAPI.xml");
+    var filePath = Path.Combine(AppContext.BaseDirectory, $"{typeof(Program).Assembly.GetName().Name}.xml");
     x.IncludeXmlComments(filePath);
 });
+
 builder.Services.AddTransient<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IEmailService, MailService>();
+builder.Services.AddIdentity<AppUser, AppRole>()
+       .AddEntityFrameworkStores<MuonRoiSocialNetworkDbContext>()
+       .AddDefaultTokenProviders();
+builder.Services.Configure<SMTPConfigModel>(builder.Configuration.GetSection($"{NameAppSetting.SMTPConfig}"));
+IConfiguration configuration = new ConfigurationBuilder().AddJsonFile($"{NameAppSetting.appsettings}.json").Build();
 builder.Services.AddDbContext<MuonRoiSocialNetworkDbContext>(opt =>
 {
-    opt.UseSqlServer("Server=.;Database=MuonRoi;Trusted_Connection=True;");
+    opt.UseSqlServer(configuration["ConnectionStrings:MuonRoi"]);
 });
 var mapperCfg = new MapperConfiguration(x =>
 {

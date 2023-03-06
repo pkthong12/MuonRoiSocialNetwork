@@ -46,9 +46,21 @@ namespace MuonRoiSocialNetwork.Infrastructure.Repositories
         /// <returns></returns>
         public async Task<AppUser> GetByGuidAsync(Guid id)
         {
+#pragma warning disable CS8603 // Possible null reference return.
             return _dbcontext.Users != null ? await _dbcontext.Users
                         .AsNoTracking()
                         .FirstOrDefaultAsync(x => x.Id.Equals(id)) : null;
+#pragma warning restore CS8603 // Possible null reference return.
+        }
+        /// <summary>
+        /// Handle confirmed email
+        /// </summary>
+        /// <param name="checkUser"></param>
+        /// <returns></returns>
+        public async Task<int> ConfirmedEmail(AppUser checkUser)
+        {
+            _dbcontext.Users.Update(checkUser);
+            return await _dbcontext.SaveChangesAsync();
         }
     }
 }

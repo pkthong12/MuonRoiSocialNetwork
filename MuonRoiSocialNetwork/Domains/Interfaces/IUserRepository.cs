@@ -8,6 +8,13 @@ namespace MuonRoiSocialNetwork.Domains.Interfaces
     public interface IUserRepository
     {
         /// <summary>
+        /// Confirmed Email
+        /// </summary>
+        /// <param name="checkUser"></param>
+        /// <returns></returns>
+        Task<int> ConfirmedEmail(AppUser checkUser);
+
+        /// <summary>
         /// Create new user no role
         /// </summary>
         /// <param name="newUser"></param>

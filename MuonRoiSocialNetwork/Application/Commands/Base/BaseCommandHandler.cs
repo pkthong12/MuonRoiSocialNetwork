@@ -15,16 +15,20 @@ namespace MuonRoiSocialNetwork.Application.Commands.Base
         /// property _mapper
         /// </summary>
         protected readonly IMapper _mapper;
-        protected readonly IUserRepository _userRepository;
+        /// <summary>
+        /// property get config
+        /// </summary>
+        protected readonly IConfiguration _configuration;
 
         /// <summary>
         /// Handler base
         /// </summary>
         /// <param name="mapper"></param>
-        protected BaseCommandHandler(IMapper mapper, IUserRepository userRepository)
+        /// <param name="configuration"></param>
+        protected BaseCommandHandler(IMapper mapper, IConfiguration configuration)
         {
             _mapper = mapper;
-            _userRepository = userRepository;
+            _configuration = configuration;
         }
         /// <summary>
         /// Hash password based salt

@@ -172,5 +172,13 @@ namespace ConnectVN.Social_Network.Users
         /// Giới tính lựa chọn không hợp lệ
         /// </summary>
         USRC35C,
+        /// <summary>
+        /// Token không hợp lệ hoặc đã hết hạn
+        /// </summary>
+        USRC36C,
+        /// <summary>
+        /// Cập nhật trạng thái xác minh thất bại
+        /// </summary>
+        USRC37C,
     }
 }

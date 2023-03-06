@@ -10,7 +10,6 @@ using ConnectVN.Social_Network.Roles;
 using ConnectVN.Social_Network.Storys;
 using ConnectVN.Social_Network.Tags;
 using ConnectVN.Social_Network.Users;
-using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;

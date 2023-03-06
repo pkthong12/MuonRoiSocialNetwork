@@ -1,0 +1,54 @@
+﻿using ConnectVN.Social_Network.Users;
+using Microsoft.EntityFrameworkCore;
+using MuonRoiSocialNetwork.Domains.Interfaces;
+
+namespace MuonRoiSocialNetwork.Infrastructure.Repositories
+{
+    /// <summary>
+    /// Handler user
+    /// </summary>
+    public class UserRepository : IUserRepository
+    {
+        private readonly MuonRoiSocialNetworkDbContext _dbcontext;
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="dbContext"></param>
+        public UserRepository(MuonRoiSocialNetworkDbContext dbContext)
+        {
+            _dbcontext = dbContext;
+        }
+        /// <summary>
+        /// Handle check user is exist? by username
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns></returns>
+        public async Task<bool> ExistUserByUsernameAsync(string username)
+        {
+            return await _dbcontext.Users.AsNoTracking()
+                 .AnyAsync(x => x.UserName.Equals(username))
+                 .ConfigureAwait(false);
+        }
+        /// <summary>
+        /// Handle create new user no role
+        /// </summary>
+        /// <param name="newUser"></param>
+        /// <returns></returns>
+        public async Task<int> CreateNewUserAsync(AppUser newUser)
+        {
+            _dbcontext.Add(newUser);
+            return await _dbcontext.SaveChangesAsync();
+        }
+        /// <summary>
+        /// Handle get user by guid
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<AppUser> GetByGuidAsync(Guid id)
+        {
+            return _dbcontext.Users != null ? await _dbcontext.Users
+                        .AsNoTracking()
+                        .FirstOrDefaultAsync(x => x.Id.Equals(id)) : null;
+        }
+    }
+}

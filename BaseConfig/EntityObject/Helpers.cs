@@ -7,7 +7,7 @@ namespace BaseConfig.EntityObject.Entity
 {
     public static class Helpers
     {
-        private static ConcurrentDictionary<string, Dictionary<string, string>> ErrorMessages;
+        private static ConcurrentDictionary<string, Dictionary<string, string>>? ErrorMessages;
 
         public static string GenerateIntegrationEventName(string domainEventName)
         {

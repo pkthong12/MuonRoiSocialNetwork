@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace MuonRoiSocialNetwork.Migrations
 {
-    public partial class Initialdatabase_202303050529 : Migration
+    public partial class _20230305110957_Initialdatabase_202303050529 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -31,8 +31,9 @@ namespace MuonRoiSocialNetwork.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Surname = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Address = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    Address = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
                     BirthDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Salt = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
                     Gender = table.Column<int>(type: "int", nullable: true),
                     LastLogin = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Avatar = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
@@ -551,12 +552,12 @@ namespace MuonRoiSocialNetwork.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Description", "Name", "NormalizedName" },
-                values: new object[] { new Guid("72377426-b057-46ca-98ff-1ca9d33ea0c1"), "ef20f70d-11a8-420d-9101-3798fc71f78b", "Người quản lý cao nhất", "Administratior", null });
+                values: new object[] { new Guid("72377426-b057-46ca-98ff-1ca9d33ea0c1"), "ecda25d3-92f9-4ee4-bb64-cc59241c1b62", "Người quản lý cao nhất", "Administratior", null });
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
-                columns: new[] { "Id", "AccessFailedCount", "Address", "Avatar", "BirthDate", "ConcurrencyStamp", "Email", "EmailConfirmed", "Gender", "GroupId", "LastLogin", "LockReason", "LockoutEnabled", "LockoutEnd", "Name", "NormalizedEmail", "NormalizedUserName", "Note", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "Status", "Surname", "TwoFactorEnabled", "UserName" },
-                values: new object[] { new Guid("e0223a03-2945-49db-976e-736433465b7f"), 0, null, null, null, "05d686f3-39ef-4582-bfa5-08d5473cfd95", "leanhphi1706@gmail.com", false, null, null, null, null, false, null, "Phi Le", null, null, null, "AQAAAAEAACcQAAAAENiY+akisF158KuwSxcoDKUKNMq1ayq3ECnrVmiGNZ1KSrDTBeakQeK8zDXRpdGgcw==", "093.310.5367", false, null, 1, "Anh", false, "muonroi" });
+                columns: new[] { "Id", "AccessFailedCount", "Address", "Avatar", "BirthDate", "ConcurrencyStamp", "Email", "EmailConfirmed", "Gender", "GroupId", "LastLogin", "LockReason", "LockoutEnabled", "LockoutEnd", "Name", "NormalizedEmail", "NormalizedUserName", "Note", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "Salt", "SecurityStamp", "Status", "Surname", "TwoFactorEnabled", "UserName" },
+                values: new object[] { new Guid("e0223a03-2945-49db-976e-736433465b7f"), 0, "Hoà trung - ngọc định", null, null, "342c35cf-baee-4196-ab95-4c18325e3f0a", "leanhphi1706@gmail.com", false, null, null, null, null, false, null, "Phi Le", null, null, null, "AQAAAAEAACcQAAAAEOyvy74t2iHmvOreeZrGKebcFsZaGRuxZqgWXRM/kV14In1d/Ig4jnbW38MpBtatfQ==", "093.310.5367", false, "12345", null, 1, "Anh", false, "muonroi" });
 
             migrationBuilder.InsertData(
                 table: "Category",

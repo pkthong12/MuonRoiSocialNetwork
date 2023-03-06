@@ -12,8 +12,8 @@ using MuonRoiSocialNetwork.Infrastructure;
 namespace MuonRoiSocialNetwork.Migrations
 {
     [DbContext(typeof(MuonRoiSocialNetworkDbContext))]
-    [Migration("20230305110957_Initial-database_202303050529")]
-    partial class Initialdatabase_202303050529
+    [Migration("20230305170018_20230305110957_Initial-database_202303050529")]
+    partial class _20230305110957_Initialdatabase_202303050529
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -934,6 +934,7 @@ namespace MuonRoiSocialNetwork.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Address")
+                        .IsRequired()
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
@@ -998,6 +999,11 @@ namespace MuonRoiSocialNetwork.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<string>("Salt")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
@@ -1033,14 +1039,16 @@ namespace MuonRoiSocialNetwork.Migrations
                         {
                             Id = new Guid("e0223a03-2945-49db-976e-736433465b7f"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "05d686f3-39ef-4582-bfa5-08d5473cfd95",
+                            Address = "Hoà trung - ngọc định",
+                            ConcurrencyStamp = "342c35cf-baee-4196-ab95-4c18325e3f0a",
                             Email = "leanhphi1706@gmail.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             Name = "Phi Le",
-                            PasswordHash = "AQAAAAEAACcQAAAAENiY+akisF158KuwSxcoDKUKNMq1ayq3ECnrVmiGNZ1KSrDTBeakQeK8zDXRpdGgcw==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEOyvy74t2iHmvOreeZrGKebcFsZaGRuxZqgWXRM/kV14In1d/Ig4jnbW38MpBtatfQ==",
                             PhoneNumber = "093.310.5367",
                             PhoneNumberConfirmed = false,
+                            Salt = "12345",
                             Status = 1,
                             Surname = "Anh",
                             TwoFactorEnabled = false,
@@ -1335,7 +1343,7 @@ namespace MuonRoiSocialNetwork.Migrations
                         new
                         {
                             Id = new Guid("72377426-b057-46ca-98ff-1ca9d33ea0c1"),
-                            ConcurrencyStamp = "ef20f70d-11a8-420d-9101-3798fc71f78b",
+                            ConcurrencyStamp = "ecda25d3-92f9-4ee4-bb64-cc59241c1b62",
                             Description = "Người quản lý cao nhất",
                             Name = "Administratior"
                         });

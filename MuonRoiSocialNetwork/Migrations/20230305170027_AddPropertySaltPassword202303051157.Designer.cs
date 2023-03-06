@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MuonRoiSocialNetwork.Infrastructure;
 
@@ -11,9 +12,10 @@ using MuonRoiSocialNetwork.Infrastructure;
 namespace MuonRoiSocialNetwork.Migrations
 {
     [DbContext(typeof(MuonRoiSocialNetworkDbContext))]
-    partial class MuonRoiSocialNetworkDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230305170027_AddPropertySaltPassword202303051157")]
+    partial class AddPropertySaltPassword202303051157
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

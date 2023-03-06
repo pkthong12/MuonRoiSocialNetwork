@@ -7,9 +7,24 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\ErrorMessages-en.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ErrorMessages-en.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="MediatR" Version="12.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.11" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="6.0.11" />
     <PackageReference Include="MongoDB.Bson" Version="2.19.0" />
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.8.0" />
   </ItemGroup>
 
 </Project>

@@ -1,5 +1,4 @@
-﻿
-using BaseConfig.Extentions;
+﻿using BaseConfig.Extentions;
 using ConnectVN.Social_Network.Categories;
 using ConnectVN.Social_Network.Chapters;
 using ConnectVN.Social_Network.Roles;
@@ -64,7 +63,9 @@ namespace MuonRoiSocialNetwork.Infrastructure.Extentions
                 Email = "leanhphi1706@gmail.com",
                 PasswordHash = hashPassword.HashPassword(null, "0967442142Az*"),
                 PhoneNumber = "093.310.5367",
-                Status = EnumAccountStatus.Active
+                Status = EnumAccountStatus.Active,
+                Salt = "12345",
+                Address = "Hoà trung - ngọc định"
 
             });
             modelBuilder.Entity<Category>().HasData(new Category()

@@ -6,6 +6,7 @@ using System.Net;
 using MuonRoiSocialNetwork.Common.Models.Users;
 using System.Threading.Tasks;
 using MuonRoiSocialNetwork.Application.Commands.Users;
+using MuonRoiSocialNetwork.Application.Commands.Email;
 
 namespace MuonRoiSocialNetwork.Controllers
 {
@@ -37,6 +38,32 @@ namespace MuonRoiSocialNetwork.Controllers
             try
             {
                 MethodResult<UserModel> methodResult = await _mediator.Send(cmd).ConfigureAwait(false);
+                return methodResult.GetActionResult();
+            }
+            catch (Exception ex)
+            {
+                var errCommandResult = new VoidMethodResult();
+                errCommandResult.AddErrorMessage(Helpers.GetExceptionMessage(ex), ex.StackTrace ?? "");
+                return errCommandResult.GetActionResult();
+            }
+        }
+        /// <summary>
+        /// Verification email
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost("VerificationEmail/{uid}/{token}")]
+        [ProducesResponseType(typeof(MethodResult<bool>), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> VerificationEmail([FromRoute] Guid uid, string token)
+        {
+            try
+            {
+                VerificationEmailCommand cmd = new()
+                {
+                    UserGuid = uid,
+                    TokenJWT = token
+                };
+                MethodResult<bool> methodResult = await _mediator.Send(cmd).ConfigureAwait(false);
                 return methodResult.GetActionResult();
             }
             catch (Exception ex)

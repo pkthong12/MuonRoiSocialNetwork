@@ -72,6 +72,8 @@
   "USRC33C": "Địa chỉ tối thiểu 10 kí tự",
   "USRC34C": "Ngày sinh không hợp lệ (tuổi phải lớn hơn 10, năm sinh > 1970)",
   "USRC35C": "Giới tính lựa chọn không hợp lệ",
+  "USRC36C": "Token không hợp lệ hoặc đã hết hạn",
+  "USRC37C": "Cập nhật trạng thái xác minh thất bại",
   //--------------------\
 
   //Role

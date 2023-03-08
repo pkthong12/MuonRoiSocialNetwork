@@ -50,7 +50,6 @@ namespace MuonRoi.Social_Network.Users
         /// </summary>
         /// <value></value>
         [MaxLength(1000, ErrorMessage = nameof(EnumUserErrorCodes.USR20C))]
-        [EmailAddress(ErrorMessage = nameof(EnumUserErrorCodes.USR19C))]
         [RegularExpression(@"^(([^<>()[\]\\.,;:\s@\""]+(\.[^<>()[\]\\.,;:\s@\""]+)*)|(\"".+\""))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$", ErrorMessage = nameof(EnumUserErrorCodes.USR19C))]
         public override string? Email { get; set; }
         /// <summary>

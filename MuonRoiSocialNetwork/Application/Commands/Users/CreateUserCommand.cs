@@ -61,9 +61,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                 newUser.LastLogin = DateTime.UtcNow;
                 if (!newUser.IsValid())
                 {
-                    methodResult.StatusCode = StatusCodes.Status400BadRequest;
-                    methodResult.AddResultFromErrorList(newUser.ErrorMessages);
-                    return methodResult;
+                    throw new CustomException(newUser.ErrorMessages);
                 }
                 #endregion
 
@@ -130,10 +128,12 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
             }
             catch (CustomException ex)
             {
+                methodResult.StatusCode = StatusCodes.Status400BadRequest;
                 methodResult.AddResultFromErrorList(ex.ErrorMessages);
             }
             catch (Exception ex)
             {
+                methodResult.StatusCode = StatusCodes.Status400BadRequest;
                 methodResult.AddErrorMessage(Helpers.GetExceptionMessage(ex), ex.StackTrace ?? "");
             }
             return methodResult;

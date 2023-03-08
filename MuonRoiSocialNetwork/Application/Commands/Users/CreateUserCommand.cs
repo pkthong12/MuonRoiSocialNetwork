@@ -65,17 +65,6 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                     methodResult.AddResultFromErrorList(newUser.ErrorMessages);
                     return methodResult;
                 }
-                string pwdPattern = @"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$";
-                bool isComplex = Regex.IsMatch(request.PasswordHash ?? "", pwdPattern);
-                if (!isComplex)
-                {
-                    methodResult.StatusCode = StatusCodes.Status400BadRequest;
-                    methodResult.AddApiErrorMessage(
-                        nameof(EnumUserErrorCodes.USR17C),
-                        new[] { Helpers.GenerateErrorResult(nameof(request.PasswordHash), request.PasswordHash ?? "") }
-                    );
-                    return methodResult;
-                }
                 #endregion
 
                 #region Check is exist user

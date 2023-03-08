@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,6 +9,7 @@ using MuonRoiSocialNetwork.Domains.Interfaces;
 using MuonRoiSocialNetwork.Infrastructure;
 using MuonRoiSocialNetwork.Infrastructure.Map.Users;
 using MuonRoiSocialNetwork.Infrastructure.Repositories;
+using System;
 
 namespace MuonRoiSocialNetwork.Test
 {
@@ -37,7 +38,6 @@ namespace MuonRoiSocialNetwork.Test
                 c.AddProfile<UserProfile>();
             });
             _maperBase = _mapperConfiguration.CreateMapper();
-
             #region InitData User
             AppUser user1 = new()
             {

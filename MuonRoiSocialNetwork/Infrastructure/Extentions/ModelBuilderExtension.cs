@@ -65,7 +65,8 @@ namespace MuonRoiSocialNetwork.Infrastructure.Extentions
                 PhoneNumber = "093.310.5367",
                 Status = EnumAccountStatus.Active,
                 Salt = "12345",
-                Address = "Hoà trung - ngọc định"
+                Address = "Hoà trung - ngọc định",
+                BirthDate = new DateTime(2002, 06, 17),
 
             });
             modelBuilder.Entity<Category>().HasData(new Category()

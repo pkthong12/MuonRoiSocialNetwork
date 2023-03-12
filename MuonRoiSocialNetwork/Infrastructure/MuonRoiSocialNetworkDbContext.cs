@@ -19,10 +19,21 @@ using MuonRoiSocialNetwork.Infrastructure.Extentions;
 
 namespace MuonRoiSocialNetwork.Infrastructure
 {
+    /// <summary>
+    /// Dbcontext config
+    /// </summary>
     public class MuonRoiSocialNetworkDbContext : IdentityDbContext<AppUser, AppRole, Guid>
     {
+        /// <summary>
+        /// Constructor dbcontext
+        /// </summary>
+        /// <param name="options"></param>
         public MuonRoiSocialNetworkDbContext(DbContextOptions options) : base(options)
         { }
+        /// <summary>
+        /// Apply config
+        /// </summary>
+        /// <param name="builder"></param>
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyConfiguration(new CategoryConfiguration());

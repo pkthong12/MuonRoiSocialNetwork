@@ -20,13 +20,13 @@ namespace MuonRoi.Social_Network.Users
         /// </summary>
         [Required(ErrorMessage = nameof(EnumUserErrorCodes.USR03C))]
         [MaxLength(100, ErrorMessage = nameof(EnumUserErrorCodes.USR08C))]
-        public string? Name { get; set; }
+        public string Name { get; set; }
         /// <summary>
         /// LastName''s User
         /// </summary>
         [Required(ErrorMessage = nameof(EnumUserErrorCodes.USR04C))]
         [MaxLength(100, ErrorMessage = nameof(EnumUserErrorCodes.USR09C))]
-        public string? Surname { get; set; }
+        public string Surname { get; set; }
         /// <summary>
         /// Tên đăng nhập
         /// </summary>
@@ -35,7 +35,7 @@ namespace MuonRoi.Social_Network.Users
         [MaxLength(100, ErrorMessage = nameof(EnumUserErrorCodes.USR10C))]
         [MinLength(5, ErrorMessage = nameof(EnumUserErrorCodes.USR15C))]
         [RegularExpression(@"^[a-zA-Z][a-zA-Z0-9_\.]{3,99}[a-z0-9](\@([a-zA-Z0-9][a-zA-Z0-9\.]+[a-zA-Z0-9]{2,}){1,5})?$", ErrorMessage = nameof(EnumUserErrorCodes.USR14C))]
-        public override string? UserName { get; set; }
+        public override string UserName { get; set; }
         /// <summary>
         /// Mật khẩu
         /// </summary>
@@ -44,44 +44,44 @@ namespace MuonRoi.Social_Network.Users
         [MaxLength(1000, ErrorMessage = nameof(EnumUserErrorCodes.USR11C))]
         [MinLength(8, ErrorMessage = nameof(EnumUserErrorCodes.USR26C))]
         [RegularExpression(@"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$", ErrorMessage = nameof(EnumUserErrorCodes.USR17C))]
-        public override string? PasswordHash { get; set; }
+        public override string PasswordHash { get; set; }
         /// <summary>
         /// Email address
         /// </summary>
         /// <value></value>
         [MaxLength(1000, ErrorMessage = nameof(EnumUserErrorCodes.USR20C))]
         [RegularExpression(@"^(([^<>()[\]\\.,;:\s@\""]+(\.[^<>()[\]\\.,;:\s@\""]+)*)|(\"".+\""))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$", ErrorMessage = nameof(EnumUserErrorCodes.USR19C))]
-        public override string? Email { get; set; }
+        public override string Email { get; set; }
         /// <summary>
         /// Address''s User
         /// </summary>
         [MaxLength(1000, ErrorMessage = nameof(EnumUserErrorCodes.USR18C))]
-        public string? Address { get; set; }
+        public string Address { get; set; }
         /// <summary>
         /// BirthDate''s User
         /// </summary>
         [Required(ErrorMessage = nameof(EnumUserErrorCodes.USRC38C))]
-        public DateTime? BirthDate { get; set; }
+        public DateTime BirthDate { get; set; }
         /// <summary>
         /// Key hash password
         /// </summary>
         [MaxLength(1000, ErrorMessage = nameof(EnumUserErrorCodes.USR12C))]
-        public string? Salt { get; set; }
+        public string Salt { get; set; }
         /// <summary>
         /// Gender''s User
         /// </summary>
-        public EnumGender? Gender { get; set; }
+        public EnumGender Gender { get; set; }
         /// <summary>
         /// Last login date
         /// </summary>
         /// <value></value>
-        public DateTime? LastLogin { get; set; }
+        public DateTime LastLogin { get; set; }
         /// <summary>
         /// Avatar Link
         /// </summary>
         /// <value></value>
         [MaxLength(1000, ErrorMessage = nameof(EnumNotificationStoryErrorCodes.NT01))]
-        public string? Avatar { get; set; }
+        public string Avatar { get; set; }
 
         /// <summary>
         /// Status of account
@@ -94,18 +94,18 @@ namespace MuonRoi.Social_Network.Users
         /// Ghi chú cho tài khoản
         /// </summary>
         /// <value></value>
-        public string? Note { get; set; }
+        public string Note { get; set; }
 
         /// <summary>
         /// Lý do khóa tài khoản
         /// </summary>
         /// <value></value>
-        public string? LockReason { get; set; }
+        public string LockReason { get; set; }
 
         /// <summary>
         /// GroupId of account
         /// </summary>
-        public int? GroupId { get; set; }
+        public int GroupId { get; set; }
         public List<GroupUserMember> GroupUserMember { get; set; }
         public List<BookMarkStory> BookMarkStory { get; set; }
         public List<StoryNotifications> StoryNotifications { get; set; }

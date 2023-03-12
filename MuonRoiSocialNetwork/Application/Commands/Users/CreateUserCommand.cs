@@ -88,7 +88,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                 FormatString.WithRegex(newUser.Surname ?? "");
                 FormatString.WithRegex(newUser.Address ?? "");
                 newUser.Status = EnumAccountStatus.UnConfirm;
-                CheckDateTime.IsValidDateTime(newUser.BirthDate ?? DateTime.MinValue);
+                CheckDateTime.IsValidDateTime(newUser.BirthDate);
                 newUser.Avatar ??= newUser.Avatar ?? "".Trim();
                 if (await _userRepository.CreateNewUserAsync(newUser) <= 0)
                 {
@@ -116,12 +116,9 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                     );
                     return methodResult;
                 };
-
                 UserModel resultUser = _mapper.Map<UserModel>(getCreatedUser);
-
                 methodResult.Result = resultUser;
                 methodResult.StatusCode = StatusCodes.Status200OK;
-
                 #endregion
 
                 return methodResult;

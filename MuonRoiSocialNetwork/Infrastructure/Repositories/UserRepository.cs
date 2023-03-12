@@ -62,5 +62,28 @@ namespace MuonRoiSocialNetwork.Infrastructure.Repositories
             _dbcontext.Users.Update(checkUser);
             return await _dbcontext.SaveChangesAsync();
         }
+        /// <summary>
+        /// handle get user by username
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns></returns>
+        public async Task<AppUser> GetByUsernameAsync(string username)
+        {
+#pragma warning disable CS8603 // Possible null reference return.
+            return _dbcontext.Users != null ? await _dbcontext.Users
+                       .AsNoTracking()
+                       .FirstOrDefaultAsync(x => x.UserName.Equals(username)) : null;
+#pragma warning restore CS8603 // Possible null reference return.
+        }
+        /// <summary>
+        /// Handle update info user
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public async Task<int> UpdateUserAsync(AppUser user)
+        {
+            _dbcontext.Users.Update(user);
+            return await _dbcontext.SaveChangesAsync();
+        }
     }
 }

@@ -180,5 +180,9 @@
         /// Ngày sinh không được trống
         /// </summary>
         USRC38C,
+        /// <summary>
+        /// Tài khoản hoặc mật khẩu không chính xác
+        /// </summary>
+        USRC39C,
     }
 }

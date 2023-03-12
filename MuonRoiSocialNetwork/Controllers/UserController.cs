@@ -48,10 +48,31 @@ namespace MuonRoiSocialNetwork.Controllers
             }
         }
         /// <summary>
+        /// Login API
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost("auth")]
+        [ProducesResponseType(typeof(MethodResult<UserModel>), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> LoginAuth([FromBody] AuthUserCommand cmd)
+        {
+            try
+            {
+                MethodResult<UserModel> methodResult = await _mediator.Send(cmd).ConfigureAwait(false);
+                return methodResult.GetActionResult();
+            }
+            catch (Exception ex)
+            {
+                var errCommandResult = new VoidMethodResult();
+                errCommandResult.AddErrorMessage(Helpers.GetExceptionMessage(ex), ex.StackTrace ?? "");
+                return errCommandResult.GetActionResult();
+            }
+        }
+        /// <summary>
         /// Verification email
         /// </summary>
         /// <returns></returns>
-        [HttpPost("VerificationEmail/{uid}/{token}")]
+        [HttpPatch("VerificationEmail/{uid}/{token}")]
         [ProducesResponseType(typeof(MethodResult<bool>), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> VerificationEmail([FromRoute] Guid uid, string token)

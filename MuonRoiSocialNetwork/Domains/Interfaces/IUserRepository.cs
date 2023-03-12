@@ -33,5 +33,17 @@ namespace MuonRoiSocialNetwork.Domains.Interfaces
         /// <param name="id"></param>
         /// <returns></returns>
         Task<AppUser> GetByGuidAsync(Guid id);
+        /// <summary>
+        /// Get user by username
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns></returns>
+        Task<AppUser> GetByUsernameAsync(string username);
+        /// <summary>
+        /// Update info user
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        Task<int> UpdateUserAsync(AppUser user);
     }
 }

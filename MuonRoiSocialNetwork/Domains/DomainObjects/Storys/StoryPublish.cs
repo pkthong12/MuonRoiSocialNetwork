@@ -19,6 +19,9 @@ namespace MuonRoi.Social_Network.Storys
         /// Guid User
         /// </summary>
         public Guid UserGuid { get; set; }
+        /// <summary>
+        /// Foreign key
+        /// </summary>
         public AppUser UserMember { get; set; }
 
     }

@@ -24,6 +24,10 @@ namespace MuonRoi.Social_Network.Storys
             IsShow = isShow;
         }
         /// <summary>
+        /// Guid in story 
+        /// </summary>
+        public Guid Guid { get; set; }
+        /// <summary>
         /// Title of story
         /// </summary>
         [Required(ErrorMessage = nameof(EnumStoryErrorCode.ST00))]
@@ -71,9 +75,20 @@ namespace MuonRoi.Social_Network.Storys
         /// Foreign key category
         /// </summary>
         public int CategoryId { get; set; }
+        /// Foreign key
+        /// </summary>
         public List<Chapter> Chapters { get; set; }
+        /// <summary>
+        /// Foreign key
+        /// </summary>
         public Category Category { get; set; }
+        /// <summary>
+        /// Foreign key
+        /// </summary>
         public List<StoryNotifications> StoryNotifications { get; set; }
+        /// <summary>
+        /// Foreign key
+        /// </summary>
         public List<TagInStory> TagInStory { get; set; }
     }
 }

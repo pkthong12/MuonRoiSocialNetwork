@@ -1,6 +1,6 @@
 ﻿using MuonRoi.Social_Network.Users;
 
-namespace MuonRoiSocialNetwork.Domains.Interfaces
+namespace MuonRoiSocialNetwork.Domains.Interfaces.Commands
 {
     /// <summary>
     /// UserRepository Interface
@@ -27,18 +27,7 @@ namespace MuonRoiSocialNetwork.Domains.Interfaces
         /// <param name="username"></param>
         /// <returns></returns>
         Task<bool> ExistUserByUsernameAsync(string username);
-        /// <summary>
-        /// Get user by guid
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        Task<AppUser> GetByGuidAsync(Guid id);
-        /// <summary>
-        /// Get user by username
-        /// </summary>
-        /// <param name="username"></param>
-        /// <returns></returns>
-        Task<AppUser> GetByUsernameAsync(string username);
+
         /// <summary>
         /// Update info user
         /// </summary>

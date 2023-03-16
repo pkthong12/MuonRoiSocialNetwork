@@ -1,6 +1,8 @@
 ﻿using MuonRoi.Social_Network.Users;
 using Microsoft.EntityFrameworkCore;
-using MuonRoiSocialNetwork.Domains.Interfaces;
+using MuonRoiSocialNetwork.Domains.Interfaces.Commands;
+using BaseConfig.Extentions;
+using MuonRoi.Social_Network.Roles;
 
 namespace MuonRoiSocialNetwork.Infrastructure.Repositories
 {
@@ -36,21 +38,16 @@ namespace MuonRoiSocialNetwork.Infrastructure.Repositories
         /// <returns></returns>
         public async Task<int> CreateNewUserAsync(AppUser newUser)
         {
+            FormatString.WithRegex(newUser.Name ?? "");
+            FormatString.WithRegex(newUser.Surname ?? "");
+            FormatString.WithRegex(newUser.Address ?? "");
+            newUser.Status = EnumAccountStatus.UnConfirm;
+            CheckDateTime.IsValidDateTime(newUser.BirthDate);
+            newUser.Avatar ??= newUser.Avatar ?? "".Trim();
+            newUser.GroupId = (int)EnumStaff.Staff;
+            newUser.CreatedDateTS = DateTime.UtcNow.GetTimeStamp();
             _dbcontext.Add(newUser);
             return await _dbcontext.SaveChangesAsync();
-        }
-        /// <summary>
-        /// Handle get user by guid
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public async Task<AppUser> GetByGuidAsync(Guid id)
-        {
-#pragma warning disable CS8603 // Possible null reference return.
-            return _dbcontext.Users != null ? await _dbcontext.Users
-                        .AsNoTracking()
-                        .FirstOrDefaultAsync(x => x.Id.Equals(id)) : null;
-#pragma warning restore CS8603 // Possible null reference return.
         }
         /// <summary>
         /// Handle confirmed email
@@ -59,21 +56,9 @@ namespace MuonRoiSocialNetwork.Infrastructure.Repositories
         /// <returns></returns>
         public async Task<int> ConfirmedEmail(AppUser checkUser)
         {
+            checkUser.UpdatedDateTS = DateTime.UtcNow.GetTimeStamp();
             _dbcontext.Users.Update(checkUser);
             return await _dbcontext.SaveChangesAsync();
-        }
-        /// <summary>
-        /// handle get user by username
-        /// </summary>
-        /// <param name="username"></param>
-        /// <returns></returns>
-        public async Task<AppUser> GetByUsernameAsync(string username)
-        {
-#pragma warning disable CS8603 // Possible null reference return.
-            return _dbcontext.Users != null ? await _dbcontext.Users
-                       .AsNoTracking()
-                       .FirstOrDefaultAsync(x => x.UserName.Equals(username)) : null;
-#pragma warning restore CS8603 // Possible null reference return.
         }
         /// <summary>
         /// Handle update info user
@@ -82,6 +67,7 @@ namespace MuonRoiSocialNetwork.Infrastructure.Repositories
         /// <returns></returns>
         public async Task<int> UpdateUserAsync(AppUser user)
         {
+            user.UpdatedDateTS = DateTime.UtcNow.GetTimeStamp();
             _dbcontext.Users.Update(user);
             return await _dbcontext.SaveChangesAsync();
         }

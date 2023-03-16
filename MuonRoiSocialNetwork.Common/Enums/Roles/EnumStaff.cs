@@ -5,6 +5,7 @@
     /// </summary>
     public enum EnumStaff
     {
-        Staff
+        Staff = 1,
+        Mod = 2,
     }
 }

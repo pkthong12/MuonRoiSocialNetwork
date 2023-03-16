@@ -9,10 +9,14 @@
   <ItemGroup>
     <Folder Include="Dtos\" />
     <Folder Include="Events\" />
-    <Folder Include="Extentions\" />
     <Folder Include="Helpers\" />
-    <Folder Include="Models\" />
     <Folder Include="QueryCommands\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.27.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.27.0" />
   </ItemGroup>
 
 </Project>

@@ -6,8 +6,9 @@ using MediatR;
 using Microsoft.IdentityModel.Tokens;
 using MuonRoiSocialNetwork.Application.Commands.Base;
 using MuonRoiSocialNetwork.Common.Settings.Appsettings;
-using MuonRoiSocialNetwork.Domains.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
+using MuonRoiSocialNetwork.Domains.Interfaces.Commands;
+using MuonRoiSocialNetwork.Domains.Interfaces.Queries;
 
 namespace MuonRoiSocialNetwork.Application.Commands.Email
 {
@@ -31,19 +32,16 @@ namespace MuonRoiSocialNetwork.Application.Commands.Email
     /// </summary>
     public class VerificationEmailCommandHandler : BaseCommandHandler, IRequestHandler<VerificationEmailCommand, MethodResult<bool>>
     {
-        private readonly IUserRepository _userRepository;
-
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="mapper"></param>
         /// <param name="configuration"></param>
         /// <param name="userRepository"></param>
+        /// <param name="userQueries"></param>
         public VerificationEmailCommandHandler(IMapper mapper,
-            IConfiguration configuration, IUserRepository userRepository) : base(mapper, configuration)
-        {
-            _userRepository = userRepository;
-        }
+            IConfiguration configuration, IUserRepository userRepository, IUserQueries userQueries) : base(mapper, configuration, userQueries, userRepository)
+        { }
         /// <summary>
         /// Handle
         /// </summary>
@@ -56,7 +54,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Email
             MethodResult<bool> methodResult = new();
             try
             {
-                AppUser checkUser = await _userRepository.GetByGuidAsync(request.UserGuid);
+                AppUser checkUser = await _userQueries.GetByGuidAsync(request.UserGuid);
                 if (checkUser == null)
                 {
                     methodResult.StatusCode = StatusCodes.Status400BadRequest;

@@ -8,6 +8,7 @@ using MuonRoi.Social_Network.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MuonRoiSocialNetwork.Domains.DomainObjects.Groups;
+using MuonRoi.Social_Network.User;
 
 namespace MuonRoiSocialNetwork.Infrastructure.Extentions
 {
@@ -32,7 +33,8 @@ namespace MuonRoiSocialNetwork.Infrastructure.Extentions
                     CreatedUserId = 1,
                     IsDeleted = false,
                     CreatedUserName = "muonroi",
-                    CategoryId = 1
+                    CategoryId = 1,
+
                 },
                 new Story()
                 {
@@ -55,7 +57,6 @@ namespace MuonRoiSocialNetwork.Infrastructure.Extentions
             var hashPassword = new PasswordHasher<AppUser>();
             modelBuilder.Entity<AppUser>().HasData(new AppUser()
             {
-                //[Guid("E0223A03-2945-49DB-976E-736433465B7F")]
                 Id = new Guid("E0223A03-2945-49DB-976E-736433465B7F"),
                 UserName = "muonroi",
                 Name = "Phi Le",
@@ -67,6 +68,27 @@ namespace MuonRoiSocialNetwork.Infrastructure.Extentions
                 Salt = "12345",
                 Address = "Hoà trung - ngọc định",
                 BirthDate = new DateTime(2002, 06, 17),
+                Avatar = "avt0",
+                Gender = EnumGender.Male,
+                GroupId = 1,
+
+            });
+            modelBuilder.Entity<AppUser>().HasData(new AppUser()
+            {
+                Id = new Guid("05075755-688D-4987-9C1E-F3BEF1746D52"),
+                UserName = "defaultUser",
+                Name = "Phi Le",
+                Surname = "Anh",
+                Email = "leanhphi1706@gmail.com",
+                PasswordHash = hashPassword.HashPassword(null, "123456z*"),
+                PhoneNumber = "093.310.5367",
+                Status = EnumAccountStatus.Active,
+                Salt = "12345",
+                Address = "Hoà trung - ngọc định",
+                BirthDate = new DateTime(2002, 06, 17),
+                Avatar = "avt0",
+                Gender = EnumGender.Male,
+                GroupId = 2,
 
             });
             modelBuilder.Entity<Category>().HasData(new Category()
@@ -116,11 +138,28 @@ namespace MuonRoiSocialNetwork.Infrastructure.Extentions
                 Name = "Administratior",
                 Description = "Người quản lý cao nhất"
             });
+            modelBuilder.Entity<AppRole>().HasData(new AppRole()
+            {
+                Id = new Guid("5EF7D163-8249-445C-8895-4EB97329AF7E"),
+                Name = "Default User",
+                Description = "Người dùng mặc định"
+            });
             modelBuilder.Entity<GroupUserMember>().HasData(new GroupUserMember()
             {
                 Id = 1,
+                GroupName = "Administratior",
                 AppRoleKey = new Guid("72377426-B057-46CA-98FF-1CA9D33EA0C1"),
                 AppUserKey = new Guid("E0223A03-2945-49DB-976E-736433465B7F"),
+                CreatedDateTS = new DateTime(2023, 01, 01).GetTimeStamp(),
+                CreatedUserName = "muonroi",
+                CreatedUserId = 1
+            });
+            modelBuilder.Entity<GroupUserMember>().HasData(new GroupUserMember()
+            {
+                Id = 2,
+                GroupName = "Default User",
+                AppRoleKey = new Guid("5EF7D163-8249-445C-8895-4EB97329AF7E"),
+                AppUserKey = new Guid("05075755-688D-4987-9C1E-F3BEF1746D52"),
                 CreatedDateTS = new DateTime(2023, 01, 01).GetTimeStamp(),
                 CreatedUserName = "muonroi",
                 CreatedUserId = 1

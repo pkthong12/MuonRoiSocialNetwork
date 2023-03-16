@@ -1,6 +1,5 @@
 using AutoMapper;
 using Moq;
-using MuonRoiSocialNetwork.Domains.Interfaces;
 using Microsoft.Extensions.Configuration;
 using MuonRoiSocialNetwork.Test;
 using MuonRoiSocialNetwork.Common.Models.Users;
@@ -12,6 +11,8 @@ using MuonRoiSocialNetwork.Infrastructure.Repositories;
 using BaseConfig.EntityObject.Entity;
 using Microsoft.AspNetCore.Http;
 using BaseConfig.Extentions;
+using MuonRoiSocialNetwork.Infrastructure.Services;
+using MuonRoiSocialNetwork.Application.Queries;
 
 namespace TestProject1
 {
@@ -20,6 +21,7 @@ namespace TestProject1
         private readonly MockDataBase _baseData = new();
         private readonly IMapper _mapper;
         public readonly UserRepository _user;
+        public readonly UserQueries _userQueries;
         private readonly IConfiguration _config;
         private readonly Mock<IEmailService> _mail;
         public CreateUserCommandTest()
@@ -27,6 +29,7 @@ namespace TestProject1
             _user = _baseData._userRepoBase;
             _mapper = _baseData._maperBase;
             _config = _baseData._configBase;
+            _userQueries = _baseData._userQueriesBase;
             _mail = _baseData._emailServiceBase;
         }
         [Fact]
@@ -48,9 +51,9 @@ namespace TestProject1
                 Status = EnumAccountStatus.UnConfirm,
                 Note = "string"
             };
-            CreateUserCommandHandler handler = new(_mapper, _user, _config, _mail.Object);
-            MethodResult<UserModel> result = await handler.Handle(user, CancellationToken.None);
-            result.ShouldBeOfType<MethodResult<UserModel>>();
+            CreateUserCommandHandler handler = new(_mapper, _user, _userQueries, _config, _mail.Object);
+            MethodResult<UserModelRequest> result = await handler.Handle(user, CancellationToken.None);
+            result.ShouldBeOfType<MethodResult<UserModelRequest>>();
         }
         [Fact]
         public async Task RegisterFail_NotValidRequest()
@@ -72,14 +75,14 @@ namespace TestProject1
                 Note = "string"
             };
             AppUser newUser = _mapper.Map<AppUser>(user);
-            MethodResult<UserModel> methodResult = new()
+            MethodResult<UserModelRequest> methodResult = new()
             {
                 StatusCode = StatusCodes.Status400BadRequest
             };
             newUser.IsValid();
             methodResult.AddResultFromErrorList(newUser.ErrorMessages);
-            CreateUserCommandHandler handler = new(_mapper, _user, _config, _mail.Object);
-            MethodResult<UserModel> result = await handler.Handle(user, CancellationToken.None);
+            CreateUserCommandHandler handler = new(_mapper, _user, _userQueries, _config, _mail.Object);
+            MethodResult<UserModelRequest> result = await handler.Handle(user, CancellationToken.None);
             bool resultMessageAndCode = CheckObjectEqual.ObjectAreEqual(result, methodResult);
             Assert.True(resultMessageAndCode);
         }
@@ -102,7 +105,7 @@ namespace TestProject1
                 Status = EnumAccountStatus.UnConfirm,
                 Note = "string"
             };
-            MethodResult<UserModel> methodResult = new()
+            MethodResult<UserModelRequest> methodResult = new()
             {
                 StatusCode = StatusCodes.Status400BadRequest
             };
@@ -110,8 +113,8 @@ namespace TestProject1
                         nameof(EnumUserErrorCodes.USR13C),
                         new[] { Helpers.GenerateErrorResult(nameof(user.UserName), user.UserName ?? "") }
                     );
-            CreateUserCommandHandler handler = new(_mapper, _user, _config, _mail.Object);
-            MethodResult<UserModel> result = await handler.Handle(user, CancellationToken.None);
+            CreateUserCommandHandler handler = new(_mapper, _user, _userQueries, _config, _mail.Object);
+            MethodResult<UserModelRequest> result = await handler.Handle(user, CancellationToken.None);
             bool resultMessageAndCode = CheckObjectEqual.ObjectAreEqual(result, methodResult);
             Assert.True(resultMessageAndCode);
         }
@@ -134,13 +137,13 @@ namespace TestProject1
                 Status = EnumAccountStatus.UnConfirm,
                 Note = "string"
             };
-            MethodResult<UserModel> methodResult = new()
+            MethodResult<UserModelRequest> methodResult = new()
             {
                 StatusCode = StatusCodes.Status400BadRequest
             };
             var _users = new UserRepository(null);
-            CreateUserCommandHandler handler = new(_mapper, _users, _config, _mail.Object);
-            MethodResult<UserModel> result = await handler.Handle(user, CancellationToken.None);
+            CreateUserCommandHandler handler = new(_mapper, _users, _userQueries, _config, _mail.Object);
+            MethodResult<UserModelRequest> result = await handler.Handle(user, CancellationToken.None);
             bool resultMessageAndCode = CheckObjectEqual.ObjectAreEqual(result, methodResult);
             Assert.False(resultMessageAndCode);
         }

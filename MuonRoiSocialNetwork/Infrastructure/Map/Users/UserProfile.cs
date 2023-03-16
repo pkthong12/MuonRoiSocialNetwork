@@ -15,8 +15,9 @@ namespace MuonRoiSocialNetwork.Infrastructure.Map.Users
         /// </summary>
         public UserProfile()
         {
-            CreateMap<AppUser, UserModel>();
+            CreateMap<AppUser, UserModelRequest>();
             CreateMap<CreateUserCommand, AppUser>();
+            CreateMap<AppUser, UserModelResponse>();
         }
     }
 }

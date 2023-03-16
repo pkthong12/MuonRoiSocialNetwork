@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using MuonRoiSocialNetwork.Domains.Interfaces;
+using MuonRoiSocialNetwork.Domains.Interfaces.Commands;
+using MuonRoiSocialNetwork.Domains.Interfaces.Queries;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -19,16 +21,28 @@ namespace MuonRoiSocialNetwork.Application.Commands.Base
         /// property get config
         /// </summary>
         protected readonly IConfiguration _configuration;
+        /// <summary>
+        /// property _userQueries
+        /// </summary>
+        protected readonly IUserQueries _userQueries;
+        /// <summary>
+        /// property _userRepository
+        /// </summary>
+        protected readonly IUserRepository _userRepository;
 
         /// <summary>
         /// Handler base
         /// </summary>
         /// <param name="mapper"></param>
         /// <param name="configuration"></param>
-        protected BaseCommandHandler(IMapper mapper, IConfiguration configuration)
+        /// <param name="userQueries"></param>
+        /// <param name="userRepository"></param>
+        protected BaseCommandHandler(IMapper mapper, IConfiguration configuration, IUserQueries userQueries, IUserRepository userRepository)
         {
             _mapper = mapper;
             _configuration = configuration;
+            _userQueries = userQueries;
+            _userRepository = userRepository;
         }
         /// <summary>
         /// Hash password based salt

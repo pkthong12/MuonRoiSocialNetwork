@@ -18,10 +18,6 @@ namespace BaseConfig.EntityObject.Entity
         [BsonId]
         public virtual int Id { get; set; }
 
-        public Guid Guid { get; set; }
-
-        public int SiteId { get; set; }
-
         [Column(Order = 101)]
         [Required(AllowEmptyStrings = true)]
         public int? CreatedUserId { get; set; }
@@ -45,7 +41,7 @@ namespace BaseConfig.EntityObject.Entity
         public string? DeletedUserName { get; set; }
 
         [Column(Order = 107)]
-        public double CreatedDateTS { get; set; }
+        public double? CreatedDateTS { get; set; }
 
         [Column(Order = 108)]
         public double? UpdatedDateTS { get; set; }

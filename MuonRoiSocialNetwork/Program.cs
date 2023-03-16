@@ -6,21 +6,25 @@ using Microsoft.OpenApi.Models;
 using MuonRoiSocialNetwork.Common.Models;
 using MuonRoiSocialNetwork.Common.Settings.Appsettings;
 using MuonRoiSocialNetwork.Domains.DomainObjects.Groups;
-using MuonRoiSocialNetwork.Domains.Interfaces;
 using MuonRoiSocialNetwork.Infrastructure;
 using MuonRoiSocialNetwork.Infrastructure.Extentions.Mail;
 using MuonRoiSocialNetwork.Infrastructure.Map.Users;
 using MuonRoiSocialNetwork.Infrastructure.Repositories;
+using MuonRoiSocialNetwork.Domains.Interfaces.Commands;
+using MuonRoiSocialNetwork.Infrastructure.Services;
+using MuonRoiSocialNetwork.Domains.Interfaces.Queries;
+using MuonRoiSocialNetwork.Application.Queries;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddMediatR(config => config.RegisterServicesFromAssembly(typeof(Program).Assembly));
-
-// Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
+#region mediatR
+builder.Services.AddMediatR(config => config.RegisterServicesFromAssembly(typeof(Program).Assembly));
+#endregion
+
+#region swagger
 builder.Services.AddSwaggerGen(x =>
 {
     x.SwaggerDoc("v1", new OpenApiInfo
@@ -37,24 +41,47 @@ builder.Services.AddSwaggerGen(x =>
     var filePath = Path.Combine(AppContext.BaseDirectory, $"{typeof(Program).Assembly.GetName().Name}.xml");
     x.IncludeXmlComments(filePath);
 });
+#endregion
 
-builder.Services.AddTransient<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IEmailService, MailService>();
-builder.Services.AddIdentity<AppUser, AppRole>()
-       .AddEntityFrameworkStores<MuonRoiSocialNetworkDbContext>()
-       .AddDefaultTokenProviders();
-builder.Services.Configure<SMTPConfigModel>(builder.Configuration.GetSection($"{NameAppSetting.SMTPCONFIG}"));
+#region Configuration
 IConfiguration configuration = new ConfigurationBuilder().AddJsonFile($"{NameAppSetting.APPSETTINGS}.json").Build();
-builder.Services.AddDbContext<MuonRoiSocialNetworkDbContext>(opt =>
-{
-    opt.UseSqlServer(configuration[ConstAppSettings.CONNECTIONSTRING]);
-});
+#endregion
+
+#region mapper
 var mapperCfg = new MapperConfiguration(x =>
 {
     x.AddProfile(new UserProfile());
 });
 IMapper mapper = mapperCfg.CreateMapper();
+#endregion
+
+#region transient
+builder.Services.AddTransient<IUserRepository, UserRepository>();
+builder.Services.AddTransient<IUserQueries, UserQueries>();
+#endregion
+
+#region scoped
+builder.Services.AddScoped<IEmailService, MailService>();
+#endregion
+
+#region Singleton
 builder.Services.AddSingleton(mapper);
+#endregion
+
+#region db
+builder.Services.AddIdentity<AppUser, AppRole>()
+       .AddEntityFrameworkStores<MuonRoiSocialNetworkDbContext>()
+       .AddDefaultTokenProviders();
+builder.Services.AddDbContext<MuonRoiSocialNetworkDbContext>(opt =>
+{
+    opt.UseSqlServer(configuration[ConstAppSettings.CONNECTIONSTRING]);
+});
+#endregion
+
+#region Mail
+builder.Services.Configure<SMTPConfigModel>(builder.Configuration.GetSection($"{NameAppSetting.SMTPCONFIG}"));
+#endregion
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

@@ -26,7 +26,10 @@
     <PackageReference Include="MongoDB.Bson" Version="2.19.0" />
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
     <PackageReference Include="NPOI" Version="2.6.0" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.8.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MuonRoiSocialNetwork.Common\MuonRoiSocialNetwork.Common.csproj" />
   </ItemGroup>
 
 </Project>

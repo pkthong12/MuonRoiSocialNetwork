@@ -1,48 +1,46 @@
 ﻿using AutoMapper;
 using BaseConfig.EntityObject.Entity;
 using BaseConfig.Exeptions;
-using BaseConfig.Extentions;
 using BaseConfig.MethodResult;
 using MuonRoi.Social_Network.Users;
 using MediatR;
-using Microsoft.IdentityModel.Tokens;
 using MuonRoiSocialNetwork.Application.Commands.Base;
 using MuonRoiSocialNetwork.Common.Models.Users;
 using MuonRoiSocialNetwork.Common.Requests.Users;
 using MuonRoiSocialNetwork.Common.Settings.Appsettings;
-using MuonRoiSocialNetwork.Domains.Interfaces;
 using MuonRoiSocialNetwork.Infrastructure.Extentions.Mail;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text.RegularExpressions;
+using BaseConfig.JWT;
+using MuonRoiSocialNetwork.Domains.Interfaces.Commands;
+using MuonRoiSocialNetwork.Infrastructure.Services;
+using MuonRoiSocialNetwork.Domains.Interfaces.Queries;
 
 namespace MuonRoiSocialNetwork.Application.Commands.Users
 {
     /// <summary>
     /// Command for user
     /// </summary>
-    public class CreateUserCommand : CreateUserCommandModel, IRequest<MethodResult<UserModel>>
+    public class CreateUserCommand : CreateUserCommandModel, IRequest<MethodResult<UserModelRequest>>
     { }
     /// <summary>
     /// Handler create user
     /// </summary>
-    public class CreateUserCommandHandler : BaseCommandHandler, IRequestHandler<CreateUserCommand, MethodResult<UserModel>>
+    public class CreateUserCommandHandler : BaseCommandHandler, IRequestHandler<CreateUserCommand, MethodResult<UserModelRequest>>
     {
-        private readonly IUserRepository _userRepository;
         private readonly IEmailService _emailService;
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="mapper"></param>
         /// <param name="userRepository"></param>
+        /// <param name="userQueries"></param>
         /// <param name="configuration"></param>
         /// <param name="emailService"></param>
         public CreateUserCommandHandler(IMapper mapper,
             IUserRepository userRepository,
+             IUserQueries userQueries,
             IConfiguration configuration,
-            IEmailService emailService) : base(mapper, configuration)
+            IEmailService emailService) : base(mapper, configuration, userQueries, userRepository)
         {
-            _userRepository = userRepository;
             _emailService = emailService;
         }
         /// <summary>
@@ -51,9 +49,9 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
         /// <param name="request"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<MethodResult<UserModel>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
+        public async Task<MethodResult<UserModelRequest>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
-            MethodResult<UserModel> methodResult = new();
+            MethodResult<UserModelRequest> methodResult = new();
             try
             {
                 #region Validation
@@ -84,12 +82,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                 #endregion
 
                 #region Create new user
-                FormatString.WithRegex(newUser.Name ?? "");
-                FormatString.WithRegex(newUser.Surname ?? "");
-                FormatString.WithRegex(newUser.Address ?? "");
-                newUser.Status = EnumAccountStatus.UnConfirm;
-                CheckDateTime.IsValidDateTime(newUser.BirthDate);
-                newUser.Avatar ??= newUser.Avatar ?? "".Trim();
+
                 if (await _userRepository.CreateNewUserAsync(newUser) <= 0)
                 {
                     methodResult.StatusCode = StatusCodes.Status400BadRequest;
@@ -106,7 +99,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                 #endregion
 
                 #region return info new user registed
-                AppUser getCreatedUser = await _userRepository.GetByGuidAsync(newUser.Id);
+                AppUser getCreatedUser = await _userQueries.GetByGuidAsync(newUser.Id);
                 if (getCreatedUser == null)
                 {
                     methodResult.StatusCode = StatusCodes.Status400BadRequest;
@@ -116,7 +109,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                     );
                     return methodResult;
                 };
-                UserModel resultUser = _mapper.Map<UserModel>(getCreatedUser);
+                UserModelRequest resultUser = _mapper.Map<UserModelRequest>(getCreatedUser);
                 methodResult.Result = resultUser;
                 methodResult.StatusCode = StatusCodes.Status200OK;
                 #endregion
@@ -142,30 +135,9 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
         /// <returns></returns>
         public async Task GenerateEmailConfirmationTokenAsync(AppUser identityUser)
         {
-
-            SymmetricSecurityKey symmetricKey = new SymmetricSecurityKey(Convert.FromBase64String(_configuration.GetSection(ConstAppSettings.APPLICATIONSERECT).Value));
-            JwtSecurityTokenHandler tokenHandler = new();
-            string? myIssuer = _configuration.GetSection(ConstAppSettings.APPLICATIONENVCONNECTION).Value;
-            string? myAudience = _configuration.GetSection(ConstAppSettings.APPLICATIONAPPDOMAIN).Value;
-            DateTime now = DateTime.UtcNow;
-            SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new[]
-                {
-                    new Claim(ClaimTypes.Name, identityUser.UserName ?? ""),
-                    new Claim(ClaimTypes.Email, identityUser.Email ?? ""),
-                    new Claim(ClaimTypes.MobilePhone,identityUser.PhoneNumber ?? "")
-                }),
-
-                Expires = now.AddMinutes(Convert.ToInt32(5)),
-                Issuer = myIssuer,
-                Audience = myAudience,
-                SigningCredentials = new SigningCredentials(symmetricKey,
-                SecurityAlgorithms.HmacSha256Signature)
-            };
-
-            SecurityToken? stoken = tokenHandler.CreateToken(tokenDescriptor);
-            string token = tokenHandler.WriteToken(stoken);
+            GenarateJwtToken genarateJwtToken = new(_configuration);
+            UserModelRequest userModel = _mapper.Map<UserModelRequest>(identityUser);
+            string token = genarateJwtToken.GenarateJwt(userModel);
             if (!string.IsNullOrEmpty(token))
             {
                 await SendEmailConfirmationEmail(identityUser, token);

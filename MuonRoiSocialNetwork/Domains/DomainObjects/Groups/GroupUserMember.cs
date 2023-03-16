@@ -10,21 +10,12 @@ namespace MuonRoi.Social_Network.Roles
     public class GroupUserMember : Entity
     {
         /// <summary>
-        /// Admin
+        /// Name of groups
         /// </summary>
-        public EnumManage Manage { get; set; }
-        /// <summary>
-        /// Staff
-        /// </summary>
-        public EnumStaff Staff { get; set; }
-        /// <summary>
-        /// Viewer (Have owned account)
-        /// </summary>
-        public EnumViewer Viewer { get; set; }
+        public string GroupName { get; set; }
         /// <summary>
         /// Guest (haven't account)
         /// </summary>
-        public EnumGuest Guest { get; set; }
         public Guid AppUserKey { get; set; }
         public Guid AppRoleKey { get; set; }
 

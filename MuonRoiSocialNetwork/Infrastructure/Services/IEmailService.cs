@@ -1,6 +1,6 @@
 ﻿using MuonRoiSocialNetwork.Infrastructure.Extentions.Mail;
 
-namespace MuonRoiSocialNetwork.Domains.Interfaces
+namespace MuonRoiSocialNetwork.Infrastructure.Services
 {
     /// <summary>
     /// Declare interface mail services

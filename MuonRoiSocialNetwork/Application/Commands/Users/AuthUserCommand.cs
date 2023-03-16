@@ -1,21 +1,22 @@
 ﻿using AutoMapper;
 using BaseConfig.EntityObject.Entity;
 using BaseConfig.Exeptions;
+using BaseConfig.JWT;
 using BaseConfig.MethodResult;
 using MediatR;
 using MuonRoi.Social_Network.Users;
 using MuonRoiSocialNetwork.Application.Commands.Base;
 using MuonRoiSocialNetwork.Common.Models.Users;
 using MuonRoiSocialNetwork.Common.Settings.UserSettings;
-using MuonRoiSocialNetwork.Domains.Interfaces;
-using System.ComponentModel.DataAnnotations;
+using MuonRoiSocialNetwork.Domains.Interfaces.Commands;
+using MuonRoiSocialNetwork.Domains.Interfaces.Queries;
 
 namespace MuonRoiSocialNetwork.Application.Commands.Users
 {
     /// <summary>
     /// Login auth user command
     /// </summary>
-    public class AuthUserCommand : IRequest<MethodResult<UserModel>>
+    public class AuthUserCommand : IRequest<MethodResult<UserModelRequest>>
     {
         #region Property
         /// <summary>
@@ -31,21 +32,20 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
     /// <summary>
     /// Handler login user
     /// </summary>
-    public class AuthUserCommandHandler : BaseCommandHandler, IRequestHandler<AuthUserCommand, MethodResult<UserModel>>
+    public class AuthUserCommandHandler : BaseCommandHandler, IRequestHandler<AuthUserCommand, MethodResult<UserModelRequest>>
     {
-        private IUserRepository _userRepository;
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="mapper"></param>
         /// <param name="userRepository"></param>
+        /// <param name="userQueries"></param>
         /// <param name="configuration"></param>
         public AuthUserCommandHandler(IMapper mapper,
             IUserRepository userRepository,
-            IConfiguration configuration) : base(mapper, configuration)
-        {
-            _userRepository = userRepository;
-        }
+            IUserQueries userQueries,
+            IConfiguration configuration) : base(mapper, configuration, userQueries, userRepository)
+        { }
         /// <summary>
         /// Handler function
         /// </summary>
@@ -53,9 +53,10 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        public async Task<MethodResult<UserModel>> Handle(AuthUserCommand request, CancellationToken cancellationToken)
+        public async Task<MethodResult<UserModelRequest>> Handle(AuthUserCommand request, CancellationToken cancellationToken)
         {
-            MethodResult<UserModel> methodResult = new();
+            MethodResult<UserModelRequest> methodResult = new();
+            GenarateJwtToken genarateJwtToken = new(_configuration);
             try
             {
                 #region Check valid username and password
@@ -84,7 +85,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                 #endregion
 
                 #region check user have been locked
-                AppUser appUser = await _userRepository.GetByUsernameAsync(request.Username);
+                AppUser appUser = await _userQueries.GetByUsernameAsync(request.Username);
                 if (appUser.Status == EnumAccountStatus.Locked)
                 {
                     methodResult.StatusCode = StatusCodes.Status400BadRequest;
@@ -97,12 +98,12 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                 #endregion
 
                 #region check password user
-                string password = HashPassword(request.Password, appUser.Salt);
+                string password = HashPassword(request.Password, appUser.Salt ?? "");
                 if (password != appUser.PasswordHash)
                 {
                     methodResult.StatusCode = StatusCodes.Status400BadRequest;
                     methodResult.AddApiErrorMessage(
-                        nameof(EnumUserErrorCodes.USR02C),
+                        nameof(EnumUserErrorCodes.USRC39C),
                         new[] { Helpers.GenerateErrorResult(nameof(LoginAttemp.loginAttemp), LoginAttemp.loginAttemp - appUser.AccessFailedCount) }
                     );
                     appUser.AccessFailedCount++;
@@ -110,6 +111,15 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                     {
                         appUser.Status = EnumAccountStatus.Locked;
                         appUser.LockReason = $"Login failed {appUser.AccessFailedCount} times";
+                    }
+                    if (await _userRepository.UpdateUserAsync(appUser) < 1)
+                    {
+                        methodResult.StatusCode = StatusCodes.Status400BadRequest;
+                        methodResult.AddApiErrorMessage(
+                            nameof(EnumUserErrorCodes.USR29C),
+                            new[] { Helpers.GenerateErrorResult(nameof(request.Username), request.Username ?? "") }
+                        );
+                        return methodResult;
                     }
                     return methodResult;
                 }
@@ -130,15 +140,20 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                 #endregion
 
                 #region Return info user was login
-                UserModel resultInforLoginUser = _mapper.Map<UserModel>(appUser);
+                UserModelRequest resultInforLoginUser = _mapper.Map<UserModelRequest>(appUser);
+                resultInforLoginUser.JwtToken = genarateJwtToken.GenarateJwt(resultInforLoginUser);
                 methodResult.Result = resultInforLoginUser;
                 methodResult.StatusCode = StatusCodes.Status200OK;
                 #endregion
                 return methodResult;
             }
-            catch (CustomException ex)
+            catch (Exception ex)
             {
-                methodResult.AddResultFromErrorList(ex.ErrorMessages);
+                methodResult.StatusCode = StatusCodes.Status400BadRequest;
+                methodResult.AddApiErrorMessage(
+                    nameof(EnumUserErrorCodes.USR29C),
+                    new[] { Helpers.GenerateErrorResult(nameof(ex.Message), ex.Message ?? "") }
+                );
             }
             return methodResult;
         }

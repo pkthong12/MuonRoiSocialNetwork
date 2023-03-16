@@ -1,12 +1,12 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using MuonRoiSocialNetwork.Common.Models;
-using MuonRoiSocialNetwork.Domains.Interfaces;
 using System.Net.Mail;
 using System.Net;
 using System.Text;
 using Azure.Storage.Blobs;
 using MuonRoiSocialNetwork.Common.Settings.Appsettings;
+using MuonRoiSocialNetwork.Infrastructure.Services;
 
 namespace MuonRoiSocialNetwork.Infrastructure.Extentions.Mail
 {

@@ -6,7 +6,7 @@ using MuonRoiSocialNetwork.Common.Models.Users;
 using MuonRoiSocialNetwork.Domains.DomainObjects.Groups;
 using MuonRoiSocialNetwork.Domains.Interfaces.Queries;
 using MuonRoiSocialNetwork.Infrastructure;
-using System.Data.Entity;
+using Microsoft.EntityFrameworkCore;
 
 namespace MuonRoiSocialNetwork.Application.Queries
 {
@@ -63,7 +63,7 @@ namespace MuonRoiSocialNetwork.Application.Queries
             if (appUser != null)
             {
                 List<AppRole> roles = await _dbcontext.AppRoles.Where(x => !x.IsDeleted).ToListAsync();
-                GroupUserMember? roleUser = _dbcontext.GroupUserMembers.FirstOrDefault(x => x.AppUserKey.Equals(appUser.Id) && roles.Any(s => s.Id.Equals(x.AppRoleKey)) && !x.IsDeleted);
+                GroupUserMember? roleUser = _dbcontext.GroupUserMembers.FirstOrDefault(x => x.AppUserKey.Equals(appUser.Id) && !x.IsDeleted);
                 methodResult.Result = _mapper.Map<UserModelResponse>(appUser);
                 methodResult.Result.RoleName = roles.FirstOrDefault(x => x.Id.Equals(roleUser?.AppRoleKey))?.Name ?? "";
                 methodResult.Result.GroupName = roleUser?.GroupName ?? "";
@@ -84,7 +84,7 @@ namespace MuonRoiSocialNetwork.Application.Queries
             if (appUser != null)
             {
                 List<AppRole> roles = await _dbcontext.AppRoles.Where(x => !x.IsDeleted).ToListAsync();
-                GroupUserMember? roleUser = _dbcontext.GroupUserMembers.FirstOrDefault(x => x.AppUserKey.Equals(guidUser) && roles.Any(s => s.Id.Equals(x.AppRoleKey)) && !x.IsDeleted);
+                GroupUserMember? roleUser = _dbcontext.GroupUserMembers.FirstOrDefault(x => x.AppUserKey.Equals(appUser.Id) && !x.IsDeleted);
                 methodResult.Result = _mapper.Map<UserModelResponse>(appUser);
                 methodResult.Result.RoleName = roles.FirstOrDefault(x => x.Id.Equals(roleUser?.AppRoleKey))?.Name ?? "";
                 methodResult.Result.GroupName = roleUser?.GroupName ?? "";

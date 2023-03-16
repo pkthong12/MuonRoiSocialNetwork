@@ -1089,7 +1089,7 @@ namespace MuonRoiSocialNetwork.Migrations
                             Address = "Hoà trung - ngọc định",
                             Avatar = "avt0",
                             BirthDate = new DateTime(2002, 6, 17, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ConcurrencyStamp = "b644b7d2-23b6-443d-a86f-fbe908887c82",
+                            ConcurrencyStamp = "db1fdc3d-24ea-4c5e-9635-7108128ca47f",
                             Email = "leanhphi1706@gmail.com",
                             EmailConfirmed = false,
                             Gender = 0,
@@ -1098,7 +1098,7 @@ namespace MuonRoiSocialNetwork.Migrations
                             LastLogin = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LockoutEnabled = false,
                             Name = "Phi Le",
-                            PasswordHash = "AQAAAAEAACcQAAAAEIHnK+PmR2XaiUh5w+6OD0WSKUyWSrdtniZrm072mbxvs/19/cgX2EoO/eoKm6jekQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEIG+RZ7jr0Ui1lbkT2PBo6gErBjrNTv5PrYyJmzdRU15auek0WyEC68+jYRs0Mq9gw==",
                             PhoneNumber = "093.310.5367",
                             PhoneNumberConfirmed = false,
                             Salt = "12345",
@@ -1114,7 +1114,7 @@ namespace MuonRoiSocialNetwork.Migrations
                             Address = "Hoà trung - ngọc định",
                             Avatar = "avt0",
                             BirthDate = new DateTime(2002, 6, 17, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ConcurrencyStamp = "05d8b171-c9dc-4977-90be-af262355cb2d",
+                            ConcurrencyStamp = "bf8c48c6-0e1d-4eea-858d-629e774e30d0",
                             Email = "leanhphi1706@gmail.com",
                             EmailConfirmed = false,
                             Gender = 0,
@@ -1123,7 +1123,7 @@ namespace MuonRoiSocialNetwork.Migrations
                             LastLogin = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LockoutEnabled = false,
                             Name = "Phi Le",
-                            PasswordHash = "AQAAAAEAACcQAAAAEMDf6K6HTV5ktop2xqdn26zLartJSvdchmMdJ9JyneykLNYmuEP1vuRmXP7FroEqXQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEId9NJUQX2u2ktH+W/nYO/qxA4p+liAvP8DjOlhoc49hFmX6372ciBMCwMoiJWBhGg==",
                             PhoneNumber = "093.310.5367",
                             PhoneNumberConfirmed = false,
                             Salt = "12345",
@@ -1309,7 +1309,7 @@ namespace MuonRoiSocialNetwork.Migrations
                         new
                         {
                             Id = new Guid("72377426-b057-46ca-98ff-1ca9d33ea0c1"),
-                            ConcurrencyStamp = "e2255570-085c-45c6-84c9-ef1ba313604a",
+                            ConcurrencyStamp = "5c86e9ae-15ce-494f-8690-ef4c791b7c89",
                             Description = "Người quản lý cao nhất",
                             IsDeleted = false,
                             Name = "Administratior"
@@ -1317,7 +1317,7 @@ namespace MuonRoiSocialNetwork.Migrations
                         new
                         {
                             Id = new Guid("5ef7d163-8249-445c-8895-4eb97329af7e"),
-                            ConcurrencyStamp = "3b3d2dac-b403-455a-8420-aaf433605c13",
+                            ConcurrencyStamp = "3df88140-724c-4f4c-b850-1fdc9e1f25b3",
                             Description = "Người dùng mặc định",
                             IsDeleted = false,
                             Name = "Default User"

@@ -103,10 +103,10 @@ namespace MuonRoiSocialNetwork.Controllers
         /// Update informations for user
         /// </summary>
         /// <returns></returns>
-        [HttpPut("{uid}")]
+        [HttpPut("ByGuid/{uid}")]
         [ProducesResponseType(typeof(MethodResult<UserModelRequest>), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> UpdateInformation([FromBody] Guid uid)
+        public async Task<IActionResult> UpdateInformation([FromRoute] Guid uid)
         {
             try
             {
@@ -128,10 +128,10 @@ namespace MuonRoiSocialNetwork.Controllers
         /// Get user by username
         /// </summary>
         /// <returns>UserModel</returns>
-        [HttpGet("{username}")]
+        [HttpGet("ByUserName/{username}")]
         [ProducesResponseType(typeof(MethodResult<UserModelResponse>), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetUserByUserName([FromBody] string username)
+        public async Task<IActionResult> GetUserByUserName([FromRoute] string username)
         {
             try
             {
@@ -149,10 +149,10 @@ namespace MuonRoiSocialNetwork.Controllers
         /// Get user by Guid
         /// </summary>
         /// <returns>UserModel</returns>
-        [HttpGet("{guidUser}")]
+        [HttpGet("ByGuidUser/{guidUser}")]
         [ProducesResponseType(typeof(MethodResult<UserModelResponse>), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetUserByGuid([FromBody] Guid guidUser)
+        public async Task<IActionResult> GetUserByGuid([FromRoute] Guid guidUser)
         {
             try
             {

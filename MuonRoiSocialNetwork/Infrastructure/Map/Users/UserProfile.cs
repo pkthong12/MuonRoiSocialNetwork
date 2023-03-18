@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using MuonRoi.Social_Network.Users;
 using MuonRoiSocialNetwork.Application.Commands.Users;
-using MuonRoiSocialNetwork.Common.Models.Users;
+using MuonRoiSocialNetwork.Common.Models.Users.Base.Response;
+using MuonRoiSocialNetwork.Common.Models.Users.Request;
+using MuonRoiSocialNetwork.Common.Models.Users.Response;
 
 namespace MuonRoiSocialNetwork.Infrastructure.Map.Users
 {
@@ -18,6 +20,10 @@ namespace MuonRoiSocialNetwork.Infrastructure.Map.Users
             CreateMap<AppUser, UserModelRequest>();
             CreateMap<CreateUserCommand, AppUser>();
             CreateMap<AppUser, UserModelResponse>();
+            CreateMap<AppUser, UpdateInformationCommand>();
+            CreateMap<UpdateInformationCommand, AppUser>();
+            CreateMap<BaseUserResponse, AppUser>();
+            CreateMap<AppUser, BaseUserResponse>();
         }
     }
 }

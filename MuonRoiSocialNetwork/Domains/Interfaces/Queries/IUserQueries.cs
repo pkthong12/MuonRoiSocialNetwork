@@ -1,6 +1,7 @@
 ﻿using BaseConfig.MethodResult;
 using MuonRoi.Social_Network.Users;
-using MuonRoiSocialNetwork.Common.Models.Users;
+using MuonRoiSocialNetwork.Common.Models.Users.Base.Response;
+using MuonRoiSocialNetwork.Common.Models.Users.Response;
 
 namespace MuonRoiSocialNetwork.Domains.Interfaces.Queries
 {
@@ -26,12 +27,18 @@ namespace MuonRoiSocialNetwork.Domains.Interfaces.Queries
         /// </summary>
         /// <param name="username"></param>
         /// <returns>UserModel</returns>
-        Task<MethodResult<UserModelResponse>> GetUserModelBynameAsync(string username);
+        Task<MethodResult<BaseUserResponse>> GetUserModelBynameAsync(string username);
         /// <summary>
         /// Get user by guid
         /// </summary>
         /// <param name="guidUser"></param>
         /// <returns>UserModel</returns>
-        Task<MethodResult<UserModelResponse>> GetUserModelByGuidAsync(Guid guidUser);
+        Task<MethodResult<BaseUserResponse>> GetUserModelByGuidAsync(Guid guidUser);
+        /// <summary>
+        /// Get user by email
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
+        Task<AppUser> GetUserByEmailAsync(string email);
     }
 }

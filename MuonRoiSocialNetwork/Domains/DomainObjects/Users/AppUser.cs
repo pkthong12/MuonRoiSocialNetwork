@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using System.Text.Json.Serialization;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MuonRoi.Social_Network.Users
 {
@@ -36,7 +35,7 @@ namespace MuonRoi.Social_Network.Users
         [MaxLength(100, ErrorMessage = nameof(EnumUserErrorCodes.USR10C))]
         [MinLength(5, ErrorMessage = nameof(EnumUserErrorCodes.USR15C))]
         [RegularExpression(@"^[a-zA-Z][a-zA-Z0-9_\.]{3,99}[a-z0-9](\@([a-zA-Z0-9][a-zA-Z0-9\.]+[a-zA-Z0-9]{2,}){1,5})?$", ErrorMessage = nameof(EnumUserErrorCodes.USR14C))]
-        public override string? UserName { get; set; }
+        public override string UserName { get; set; }
         /// <summary>
         /// Mật khẩu
         /// </summary>
@@ -76,7 +75,7 @@ namespace MuonRoi.Social_Network.Users
         /// Last login date
         /// </summary>
         /// <value></value>
-        public DateTime LastLogin { get; set; }
+        public DateTime? LastLogin { get; set; }
         /// <summary>
         /// Avatar Link
         /// </summary>

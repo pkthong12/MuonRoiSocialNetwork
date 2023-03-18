@@ -7,7 +7,8 @@ using Microsoft.Extensions.Configuration;
 using MuonRoi.Social_Network.Users;
 using MuonRoiSocialNetwork.Application.Commands.Users;
 using MuonRoiSocialNetwork.Application.Queries;
-using MuonRoiSocialNetwork.Common.Models.Users;
+using MuonRoiSocialNetwork.Common.Models.Users.Request;
+using MuonRoiSocialNetwork.Common.Models.Users.Response;
 using MuonRoiSocialNetwork.Infrastructure.Repositories;
 using NPOI.SS.Formula.Functions;
 using Shouldly;
@@ -37,15 +38,15 @@ namespace MuonRoiSocialNetwork.Test.Command
                 Password = "1234567Az*99",
             };
             AuthUserCommandHandler handler = new(_mapper, _user, _userQueries, _config);
-            MethodResult<UserModelRequest> result = await handler.Handle(user, CancellationToken.None);
-            result.ShouldBeOfType<MethodResult<UserModelRequest>>();
+            MethodResult<UserModelResponse> result = await handler.Handle(user, CancellationToken.None);
+            result.ShouldBeOfType<MethodResult<UserModelResponse>>();
         }
         [Theory]
         [InlineData("", "test2")]
         [InlineData("test2", "")]
         public async Task RegisterFailMissingPassOrUserName(string username, string password)
         {
-            MethodResult<UserModelRequest> methodResult = new();
+            MethodResult<UserModelResponse> methodResult = new();
             AuthUserCommand user = new()
             {
                 Username = username,
@@ -57,7 +58,7 @@ namespace MuonRoiSocialNetwork.Test.Command
                 new[] { Helpers.GenerateErrorResult(nameof(user.Username), user.Username ?? "") }
             );
             AuthUserCommandHandler handler = new(_mapper, _user, _userQueries, _config);
-            MethodResult<UserModelRequest> result = await handler.Handle(user, CancellationToken.None);
+            MethodResult<UserModelResponse> result = await handler.Handle(user, CancellationToken.None);
             bool resultMessageAndCode = CheckObjectEqual.ObjectAreEqual(result, methodResult);
             Assert.True(resultMessageAndCode);
         }
@@ -65,7 +66,7 @@ namespace MuonRoiSocialNetwork.Test.Command
         [InlineData("test12", "12345678Az*")]
         public async Task RegisterFailUsernameIsExist(string username, string password)
         {
-            MethodResult<UserModelRequest> methodResult = new();
+            MethodResult<UserModelResponse> methodResult = new();
             AuthUserCommand user = new()
             {
                 Username = username,
@@ -77,7 +78,7 @@ namespace MuonRoiSocialNetwork.Test.Command
                 new[] { Helpers.GenerateErrorResult(nameof(user.Username), user.Username ?? "") }
             );
             AuthUserCommandHandler handler = new(_mapper, _user, _userQueries, _config);
-            MethodResult<UserModelRequest> result = await handler.Handle(user, CancellationToken.None);
+            MethodResult<UserModelResponse> result = await handler.Handle(user, CancellationToken.None);
             bool resultMessageAndCode = CheckObjectEqual.ObjectAreEqual(result, methodResult);
             Assert.True(resultMessageAndCode);
         }
@@ -85,7 +86,7 @@ namespace MuonRoiSocialNetwork.Test.Command
         [InlineData("testlocked", "1234567Az*99")]
         public async Task RegisterFailUsernameIsLocked(string username, string password)
         {
-            MethodResult<UserModelRequest> methodResult = new();
+            MethodResult<UserModelResponse> methodResult = new();
             AuthUserCommand user = new()
             {
                 Username = username,
@@ -97,7 +98,7 @@ namespace MuonRoiSocialNetwork.Test.Command
                 new[] { Helpers.GenerateErrorResult(nameof(user.Username), user.Username ?? "") }
             );
             AuthUserCommandHandler handler = new(_mapper, _user, _userQueries, _config);
-            MethodResult<UserModelRequest> result = await handler.Handle(user, CancellationToken.None);
+            MethodResult<UserModelResponse> result = await handler.Handle(user, CancellationToken.None);
             bool resultMessageAndCode = CheckObjectEqual.ObjectAreEqual(result, methodResult);
             Assert.True(resultMessageAndCode);
         }

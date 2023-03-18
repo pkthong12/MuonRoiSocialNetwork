@@ -1,12 +1,14 @@
 ﻿using AutoMapper;
 using BaseConfig.EntityObject.Entity;
 using BaseConfig.Exeptions;
+using BaseConfig.Infrashtructure;
 using BaseConfig.MethodResult;
 using MediatR;
 using MuonRoi.Social_Network.Users;
 using MuonRoiSocialNetwork.Application.Commands.Base;
-using MuonRoiSocialNetwork.Common.Models.Users;
-using MuonRoiSocialNetwork.Common.Requests.Users;
+using MuonRoiSocialNetwork.Common.Models.Users.Base.Response;
+using MuonRoiSocialNetwork.Common.Models.Users.Request;
+using MuonRoiSocialNetwork.Common.Models.Users.Response;
 using MuonRoiSocialNetwork.Domains.Interfaces.Commands;
 using MuonRoiSocialNetwork.Domains.Interfaces.Queries;
 
@@ -15,7 +17,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
     /// <summary>
     /// Update user command
     /// </summary>
-    public class UpdateInformationCommand : CreateUserCommandModel, IRequest<MethodResult<UserModelRequest>>
+    public class UpdateInformationCommand : UserModelRequest, IRequest<MethodResult<BaseUserResponse>>
     {
         /// <summary>
         /// Guid user update
@@ -25,7 +27,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
     /// <summary>
     /// Handler update infor user
     /// </summary>
-    public class UpdateInformationCommandHandler : BaseCommandHandler, IRequestHandler<UpdateInformationCommand, MethodResult<UserModelRequest>>
+    public class UpdateInformationCommandHandler : BaseCommandHandler, IRequestHandler<UpdateInformationCommand, MethodResult<BaseUserResponse>>
     {
         /// <summary>
         /// Constructor
@@ -44,47 +46,65 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        public async Task<MethodResult<UserModelRequest>> Handle(UpdateInformationCommand request, CancellationToken cancellationToken)
+        public async Task<MethodResult<BaseUserResponse>> Handle(UpdateInformationCommand request, CancellationToken cancellationToken)
         {
-            MethodResult<UserModelRequest> methodResult = new();
+            MethodResult<BaseUserResponse> methodResult = new();
             try
             {
-                #region Validation
-                AppUser appUser = _mapper.Map<AppUser>(request);
-                if (appUser.IsValid())
-                {
-                    throw new CustomException(appUser.ErrorMessages);
-                }
-                #endregion
-
                 #region Check is exist user
-                bool userIsExist = await _userRepository.ExistUserByUsernameAsync(appUser.UserName ?? "");
-                if (!userIsExist)
+                AppUser userIsExist = await _userQueries.GetByUsernameAsync(request.UserName ?? "");
+                if (userIsExist == null)
                 {
                     methodResult.StatusCode = StatusCodes.Status400BadRequest;
                     methodResult.AddApiErrorMessage(
                         nameof(EnumUserErrorCodes.USR02C),
-                        new[] { Helpers.GenerateErrorResult(nameof(appUser.UserName), appUser.UserName ?? "") }
+                        new[] { Helpers.GenerateErrorResult(nameof(request.UserName), request.UserName ?? "") }
                     );
+                    return methodResult;
+                }
+                #endregion
+                if (request.Email != userIsExist.Email)
+                {
+                    AppUser existingUser = await _userQueries
+                    .GetUserByEmailAsync(request.Email ?? "")
+                    .ConfigureAwait(false);
+                    if (existingUser != null)
+                    {
+                        methodResult.StatusCode = StatusCodes.Status400BadRequest;
+                        methodResult.AddApiErrorMessage(
+                            nameof(EnumUserErrorCodes.USRC34C),
+                            new[] { Helpers.GenerateErrorResult(nameof(request.Email), request.Email) }
+                        );
+                        return methodResult;
+                    }
+                }
+                #region Validation
+                _mapper.Map(request, userIsExist);
+                if (!userIsExist.IsValid())
+                {
+                    methodResult.StatusCode = StatusCodes.Status400BadRequest;
+                    methodResult.AddResultFromErrorList(userIsExist.ErrorMessages);
                     return methodResult;
                 }
                 #endregion
 
                 #region Update info user
-                if (await _userRepository.UpdateUserAsync(appUser) < 1)
+                userIsExist.Salt = GenarateSalt();
+                userIsExist.PasswordHash = HashPassword(request.PasswordHash ?? "", userIsExist.Salt);
+                if (await _userRepository.UpdateUserAsync(userIsExist) < 1)
                 {
                     methodResult.StatusCode = StatusCodes.Status400BadRequest;
                     methodResult.AddApiErrorMessage(
                         nameof(EnumUserErrorCodes.USR29C),
-                        new[] { Helpers.GenerateErrorResult(nameof(appUser.UserName), appUser.UserName ?? "") }
+                        new[] { Helpers.GenerateErrorResult(nameof(userIsExist.UserName), userIsExist.UserName ?? "") }
                     );
                     return methodResult;
                 }
                 #endregion
 
                 #region Return info user updated
-                AppUser inforResult = await _userQueries.GetByUsernameAsync(appUser.UserName ?? "");
-                UserModelRequest resultInforLoginUser = _mapper.Map<UserModelRequest>(inforResult);
+                AppUser inforResult = await _userQueries.GetByUsernameAsync(userIsExist.UserName ?? "");
+                BaseUserResponse resultInforLoginUser = _mapper.Map<BaseUserResponse>(inforResult);
                 methodResult.Result = resultInforLoginUser;
                 methodResult.StatusCode = StatusCodes.Status200OK;
                 #endregion

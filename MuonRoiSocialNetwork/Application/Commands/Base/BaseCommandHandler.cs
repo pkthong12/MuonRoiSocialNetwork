@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
-using MuonRoiSocialNetwork.Domains.Interfaces;
 using MuonRoiSocialNetwork.Domains.Interfaces.Commands;
 using MuonRoiSocialNetwork.Domains.Interfaces.Queries;
 using System.Security.Cryptography;
@@ -52,13 +51,13 @@ namespace MuonRoiSocialNetwork.Application.Commands.Base
         /// <returns></returns>
         protected string HashPassword(string password, string salt)
         {
-            // derive a 256-bit subkey (use HMACSHA1 with 10,000 iterations)
+            // derive a 256-bit subkey (use HMACSHA512 with 10,000 iterations)
             string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
                 password: password,
                 salt: Encoding.UTF8.GetBytes(salt),
-                prf: KeyDerivationPrf.HMACSHA1,
+                prf: KeyDerivationPrf.HMACSHA512,
                 iterationCount: 10000,
-                numBytesRequested: 256 / 8));
+                numBytesRequested: 256 / 4));
             return hashed;
         }
         /// <summary>
@@ -67,7 +66,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Base
         /// <returns></returns>
         protected string GenarateSalt()
         {
-            byte[] randomBytes = new byte[128 / 8];
+            byte[] randomBytes = new byte[256 / 4];
             using var generator = RandomNumberGenerator.Create();
             generator.GetBytes(randomBytes);
             return Convert.ToBase64String(randomBytes);

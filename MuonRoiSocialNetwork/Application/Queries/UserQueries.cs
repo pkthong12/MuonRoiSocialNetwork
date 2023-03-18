@@ -2,12 +2,14 @@
 using BaseConfig.MethodResult;
 using MuonRoi.Social_Network.Roles;
 using MuonRoi.Social_Network.Users;
-using MuonRoiSocialNetwork.Common.Models.Users;
 using MuonRoiSocialNetwork.Domains.DomainObjects.Groups;
 using MuonRoiSocialNetwork.Domains.Interfaces.Queries;
 using MuonRoiSocialNetwork.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-
+using BaseConfig.EntityObject.Entity;
+using MuonRoiSocialNetwork.Common.Models.Users.Response;
+using MuonRoiSocialNetwork.Common.Models.Users.Base.Response;
+using BaseConfig.Extentions;
 namespace MuonRoiSocialNetwork.Application.Queries
 {
     /// <summary>
@@ -33,41 +35,45 @@ namespace MuonRoiSocialNetwork.Application.Queries
         /// <param name="id"></param>
         /// <returns></returns>
         public async Task<AppUser> GetByGuidAsync(Guid id)
-        {
-            return await _dbcontext.Users
+            => await _dbcontext.AppUsers
                         .AsNoTracking()
-                        .FirstOrDefaultAsync(x => x.Id.Equals(id));
-        }
+                        .FirstOrDefaultAsync(x => x.Id.Equals(id) && !x.IsDeleted);
         /// <summary>
         /// handle get user by username
         /// </summary>
         /// <param name="username"></param>
         /// <returns></returns>
         public async Task<AppUser> GetByUsernameAsync(string username)
-        {
-            return await _dbcontext.Users
+        => await _dbcontext.AppUsers
                        .AsNoTracking()
                        .FirstOrDefaultAsync(x => x.UserName.Equals(username) && !x.IsDeleted);
-        }
         /// <summary>
         /// handle get user by username
         /// </summary>
         /// <param name="username"></param>
         /// <returns>UserModel</returns>
-        public async Task<MethodResult<UserModelResponse>> GetUserModelBynameAsync(string username)
+        public async Task<MethodResult<BaseUserResponse>> GetUserModelBynameAsync(string username)
         {
-            MethodResult<UserModelResponse> methodResult = new();
-            AppUser? appUser = await _dbcontext.Users
+            MethodResult<BaseUserResponse> methodResult = new();
+            AppUser? appUser = await _dbcontext.AppUsers
                        .AsNoTracking()
                        .FirstOrDefaultAsync(x => x.UserName.Equals(username) && !x.IsDeleted);
-            if (appUser != null)
+            if (appUser == null)
             {
-                List<AppRole> roles = await _dbcontext.AppRoles.Where(x => !x.IsDeleted).ToListAsync();
-                GroupUserMember? roleUser = _dbcontext.GroupUserMembers.FirstOrDefault(x => x.AppUserKey.Equals(appUser.Id) && !x.IsDeleted);
-                methodResult.Result = _mapper.Map<UserModelResponse>(appUser);
-                methodResult.Result.RoleName = roles.FirstOrDefault(x => x.Id.Equals(roleUser?.AppRoleKey))?.Name ?? "";
-                methodResult.Result.GroupName = roleUser?.GroupName ?? "";
+                methodResult.StatusCode = StatusCodes.Status400BadRequest;
+                methodResult.AddApiErrorMessage(
+                    nameof(EnumUserErrorCodes.USR02C),
+                    new[] { Helpers.GenerateErrorResult(nameof(username), username ?? "") }
+                );
+                return methodResult;
             }
+            List<AppRole> roles = await _dbcontext.AppRoles.Where(x => !x.IsDeleted).ToListAsync();
+            GroupUserMember? roleUser = _dbcontext.GroupUserMembers.FirstOrDefault(x => x.AppUserKey.Equals(appUser.Id) && !x.IsDeleted);
+            methodResult.Result = _mapper.Map<UserModelResponse>(appUser);
+            methodResult.Result.RoleName = roles.FirstOrDefault(x => x.Id.Equals(roleUser?.AppRoleKey))?.Name ?? "";
+            methodResult.Result.GroupName = roleUser?.GroupName ?? "";
+            methodResult.Result.CreateDate = DateTimeExtensions.TimeStampToDateTime(appUser.CreatedDateTS ?? 0).AddHours(7);
+            methodResult.Result.UpdateDate = DateTimeExtensions.TimeStampToDateTime(appUser.UpdatedDateTS ?? 0).AddHours(7);
             return methodResult;
         }
         /// <summary>
@@ -75,21 +81,43 @@ namespace MuonRoiSocialNetwork.Application.Queries
         /// </summary>
         /// <param name="guidUser"></param>
         /// <returns></returns>
-        public async Task<MethodResult<UserModelResponse>> GetUserModelByGuidAsync(Guid guidUser)
+        public async Task<MethodResult<BaseUserResponse>> GetUserModelByGuidAsync(Guid guidUser)
         {
-            MethodResult<UserModelResponse> methodResult = new();
-            AppUser? appUser = await _dbcontext.Users
+            MethodResult<BaseUserResponse> methodResult = new();
+            AppUser? appUser = await _dbcontext.AppUsers
                        .AsNoTracking()
                        .FirstOrDefaultAsync(x => x.Id.Equals(guidUser) && !x.IsDeleted);
-            if (appUser != null)
+            if (appUser == null)
             {
-                List<AppRole> roles = await _dbcontext.AppRoles.Where(x => !x.IsDeleted).ToListAsync();
-                GroupUserMember? roleUser = _dbcontext.GroupUserMembers.FirstOrDefault(x => x.AppUserKey.Equals(appUser.Id) && !x.IsDeleted);
-                methodResult.Result = _mapper.Map<UserModelResponse>(appUser);
-                methodResult.Result.RoleName = roles.FirstOrDefault(x => x.Id.Equals(roleUser?.AppRoleKey))?.Name ?? "";
-                methodResult.Result.GroupName = roleUser?.GroupName ?? "";
+                methodResult.StatusCode = StatusCodes.Status400BadRequest;
+                methodResult.AddApiErrorMessage(
+                    nameof(EnumUserErrorCodes.USR02C),
+                    new[] { Helpers.GenerateErrorResult(nameof(guidUser), guidUser) }
+                );
+                return methodResult;
             }
+            List<AppRole> roles = await _dbcontext.AppRoles.Where(x => !x.IsDeleted).ToListAsync();
+            List<GroupUserMember> groups = await _dbcontext.GroupUserMembers.Where(x => !x.IsDeleted).ToListAsync();
+            GroupUserMember userRole = (from role in roles
+                                        join gr in groups
+                                        on role.Id equals gr.AppRoleKey
+                                        where gr.Id == appUser.GroupId
+                                        select gr).FirstOrDefault();
+
+            methodResult.Result = _mapper.Map<UserModelResponse>(appUser);
+            methodResult.Result.RoleName = userRole?.GroupName ?? "";
+            methodResult.Result.GroupName = userRole?.GroupName ?? "";
+            methodResult.Result.CreateDate = DateTimeExtensions.TimeStampToDateTime(appUser.CreatedDateTS ?? 0).AddHours(7);
+            methodResult.Result.UpdateDate = DateTimeExtensions.TimeStampToDateTime(appUser.UpdatedDateTS ?? 0).AddHours(7);
             return methodResult;
         }
+        /// <summary>
+        /// Get user by email handle
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
+        public async Task<AppUser> GetUserByEmailAsync(string email)
+            => await _dbcontext.AppUsers.AsNoTracking().FirstOrDefaultAsync(x => x.Email == email && !x.IsDeleted).ConfigureAwait(false);
+
     }
 }

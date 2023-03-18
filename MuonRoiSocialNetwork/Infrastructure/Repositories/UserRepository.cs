@@ -27,7 +27,7 @@ namespace MuonRoiSocialNetwork.Infrastructure.Repositories
         /// <returns></returns>
         public async Task<bool> ExistUserByUsernameAsync(string username)
         {
-            return await _dbcontext.Users.AsNoTracking()
+            return await _dbcontext.AppUsers.AsNoTracking()
                  .AnyAsync(x => x.UserName.Equals(username))
                  .ConfigureAwait(false);
         }
@@ -45,7 +45,9 @@ namespace MuonRoiSocialNetwork.Infrastructure.Repositories
             CheckDateTime.IsValidDateTime(newUser.BirthDate);
             newUser.Avatar ??= newUser.Avatar ?? "".Trim();
             newUser.GroupId = (int)EnumStaff.Staff;
-            newUser.CreatedDateTS = DateTime.UtcNow.GetTimeStamp();
+            DateTime utcNow = DateTime.UtcNow;
+            newUser.CreatedDateTS = utcNow.GetTimeStamp(includedTimeValue: true);
+            newUser.UpdatedDateTS = utcNow.GetTimeStamp(includedTimeValue: true);
             _dbcontext.Add(newUser);
             return await _dbcontext.SaveChangesAsync();
         }
@@ -56,8 +58,11 @@ namespace MuonRoiSocialNetwork.Infrastructure.Repositories
         /// <returns></returns>
         public async Task<int> ConfirmedEmail(AppUser checkUser)
         {
-            checkUser.UpdatedDateTS = DateTime.UtcNow.GetTimeStamp();
-            _dbcontext.Users.Update(checkUser);
+            checkUser.EmailConfirmed = true;
+            checkUser.Status = EnumAccountStatus.Confirmed;
+            DateTime utcNow = DateTime.UtcNow;
+            checkUser.UpdatedDateTS = utcNow.GetTimeStamp(includedTimeValue: true);
+            _dbcontext.AppUsers.Update(checkUser);
             return await _dbcontext.SaveChangesAsync();
         }
         /// <summary>
@@ -67,8 +72,27 @@ namespace MuonRoiSocialNetwork.Infrastructure.Repositories
         /// <returns></returns>
         public async Task<int> UpdateUserAsync(AppUser user)
         {
-            user.UpdatedDateTS = DateTime.UtcNow.GetTimeStamp();
-            _dbcontext.Users.Update(user);
+            DateTime utcNow = DateTime.UtcNow;
+            user.UpdatedDateTS = utcNow.GetTimeStamp(includedTimeValue: true);
+            _dbcontext.AppUsers.Update(user);
+            return await _dbcontext.SaveChangesAsync();
+        }
+        /// <summary>
+        /// Handle delete user
+        /// </summary>
+        /// <param name="userGuid"></param>
+        /// <returns></returns>
+        public async Task<int> DeleteUserAsync(Guid userGuid)
+        {
+            AppUser userDelete = await _dbcontext.AppUsers.Where(x => x.Id.Equals(userGuid) && !x.IsDeleted).FirstOrDefaultAsync();
+            if (userDelete == null)
+            {
+                return -1;
+            }
+            DateTime utcNow = DateTime.UtcNow;
+            userDelete.DeletedDateTS = utcNow.GetTimeStamp(includedTimeValue: true);
+            userDelete.IsDeleted = true;
+            _dbcontext.AppUsers.Update(userDelete);
             return await _dbcontext.SaveChangesAsync();
         }
     }

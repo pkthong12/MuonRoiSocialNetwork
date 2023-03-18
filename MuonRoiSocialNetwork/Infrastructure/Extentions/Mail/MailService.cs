@@ -1,12 +1,15 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using MuonRoiSocialNetwork.Common.Models;
 using System.Net.Mail;
 using System.Net;
 using System.Text;
-using Azure.Storage.Blobs;
 using MuonRoiSocialNetwork.Common.Settings.Appsettings;
 using MuonRoiSocialNetwork.Infrastructure.Services;
+using MuonRoiSocialNetwork.Common.Models.Images;
+using Amazon;
+using Amazon.S3;
+using Amazon.S3.Model;
+using System.IO;
 
 namespace MuonRoiSocialNetwork.Infrastructure.Extentions.Mail
 {
@@ -27,7 +30,7 @@ namespace MuonRoiSocialNetwork.Infrastructure.Extentions.Mail
         {
             userEmailOptions.Subject = UpdatePlaceHolders("Xin chào! {{UserName}}, Vui lòng xác nhận email của bạn", userEmailOptions.PlaceHolders);
 
-            userEmailOptions.Body = UpdatePlaceHolders(GetEmailBody("EmailConfirm", _configuration), userEmailOptions.PlaceHolders);
+            userEmailOptions.Body = UpdatePlaceHolders(await GetEmailBodyAsync("EmailConfirm", _configuration), userEmailOptions.PlaceHolders);
 
             await SendEmail(userEmailOptions);
         }
@@ -71,17 +74,22 @@ namespace MuonRoiSocialNetwork.Infrastructure.Extentions.Mail
 
             await smtpClient.SendMailAsync(mail);
         }
-        private static string GetEmailBody(string templateName, IConfiguration config)
+        private static async Task<string> GetEmailBodyAsync(string templateName, IConfiguration config)
         {
-            string containerStr = config.GetSection(ConstAppSettings.ENV_CONTAINERNAME).Value;
-            string connecttionStr = config.GetSection(ConstAppSettings.APPLICATIONENVCONNECTION).Value;
-            BlobServiceClient blobServiceClient = new(connecttionStr);
-            BlobContainerClient blobContainerClient = blobServiceClient.GetBlobContainerClient(containerStr);
-            BlobClient blobClient = blobContainerClient.GetBlobClient(string.Format(templatePath, templateName));
-            using MemoryStream memoryStream = new();
-            blobClient.DownloadTo(memoryStream);
-            memoryStream.Position = 0;
-            string body = new StreamReader(memoryStream).ReadToEnd();
+            string accessKey = config.GetSection(ConstAppSettings.ENV_ACCESSKEY).Value;
+            string secretKey = config.GetSection(ConstAppSettings.ENV_SERECT).Value;
+            AmazonS3Client client = new(accessKey, secretKey, RegionEndpoint.APNortheast1);
+            GetObjectRequest request = new()
+            {
+                BucketName = FolderSetting.BUCKET_USER,
+                Key = string.Format(templatePath, templateName),
+            };
+            string body = "";
+            using (var response = await client.GetObjectAsync(request))
+            {
+                using var streamReader = new StreamReader(response.ResponseStream);
+                body = streamReader.ReadToEnd();
+            }
             return body;
         }
         private static string UpdatePlaceHolders(string text, List<KeyValuePair<string, string>> keyValuePairs)

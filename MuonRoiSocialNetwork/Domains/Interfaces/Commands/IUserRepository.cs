@@ -20,6 +20,12 @@ namespace MuonRoiSocialNetwork.Domains.Interfaces.Commands
         /// <param name="newUser"></param>
         /// <returns></returns>
         Task<int> CreateNewUserAsync(AppUser newUser);
+        /// <summary>
+        /// Delete user for guid
+        /// </summary>
+        /// <param name="guidUser"></param>
+        /// <returns></returns>
+        Task<int> DeleteUserAsync(Guid guidUser);
 
         /// <summary>
         /// Check user is exist? by username

@@ -54,6 +54,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Email
             MethodResult<bool> methodResult = new();
             try
             {
+                #region Check is exist User
                 AppUser checkUser = await _userQueries.GetByGuidAsync(request.UserGuid);
                 if (checkUser == null)
                 {
@@ -62,12 +63,16 @@ namespace MuonRoiSocialNetwork.Application.Commands.Email
                         nameof(EnumUserErrorCodes.USR02C),
                         new[] { Helpers.GenerateErrorResult(nameof(request.UserGuid), request.UserGuid) }
                     );
+                    methodResult.Result = false;
                     return methodResult;
                 }
-                var symmetricKey = new SymmetricSecurityKey(Convert.FromBase64String(_configuration.GetSection(ConstAppSettings.APPLICATIONSERECT).Value));
-                var tokenHandler = new JwtSecurityTokenHandler();
-                var myIssuer = _configuration.GetSection(ConstAppSettings.APPLICATIONENVCONNECTION).Value;
-                var myAudience = _configuration.GetSection(ConstAppSettings.APPLICATIONAPPDOMAIN).Value;
+                #endregion
+
+                #region Valid token and check exp time
+                SymmetricSecurityKey symmetricKey = new SymmetricSecurityKey(Convert.FromBase64String(_configuration.GetSection(ConstAppSettings.APPLICATIONSERECT).Value));
+                JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
+                string myIssuer = _configuration.GetSection(ConstAppSettings.ENV_SERECT).Value;
+                string myAudience = _configuration.GetSection(ConstAppSettings.APPLICATIONAPPDOMAIN).Value;
                 try
                 {
                     tokenHandler.ValidateToken(request.TokenJWT, new TokenValidationParameters
@@ -88,11 +93,13 @@ namespace MuonRoiSocialNetwork.Application.Commands.Email
                         nameof(EnumUserErrorCodes.USRC36C),
                         new[] { Helpers.GenerateErrorResult(nameof(request.TokenJWT), request.TokenJWT ?? "") }
                     );
+                    methodResult.Result = false;
                     return methodResult;
                 }
-                checkUser.EmailConfirmed = true;
-                checkUser.Status = EnumAccountStatus.Confirmed;
-                if (await _userRepository.ConfirmedEmail(checkUser) == -1)
+                #endregion
+
+                #region update status confirmed
+                if (await _userRepository.ConfirmedEmail(checkUser) < 1)
                 {
                     methodResult.Result = false;
                     methodResult.StatusCode = StatusCodes.Status400BadRequest;
@@ -100,11 +107,13 @@ namespace MuonRoiSocialNetwork.Application.Commands.Email
                         nameof(EnumUserErrorCodes.USRC37C),
                         new[] { Helpers.GenerateErrorResult(nameof(checkUser.UserName), checkUser.UserName ?? "") }
                     );
+                    methodResult.Result = false;
                     return methodResult;
                 }
                 methodResult.Result = true;
                 methodResult.StatusCode = StatusCodes.Status200OK;
                 return methodResult;
+                #endregion
             }
             catch (Exception ex)
             {
@@ -114,6 +123,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Email
                     nameof(EnumUserErrorCodes.USR29C),
                     new[] { Helpers.GenerateErrorResult(nameof(ex.Message), ex.Message) }
                 );
+                methodResult.Result = false;
                 return methodResult;
             }
         }

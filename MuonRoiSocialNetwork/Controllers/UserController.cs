@@ -3,11 +3,14 @@ using BaseConfig.MethodResult;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
-using MuonRoiSocialNetwork.Common.Models.Users;
 using MuonRoiSocialNetwork.Application.Commands.Users;
 using MuonRoiSocialNetwork.Application.Commands.Email;
 using MuonRoiSocialNetwork.Domains.Interfaces.Queries;
-using MuonRoi.Social_Network.Users;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using MuonRoiSocialNetwork.Common.Models.Users.Request;
+using MuonRoiSocialNetwork.Common.Models.Users.Response;
+using MuonRoiSocialNetwork.Common.Models.Users.Base.Response;
 
 namespace MuonRoiSocialNetwork.Controllers
 {
@@ -16,6 +19,7 @@ namespace MuonRoiSocialNetwork.Controllers
     /// </summary>
     [Route("api/users")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class UserController : Controller
     {
         private readonly IMediator _mediator;
@@ -36,13 +40,14 @@ namespace MuonRoiSocialNetwork.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost("register")]
-        [ProducesResponseType(typeof(MethodResult<UserModelRequest>), (int)HttpStatusCode.Created)]
+        [AllowAnonymous]
+        [ProducesResponseType(typeof(MethodResult<UserModelResponse>), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> RegisterUser([FromBody] CreateUserCommand cmd)
         {
             try
             {
-                MethodResult<UserModelRequest> methodResult = await _mediator.Send(cmd).ConfigureAwait(false);
+                MethodResult<UserModelResponse> methodResult = await _mediator.Send(cmd).ConfigureAwait(false);
                 return methodResult.GetActionResult();
             }
             catch (Exception ex)
@@ -57,13 +62,14 @@ namespace MuonRoiSocialNetwork.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost("auth")]
-        [ProducesResponseType(typeof(MethodResult<UserModelRequest>), (int)HttpStatusCode.Created)]
+        [AllowAnonymous]
+        [ProducesResponseType(typeof(MethodResult<UserModelResponse>), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> LoginAuth([FromBody] AuthUserCommand cmd)
         {
             try
             {
-                MethodResult<UserModelRequest> methodResult = await _mediator.Send(cmd).ConfigureAwait(false);
+                MethodResult<UserModelResponse> methodResult = await _mediator.Send(cmd).ConfigureAwait(false);
                 return methodResult.GetActionResult();
             }
             catch (Exception ex)
@@ -104,17 +110,14 @@ namespace MuonRoiSocialNetwork.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPut("ByGuid/{uid}")]
-        [ProducesResponseType(typeof(MethodResult<UserModelRequest>), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(MethodResult<BaseUserResponse>), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> UpdateInformation([FromRoute] Guid uid)
+        public async Task<IActionResult> UpdateInformation([FromRoute] Guid uid, [FromBody] UpdateInformationCommand userChange)
         {
             try
             {
-                UpdateInformationCommand cmd = new()
-                {
-                    UserGuid = uid,
-                };
-                MethodResult<UserModelRequest> methodResult = await _mediator.Send(cmd).ConfigureAwait(false);
+                userChange.UserGuid = uid;
+                MethodResult<BaseUserResponse> methodResult = await _mediator.Send(userChange).ConfigureAwait(false);
                 return methodResult.GetActionResult();
             }
             catch (Exception ex)
@@ -129,13 +132,13 @@ namespace MuonRoiSocialNetwork.Controllers
         /// </summary>
         /// <returns>UserModel</returns>
         [HttpGet("ByUserName/{username}")]
-        [ProducesResponseType(typeof(MethodResult<UserModelResponse>), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(MethodResult<BaseUserResponse>), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetUserByUserName([FromRoute] string username)
         {
             try
             {
-                MethodResult<UserModelResponse> methodResult = await _userQueries.GetUserModelBynameAsync(username).ConfigureAwait(false);
+                MethodResult<BaseUserResponse> methodResult = await _userQueries.GetUserModelBynameAsync(username).ConfigureAwait(false);
                 return methodResult.GetActionResult();
             }
             catch (Exception ex)
@@ -150,13 +153,38 @@ namespace MuonRoiSocialNetwork.Controllers
         /// </summary>
         /// <returns>UserModel</returns>
         [HttpGet("ByGuidUser/{guidUser}")]
-        [ProducesResponseType(typeof(MethodResult<UserModelResponse>), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(MethodResult<BaseUserResponse>), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetUserByGuid([FromRoute] Guid guidUser)
         {
             try
             {
-                MethodResult<UserModelResponse> methodResult = await _userQueries.GetUserModelByGuidAsync(guidUser).ConfigureAwait(false);
+                MethodResult<BaseUserResponse> methodResult = await _userQueries.GetUserModelByGuidAsync(guidUser).ConfigureAwait(false);
+                return methodResult.GetActionResult();
+            }
+            catch (Exception ex)
+            {
+                var errCommandResult = new VoidMethodResult();
+                errCommandResult.AddErrorMessage(Helpers.GetExceptionMessage(ex), ex.StackTrace ?? "");
+                return errCommandResult.GetActionResult();
+            }
+        }
+        /// <summary>
+        /// Delete user by Guid
+        /// </summary>
+        /// <returns>UserModel</returns>
+        [HttpDelete("ByGuidUser/{guidUser}")]
+        [ProducesResponseType(typeof(MethodResult<bool>), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> DeleteUserByGuid([FromRoute] Guid guidUser)
+        {
+            try
+            {
+                DeleteUserCommand cmd = new()
+                {
+                    GuidUser = guidUser
+                };
+                MethodResult<bool> methodResult = await _mediator.Send(cmd).ConfigureAwait(false);
                 return methodResult.GetActionResult();
             }
             catch (Exception ex)

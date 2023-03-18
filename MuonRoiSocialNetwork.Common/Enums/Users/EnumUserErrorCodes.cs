@@ -184,5 +184,9 @@
         /// Tài khoản hoặc mật khẩu không chính xác
         /// </summary>
         USRC39C,
+        /// <summary>
+        /// Email đã tồn tại.
+        /// </summary>
+        USRC40C,
     }
 }

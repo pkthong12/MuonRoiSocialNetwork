@@ -1,8 +1,7 @@
 ﻿using MuonRoi.Social_Network.User;
-using MuonRoi.Social_Network.Users;
-namespace MuonRoiSocialNetwork.Common.Requests.Users
+namespace MuonRoiSocialNetwork.Common.Models.Users.Base.Request
 {
-    public class CreateUserCommandModel
+    public class BaseUserRequest
     {
         public string? Name { get; set; }
         public string? Surname { get; set; }
@@ -13,10 +12,5 @@ namespace MuonRoiSocialNetwork.Common.Requests.Users
         public string? Address { get; set; }
         public DateTime BirthDate { get; set; }
         public EnumGender Gender { get; set; }
-        public DateTime LastLogin { get; set; }
-        public string? Avatar { get; set; }
-        public EnumAccountStatus Status { get; set; }
-        public string? Note { get; set; }
-
     }
 }

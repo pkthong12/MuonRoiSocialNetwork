@@ -12,8 +12,8 @@ using MuonRoiSocialNetwork.Infrastructure;
 namespace MuonRoiSocialNetwork.Migrations
 {
     [DbContext(typeof(MuonRoiSocialNetworkDbContext))]
-    [Migration("20230316162247_InitialDb")]
-    partial class InitialDb
+    [Migration("20230318023621_configDb")]
+    partial class configDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -43,9 +43,7 @@ namespace MuonRoiSocialNetwork.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("AspNetRoleClaims", (string)null);
+                    b.ToTable("RoleClaim", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
@@ -67,64 +65,60 @@ namespace MuonRoiSocialNetwork.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
-
-                    b.ToTable("AspNetUserClaims", (string)null);
+                    b.ToTable("UserClaim", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
-                    b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("UserId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("ProviderKey")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("ProviderKey")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("LoginProvider", "ProviderKey");
+                    b.HasKey("UserId");
 
-                    b.HasIndex("UserId");
-
-                    b.ToTable("AspNetUserLogins", (string)null);
+                    b.ToTable("UserLogin", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
                 {
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("RoleId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("UserId", "RoleId");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.HasIndex("RoleId");
+                    b.HasKey("RoleId", "UserId");
 
-                    b.ToTable("AspNetUserRoles", (string)null);
+                    b.ToTable("UserRole", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
                     b.Property<Guid>("UserId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("UserId", "LoginProvider", "Name");
+                    b.HasKey("UserId");
 
-                    b.ToTable("AspNetUserTokens", (string)null);
+                    b.ToTable("UserToken", (string)null);
                 });
 
             modelBuilder.Entity("MuonRoi.Social_Network.Categories.Category", b =>
@@ -981,7 +975,6 @@ namespace MuonRoiSocialNetwork.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<double?>("CreatedDateTS")
@@ -991,8 +984,8 @@ namespace MuonRoiSocialNetwork.Migrations
                         .HasColumnType("float");
 
                     b.Property<string>("Email")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
@@ -1024,12 +1017,10 @@ namespace MuonRoiSocialNetwork.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("NormalizedEmail")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NormalizedUserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
@@ -1068,20 +1059,12 @@ namespace MuonRoiSocialNetwork.Migrations
 
                     b.Property<string>("UserName")
                         .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("NormalizedEmail")
-                        .HasDatabaseName("EmailIndex");
-
-                    b.HasIndex("NormalizedUserName")
-                        .IsUnique()
-                        .HasDatabaseName("UserNameIndex")
-                        .HasFilter("[NormalizedUserName] IS NOT NULL");
-
-                    b.ToTable("AspNetUsers", (string)null);
+                    b.ToTable("AppUsers");
 
                     b.HasData(
                         new
@@ -1091,7 +1074,7 @@ namespace MuonRoiSocialNetwork.Migrations
                             Address = "Hoà trung - ngọc định",
                             Avatar = "avt0",
                             BirthDate = new DateTime(2002, 6, 17, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ConcurrencyStamp = "b644b7d2-23b6-443d-a86f-fbe908887c82",
+                            ConcurrencyStamp = "aa9ca9d1-5176-46f2-93c0-7a5a5663025f",
                             Email = "leanhphi1706@gmail.com",
                             EmailConfirmed = false,
                             Gender = 0,
@@ -1100,7 +1083,7 @@ namespace MuonRoiSocialNetwork.Migrations
                             LastLogin = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LockoutEnabled = false,
                             Name = "Phi Le",
-                            PasswordHash = "AQAAAAEAACcQAAAAEIHnK+PmR2XaiUh5w+6OD0WSKUyWSrdtniZrm072mbxvs/19/cgX2EoO/eoKm6jekQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEFULFj3mmIwfpirurzZyN/ZHd0RAcTmk6WaGoZnF5ymwLVUSOiLrtT+5PuzAdRdFhA==",
                             PhoneNumber = "093.310.5367",
                             PhoneNumberConfirmed = false,
                             Salt = "12345",
@@ -1116,7 +1099,7 @@ namespace MuonRoiSocialNetwork.Migrations
                             Address = "Hoà trung - ngọc định",
                             Avatar = "avt0",
                             BirthDate = new DateTime(2002, 6, 17, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ConcurrencyStamp = "05d8b171-c9dc-4977-90be-af262355cb2d",
+                            ConcurrencyStamp = "c4c555a6-9fdd-420e-b694-80d74880cc6a",
                             Email = "leanhphi1706@gmail.com",
                             EmailConfirmed = false,
                             Gender = 0,
@@ -1125,7 +1108,7 @@ namespace MuonRoiSocialNetwork.Migrations
                             LastLogin = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LockoutEnabled = false,
                             Name = "Phi Le",
-                            PasswordHash = "AQAAAAEAACcQAAAAEMDf6K6HTV5ktop2xqdn26zLartJSvdchmMdJ9JyneykLNYmuEP1vuRmXP7FroEqXQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEMPxO0N/pIH94zJC2xdAL3b7X8yzqWmJDJ/oU8g8o0FTyj/PJ0Vyjr5c4LHUmdMpLQ==",
                             PhoneNumber = "093.310.5367",
                             PhoneNumberConfirmed = false,
                             Salt = "12345",
@@ -1280,7 +1263,6 @@ namespace MuonRoiSocialNetwork.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
@@ -1291,27 +1273,20 @@ namespace MuonRoiSocialNetwork.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NormalizedName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("NormalizedName")
-                        .IsUnique()
-                        .HasDatabaseName("RoleNameIndex")
-                        .HasFilter("[NormalizedName] IS NOT NULL");
-
-                    b.ToTable("AspNetRoles", (string)null);
+                    b.ToTable("AppRole", (string)null);
 
                     b.HasData(
                         new
                         {
                             Id = new Guid("72377426-b057-46ca-98ff-1ca9d33ea0c1"),
-                            ConcurrencyStamp = "e2255570-085c-45c6-84c9-ef1ba313604a",
+                            ConcurrencyStamp = "d35efd8b-63bf-44e4-960a-ed2f06c233f6",
                             Description = "Người quản lý cao nhất",
                             IsDeleted = false,
                             Name = "Administratior"
@@ -1319,62 +1294,11 @@ namespace MuonRoiSocialNetwork.Migrations
                         new
                         {
                             Id = new Guid("5ef7d163-8249-445c-8895-4eb97329af7e"),
-                            ConcurrencyStamp = "3b3d2dac-b403-455a-8420-aaf433605c13",
+                            ConcurrencyStamp = "ccacfde4-c93e-43a4-8d69-10de3722ab71",
                             Description = "Người dùng mặc định",
                             IsDeleted = false,
                             Name = "Default User"
                         });
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
-                {
-                    b.HasOne("MuonRoiSocialNetwork.Domains.DomainObjects.Groups.AppRole", null)
-                        .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
-                {
-                    b.HasOne("MuonRoi.Social_Network.Users.AppUser", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
-                {
-                    b.HasOne("MuonRoi.Social_Network.Users.AppUser", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
-                {
-                    b.HasOne("MuonRoiSocialNetwork.Domains.DomainObjects.Groups.AppRole", null)
-                        .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MuonRoi.Social_Network.Users.AppUser", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
-                {
-                    b.HasOne("MuonRoi.Social_Network.Users.AppUser", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("MuonRoi.Social_Network.Chapters.Chapter", b =>

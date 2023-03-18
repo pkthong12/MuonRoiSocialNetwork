@@ -2,7 +2,6 @@ using AutoMapper;
 using Moq;
 using Microsoft.Extensions.Configuration;
 using MuonRoiSocialNetwork.Test;
-using MuonRoiSocialNetwork.Common.Models.Users;
 using MuonRoiSocialNetwork.Application.Commands.Users;
 using Shouldly;
 using BaseConfig.MethodResult;
@@ -13,6 +12,8 @@ using Microsoft.AspNetCore.Http;
 using BaseConfig.Extentions;
 using MuonRoiSocialNetwork.Infrastructure.Services;
 using MuonRoiSocialNetwork.Application.Queries;
+using MuonRoiSocialNetwork.Common.Models.Users.Request;
+using MuonRoiSocialNetwork.Common.Models.Users.Response;
 
 namespace TestProject1
 {
@@ -46,14 +47,10 @@ namespace TestProject1
                 PasswordHash = "1234567Az*99",
                 Address = "string",
                 Gender = MuonRoi.Social_Network.User.EnumGender.Male,
-                LastLogin = new DateTime(2023, 01, 01),
-                Avatar = "string",
-                Status = EnumAccountStatus.UnConfirm,
-                Note = "string"
             };
             CreateUserCommandHandler handler = new(_mapper, _user, _userQueries, _config, _mail.Object);
-            MethodResult<UserModelRequest> result = await handler.Handle(user, CancellationToken.None);
-            result.ShouldBeOfType<MethodResult<UserModelRequest>>();
+            MethodResult<UserModelResponse> result = await handler.Handle(user, CancellationToken.None);
+            result.ShouldBeOfType<MethodResult<UserModelResponse>>();
         }
         [Fact]
         public async Task RegisterFail_NotValidRequest()
@@ -69,20 +66,16 @@ namespace TestProject1
                 PasswordHash = "12345",
                 Address = "string",
                 Gender = MuonRoi.Social_Network.User.EnumGender.Male,
-                LastLogin = new DateTime(2023, 01, 01),
-                Avatar = "string",
-                Status = EnumAccountStatus.UnConfirm,
-                Note = "string"
             };
             AppUser newUser = _mapper.Map<AppUser>(user);
-            MethodResult<UserModelRequest> methodResult = new()
+            MethodResult<UserModelResponse> methodResult = new()
             {
                 StatusCode = StatusCodes.Status400BadRequest
             };
             newUser.IsValid();
             methodResult.AddResultFromErrorList(newUser.ErrorMessages);
             CreateUserCommandHandler handler = new(_mapper, _user, _userQueries, _config, _mail.Object);
-            MethodResult<UserModelRequest> result = await handler.Handle(user, CancellationToken.None);
+            MethodResult<UserModelResponse> result = await handler.Handle(user, CancellationToken.None);
             bool resultMessageAndCode = CheckObjectEqual.ObjectAreEqual(result, methodResult);
             Assert.True(resultMessageAndCode);
         }
@@ -100,12 +93,8 @@ namespace TestProject1
                 PasswordHash = "1234567Az*99",
                 Address = "string",
                 Gender = MuonRoi.Social_Network.User.EnumGender.Male,
-                LastLogin = new DateTime(2023, 01, 01),
-                Avatar = "string",
-                Status = EnumAccountStatus.UnConfirm,
-                Note = "string"
             };
-            MethodResult<UserModelRequest> methodResult = new()
+            MethodResult<UserModelResponse> methodResult = new()
             {
                 StatusCode = StatusCodes.Status400BadRequest
             };
@@ -114,7 +103,7 @@ namespace TestProject1
                         new[] { Helpers.GenerateErrorResult(nameof(user.UserName), user.UserName ?? "") }
                     );
             CreateUserCommandHandler handler = new(_mapper, _user, _userQueries, _config, _mail.Object);
-            MethodResult<UserModelRequest> result = await handler.Handle(user, CancellationToken.None);
+            MethodResult<UserModelResponse> result = await handler.Handle(user, CancellationToken.None);
             bool resultMessageAndCode = CheckObjectEqual.ObjectAreEqual(result, methodResult);
             Assert.True(resultMessageAndCode);
         }
@@ -132,18 +121,14 @@ namespace TestProject1
                 PasswordHash = "1234567Az*99",
                 Address = "string",
                 Gender = MuonRoi.Social_Network.User.EnumGender.Male,
-                LastLogin = new DateTime(2023, 01, 01),
-                Avatar = "string",
-                Status = EnumAccountStatus.UnConfirm,
-                Note = "string"
             };
-            MethodResult<UserModelRequest> methodResult = new()
+            MethodResult<UserModelResponse> methodResult = new()
             {
                 StatusCode = StatusCodes.Status400BadRequest
             };
             var _users = new UserRepository(null);
             CreateUserCommandHandler handler = new(_mapper, _users, _userQueries, _config, _mail.Object);
-            MethodResult<UserModelRequest> result = await handler.Handle(user, CancellationToken.None);
+            MethodResult<UserModelResponse> result = await handler.Handle(user, CancellationToken.None);
             bool resultMessageAndCode = CheckObjectEqual.ObjectAreEqual(result, methodResult);
             Assert.False(resultMessageAndCode);
         }

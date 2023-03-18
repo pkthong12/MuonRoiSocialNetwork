@@ -17,6 +17,8 @@ namespace BaseConfig.EntityObject.Entity
         [Column(Order = 0)]
         [BsonId]
         public virtual int Id { get; set; }
+        [Column(Order = 1)]
+        public virtual Guid Guid { get; set; }
 
         [Column(Order = 101)]
         [Required(AllowEmptyStrings = true)]

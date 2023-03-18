@@ -5,26 +5,26 @@ using BaseConfig.MethodResult;
 using MuonRoi.Social_Network.Users;
 using MediatR;
 using MuonRoiSocialNetwork.Application.Commands.Base;
-using MuonRoiSocialNetwork.Common.Models.Users;
-using MuonRoiSocialNetwork.Common.Requests.Users;
 using MuonRoiSocialNetwork.Common.Settings.Appsettings;
 using MuonRoiSocialNetwork.Infrastructure.Extentions.Mail;
 using BaseConfig.JWT;
 using MuonRoiSocialNetwork.Domains.Interfaces.Commands;
 using MuonRoiSocialNetwork.Infrastructure.Services;
 using MuonRoiSocialNetwork.Domains.Interfaces.Queries;
+using MuonRoiSocialNetwork.Common.Models.Users.Response;
+using MuonRoiSocialNetwork.Common.Models.Users.Request;
 
 namespace MuonRoiSocialNetwork.Application.Commands.Users
 {
     /// <summary>
     /// Command for user
     /// </summary>
-    public class CreateUserCommand : CreateUserCommandModel, IRequest<MethodResult<UserModelRequest>>
+    public class CreateUserCommand : UserModelRequest, IRequest<MethodResult<UserModelResponse>>
     { }
     /// <summary>
     /// Handler create user
     /// </summary>
-    public class CreateUserCommandHandler : BaseCommandHandler, IRequestHandler<CreateUserCommand, MethodResult<UserModelRequest>>
+    public class CreateUserCommandHandler : BaseCommandHandler, IRequestHandler<CreateUserCommand, MethodResult<UserModelResponse>>
     {
         private readonly IEmailService _emailService;
         /// <summary>
@@ -37,7 +37,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
         /// <param name="emailService"></param>
         public CreateUserCommandHandler(IMapper mapper,
             IUserRepository userRepository,
-             IUserQueries userQueries,
+            IUserQueries userQueries,
             IConfiguration configuration,
             IEmailService emailService) : base(mapper, configuration, userQueries, userRepository)
         {
@@ -49,9 +49,9 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
         /// <param name="request"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<MethodResult<UserModelRequest>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
+        public async Task<MethodResult<UserModelResponse>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
-            MethodResult<UserModelRequest> methodResult = new();
+            MethodResult<UserModelResponse> methodResult = new();
             try
             {
                 #region Validation
@@ -109,7 +109,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                     );
                     return methodResult;
                 };
-                UserModelRequest resultUser = _mapper.Map<UserModelRequest>(getCreatedUser);
+                UserModelResponse resultUser = _mapper.Map<UserModelResponse>(getCreatedUser);
                 methodResult.Result = resultUser;
                 methodResult.StatusCode = StatusCodes.Status200OK;
                 #endregion
@@ -136,8 +136,8 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
         public async Task GenerateEmailConfirmationTokenAsync(AppUser identityUser)
         {
             GenarateJwtToken genarateJwtToken = new(_configuration);
-            UserModelRequest userModel = _mapper.Map<UserModelRequest>(identityUser);
-            string token = genarateJwtToken.GenarateJwt(userModel);
+            UserModelResponse userModel = _mapper.Map<UserModelResponse>(identityUser);
+            string token = genarateJwtToken.GenarateJwt(userModel, int.Parse(_configuration.GetSection(ConstAppSettings.LIFE_TIME).Value));
             if (!string.IsNullOrEmpty(token))
             {
                 await SendEmailConfirmationEmail(identityUser, token);

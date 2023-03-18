@@ -1,4 +1,5 @@
 using AutoMapper;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,6 +24,7 @@ namespace MuonRoiSocialNetwork.Test
         public MuonRoiSocialNetworkDbContext _userdbContext;
         public MapperConfiguration _mapperConfiguration;
         public IMapper _maperBase;
+        public Mock<IMediator> _mediator;
         public MockDataBase()
         {
             ServiceProvider serviceProvider = new ServiceCollection()
@@ -31,7 +33,8 @@ namespace MuonRoiSocialNetwork.Test
             DbContextOptionsBuilder<MuonRoiSocialNetworkDbContext> builder = new DbContextOptionsBuilder<MuonRoiSocialNetworkDbContext>()
                         .UseInMemoryDatabase(Guid.NewGuid().ToString())
                         .UseInternalServiceProvider(serviceProvider);
-            _userdbContext = new MuonRoiSocialNetworkDbContext(builder.Options);
+            _mediator = new Mock<IMediator>();
+            _userdbContext = new MuonRoiSocialNetworkDbContext(builder.Options, _mediator.Object);
             _userRepoBase = new UserRepository(_userdbContext);
             _configBase = new ConfigurationBuilder().AddJsonFile($"{NameAppSetting.APPSETTINGS}.json", optional: false).Build();
             _emailServiceBase = new Mock<IEmailService>();
@@ -84,12 +87,12 @@ namespace MuonRoiSocialNetwork.Test
                 Avatar = "av2",
                 Status = EnumAccountStatus.Locked
             };
-            if (!_userdbContext.Users.Any(t => t.Id.Equals(new Guid("6A2A1E72-7C06-47AC-861C-75046C75A588"))))
-                _userdbContext.Users.Add(user1);
-            if (!_userdbContext.Users.Any(t => t.Id.Equals(new Guid("00F13A88-54B8-4A07-9AFB-636C2C93C200"))))
-                _userdbContext.Users.Add(user2);
-            if (!_userdbContext.Users.Any(t => t.Id.Equals(new Guid("00F13A88-54B8-4A07-9AFB-636C2C93C202"))))
-                _userdbContext.Users.Add(user3);
+            if (!_userdbContext.AppUsers.Any(t => t.Id.Equals(new Guid("6A2A1E72-7C06-47AC-861C-75046C75A588"))))
+                _userdbContext.AppUsers.Add(user1);
+            if (!_userdbContext.AppUsers.Any(t => t.Id.Equals(new Guid("00F13A88-54B8-4A07-9AFB-636C2C93C200"))))
+                _userdbContext.AppUsers.Add(user2);
+            if (!_userdbContext.AppUsers.Any(t => t.Id.Equals(new Guid("00F13A88-54B8-4A07-9AFB-636C2C93C202"))))
+                _userdbContext.AppUsers.Add(user3);
             _userdbContext.SaveChanges();
             #endregion
         }

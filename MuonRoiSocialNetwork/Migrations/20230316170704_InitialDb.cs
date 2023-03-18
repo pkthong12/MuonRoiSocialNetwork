@@ -15,10 +15,10 @@ namespace MuonRoiSocialNetwork.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -45,18 +45,21 @@ namespace MuonRoiSocialNetwork.Migrations
                     Note = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LockReason = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     GroupId = table.Column<int>(type: "int", nullable: true),
+                    CreatedDateTS = table.Column<double>(type: "float", nullable: true),
+                    UpdatedDateTS = table.Column<double>(type: "float", nullable: true),
+                    DeletedDateTS = table.Column<double>(type: "float", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
                     SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
                     TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
                     LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    AccessFailedCount = table.Column<int>(type: "int", nullable: false),
-                    CreatedUserId = table.Column<int>(type: "int", nullable: true),
-                    UpdatedUserId = table.Column<int>(type: "int", nullable: true),
-                    DeletedUserId = table.Column<int>(type: "int", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -64,28 +67,28 @@ namespace MuonRoiSocialNetwork.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Category",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    NameCategory = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedDateTS = table.Column<double>(type: "float", nullable: true),
-                    UpdatedDateTS = table.Column<double>(type: "float", nullable: true),
-                    DeletedDateTS = table.Column<double>(type: "float", nullable: true),
-                    CreatedUserId = table.Column<int>(type: "int", nullable: false),
-                    UpdatedUserId = table.Column<int>(type: "int", nullable: true),
-                    DeletedUserId = table.Column<int>(type: "int", nullable: true),
-                    CreatedUserName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    UpdatedUserName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    DeletedUserName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Category", x => x.Id);
-                });
+               name: "Category",
+               columns: table => new
+               {
+                   Id = table.Column<int>(type: "int", nullable: false)
+                       .Annotation("SqlServer:Identity", "1, 1"),
+                   NameCategory = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                   IsActive = table.Column<bool>(type: "bit", nullable: false),
+                   IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                   CreatedDateTS = table.Column<double>(type: "float", nullable: true),
+                   UpdatedDateTS = table.Column<double>(type: "float", nullable: true),
+                   DeletedDateTS = table.Column<double>(type: "float", nullable: true),
+                   CreatedUserId = table.Column<int>(type: "int", nullable: false),
+                   UpdatedUserId = table.Column<int>(type: "int", nullable: true),
+                   DeletedUserId = table.Column<int>(type: "int", nullable: true),
+                   CreatedUserName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                   UpdatedUserName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                   DeletedUserName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+               },
+               constraints: table =>
+               {
+                   table.PrimaryKey("PK_Category", x => x.Id);
+               });
 
             migrationBuilder.CreateTable(
                 name: "Tag",
@@ -528,22 +531,23 @@ namespace MuonRoiSocialNetwork.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
-                columns: new[] { "Id", "ConcurrencyStamp", "Description", "Name", "NormalizedName", "IsDeleted" },
+                columns: new[] { "Id", "ConcurrencyStamp", "Description", "IsDeleted", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { new Guid("5ef7d163-8249-445c-8895-4eb97329af7e"), "82ecc7d9-8dc5-477d-ae92-4227b393ded6", "Người dùng mặc định", "Default User", null,false },
-                    { new Guid("72377426-b057-46ca-98ff-1ca9d33ea0c1"), "dfc189f7-e725-4ab5-a567-a4fea5ef3783", "Người quản lý cao nhất", "Administratior", null,false }
+                    { new Guid("5ef7d163-8249-445c-8895-4eb97329af7e"), "3df88140-724c-4f4c-b850-1fdc9e1f25b3", "Người dùng mặc định", false, "Default User", null },
+                    { new Guid("72377426-b057-46ca-98ff-1ca9d33ea0c1"), "5c86e9ae-15ce-494f-8690-ef4c791b7c89", "Người quản lý cao nhất", false, "Administratior", null }
                 });
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
-                columns: new[] { "Id", "AccessFailedCount", "Address", "Avatar", "BirthDate", "Email", "EmailConfirmed", "Gender", "GroupId", "LastLogin", "LockReason", "LockoutEnabled", "LockoutEnd", "Name", "Note", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "Salt", "SecurityStamp", "Status", "Surname", "TwoFactorEnabled", "UserName", "IsDeleted" },
+                columns: new[] { "Id", "AccessFailedCount", "Address", "Avatar", "BirthDate", "ConcurrencyStamp", "CreatedDateTS", "DeletedDateTS", "Email", "EmailConfirmed", "Gender", "GroupId", "IsDeleted", "LastLogin", "LockReason", "LockoutEnabled", "LockoutEnd", "Name", "NormalizedEmail", "NormalizedUserName", "Note", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "Salt", "SecurityStamp", "Status", "Surname", "TwoFactorEnabled", "UpdatedDateTS", "UserName" },
                 values: new object[,]
                 {
-                    { new Guid("05075755-688d-4987-9c1e-f3bef1746d52"), 0, "Hoà trung - ngọc định", "avt0", new DateTime(2002, 6, 17, 0, 0, 0, 0, DateTimeKind.Unspecified), "leanhphi1706@gmail.com", false, 0, 2, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, false, null, "Phi Le", null, "AQAAAAEAACcQAAAAEKNjY95sSUQAyio2lbpfGXMOW6FCPvc0SA9i/ii5jfXl+WBM1S6t3S8i38QqR/u2bA==", "093.310.5367", false, "12345", null, 1, "Anh", false, "defaultUser",false },
-                    { new Guid("e0223a03-2945-49db-976e-736433465b7f"), 0, "Hoà trung - ngọc định", "avt0", new DateTime(2002, 6, 17, 0, 0, 0, 0, DateTimeKind.Unspecified), "leanhphi1706@gmail.com", false, 0, 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, false, null, "Phi Le", null, "AQAAAAEAACcQAAAAEKNjY95sSUQAyio2lbpfGXMOW6FCPvc0SA9i/ii5jfXl+WBM1S6t3S8i38QqR/u2bA==", "093.310.5367", false, "12345", null, 1, "Anh", false, "muonroi", false}
+                    { new Guid("05075755-688d-4987-9c1e-f3bef1746d52"), 0, "Hoà trung - ngọc định", "avt0", new DateTime(2002, 6, 17, 0, 0, 0, 0, DateTimeKind.Unspecified), "bf8c48c6-0e1d-4eea-858d-629e774e30d0", null, null, "leanhphi1706@gmail.com", false, 0, 2, false, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, false, null, "Phi Le", null, null, null, "AQAAAAEAACcQAAAAEId9NJUQX2u2ktH+W/nYO/qxA4p+liAvP8DjOlhoc49hFmX6372ciBMCwMoiJWBhGg==", "093.310.5367", false, "12345", null, 1, "Anh", false, null, "defaultUser" },
+                    { new Guid("e0223a03-2945-49db-976e-736433465b7f"), 0, "Hoà trung - ngọc định", "avt0", new DateTime(2002, 6, 17, 0, 0, 0, 0, DateTimeKind.Unspecified), "db1fdc3d-24ea-4c5e-9635-7108128ca47f", null, null, "leanhphi1706@gmail.com", false, 0, 1, false, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, false, null, "Phi Le", null, null, null, "AQAAAAEAACcQAAAAEIG+RZ7jr0Ui1lbkT2PBo6gErBjrNTv5PrYyJmzdRU15auek0WyEC68+jYRs0Mq9gw==", "093.310.5367", false, "12345", null, 1, "Anh", false, null, "muonroi" }
                 });
 
             migrationBuilder.InsertData(
@@ -598,6 +602,13 @@ namespace MuonRoiSocialNetwork.Migrations
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
+                name: "RoleNameIndex",
+                table: "AspNetRoles",
+                column: "NormalizedName",
+                unique: true,
+                filter: "[NormalizedName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_AspNetUserClaims_UserId",
                 table: "AspNetUserClaims",
                 column: "UserId");
@@ -611,6 +622,18 @@ namespace MuonRoiSocialNetwork.Migrations
                 name: "IX_AspNetUserRoles_RoleId",
                 table: "AspNetUserRoles",
                 column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "EmailIndex",
+                table: "AspNetUsers",
+                column: "NormalizedEmail");
+
+            migrationBuilder.CreateIndex(
+                name: "UserNameIndex",
+                table: "AspNetUsers",
+                column: "NormalizedUserName",
+                unique: true,
+                filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_BookMarkStory_UserGuid",

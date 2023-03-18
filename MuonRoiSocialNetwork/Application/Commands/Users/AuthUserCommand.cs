@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
 using BaseConfig.EntityObject.Entity;
-using BaseConfig.Exeptions;
+using BaseConfig.Infrashtructure;
 using BaseConfig.JWT;
 using BaseConfig.MethodResult;
 using MediatR;
 using MuonRoi.Social_Network.Users;
 using MuonRoiSocialNetwork.Application.Commands.Base;
-using MuonRoiSocialNetwork.Common.Models.Users;
+using MuonRoiSocialNetwork.Common.Models.Users.Response;
 using MuonRoiSocialNetwork.Common.Settings.UserSettings;
 using MuonRoiSocialNetwork.Domains.Interfaces.Commands;
 using MuonRoiSocialNetwork.Domains.Interfaces.Queries;
@@ -16,7 +16,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
     /// <summary>
     /// Login auth user command
     /// </summary>
-    public class AuthUserCommand : IRequest<MethodResult<UserModelRequest>>
+    public class AuthUserCommand : IRequest<MethodResult<UserModelResponse>>
     {
         #region Property
         /// <summary>
@@ -32,7 +32,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
     /// <summary>
     /// Handler login user
     /// </summary>
-    public class AuthUserCommandHandler : BaseCommandHandler, IRequestHandler<AuthUserCommand, MethodResult<UserModelRequest>>
+    public class AuthUserCommandHandler : BaseCommandHandler, IRequestHandler<AuthUserCommand, MethodResult<UserModelResponse>>
     {
         /// <summary>
         /// Constructor
@@ -45,7 +45,9 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
             IUserRepository userRepository,
             IUserQueries userQueries,
             IConfiguration configuration) : base(mapper, configuration, userQueries, userRepository)
-        { }
+        {
+
+        }
         /// <summary>
         /// Handler function
         /// </summary>
@@ -53,9 +55,9 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        public async Task<MethodResult<UserModelRequest>> Handle(AuthUserCommand request, CancellationToken cancellationToken)
+        public async Task<MethodResult<UserModelResponse>> Handle(AuthUserCommand request, CancellationToken cancellationToken)
         {
-            MethodResult<UserModelRequest> methodResult = new();
+            MethodResult<UserModelResponse> methodResult = new();
             GenarateJwtToken genarateJwtToken = new(_configuration);
             try
             {
@@ -140,7 +142,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                 #endregion
 
                 #region Return info user was login
-                UserModelRequest resultInforLoginUser = _mapper.Map<UserModelRequest>(appUser);
+                UserModelResponse resultInforLoginUser = _mapper.Map<UserModelResponse>(appUser);
                 resultInforLoginUser.JwtToken = genarateJwtToken.GenarateJwt(resultInforLoginUser);
                 methodResult.Result = resultInforLoginUser;
                 methodResult.StatusCode = StatusCodes.Status200OK;

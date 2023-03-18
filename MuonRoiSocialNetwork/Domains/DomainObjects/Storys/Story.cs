@@ -26,7 +26,7 @@ namespace MuonRoi.Social_Network.Storys
         /// <summary>
         /// Guid in story 
         /// </summary>
-        public Guid Guid { get; set; }
+        public override Guid Guid { get; set; }
         /// <summary>
         /// Title of story
         /// </summary>

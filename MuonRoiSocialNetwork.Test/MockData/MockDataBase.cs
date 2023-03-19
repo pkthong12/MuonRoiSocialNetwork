@@ -34,7 +34,7 @@ namespace MuonRoiSocialNetwork.Test
                         .UseInternalServiceProvider(serviceProvider);
             _mediator = new Mock<IMediator>();
             _userdbContext = new MuonRoiSocialNetworkDbContext(builder.Options, _mediator.Object);
-            _userRepoBase = new UserRepository(_userdbContext);
+            _userRepoBase = new UserRepository(_userdbContext, _maperBase, _userRepoBase, _userQueriesBase, _configBase);
             _configBase = new ConfigurationBuilder().AddJsonFile($"{NameAppSetting.APPSETTINGS}.json", optional: false).Build();
             _emailServiceBase = new Mock<IEmailService>();
             _mapperConfiguration = new MapperConfiguration(c =>

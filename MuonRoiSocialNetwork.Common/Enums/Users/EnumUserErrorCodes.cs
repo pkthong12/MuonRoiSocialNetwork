@@ -188,5 +188,9 @@
         /// Email đã tồn tại.
         /// </summary>
         USRC40C,
+        /// <summary>
+        /// Ảnh lỗi! Vui lòng thử lại.
+        /// </summary>
+        USRC41C,
     }
 }

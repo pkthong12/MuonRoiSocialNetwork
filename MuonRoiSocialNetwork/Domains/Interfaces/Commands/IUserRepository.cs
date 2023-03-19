@@ -26,6 +26,12 @@ namespace MuonRoiSocialNetwork.Domains.Interfaces.Commands
         /// <param name="guidUser"></param>
         /// <returns></returns>
         Task<int> DeleteUserAsync(Guid guidUser);
+        /// <summary>
+        /// Check is exist user by guid
+        /// </summary>
+        /// <param name="userGuid"></param>
+        /// <returns></returns>
+        Task<bool> ExistUserByGuidAsync(Guid userGuid);
 
         /// <summary>
         /// Check user is exist? by username
@@ -33,6 +39,13 @@ namespace MuonRoiSocialNetwork.Domains.Interfaces.Commands
         /// <param name="username"></param>
         /// <returns></returns>
         Task<bool> ExistUserByUsernameAsync(string username);
+        /// <summary>
+        /// Change password forgot
+        /// </summary>
+        /// <param name="confirmPassword"></param>
+        /// <param name="userGuid"></param>
+        /// <returns></returns>
+        Task<bool> UpdatePassworAsync(string confirmPassword, Guid userGuid);
 
         /// <summary>
         /// Update info user

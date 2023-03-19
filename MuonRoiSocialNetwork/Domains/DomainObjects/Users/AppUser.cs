@@ -106,6 +106,14 @@ namespace MuonRoi.Social_Network.Users
         /// GroupId of account
         /// </summary>
         public int? GroupId { get; set; }
+        /// <summary>
+        /// Account status
+        /// </summary>
+        public EnumAccountStatus AccountStatus { get; set; }
+        /// <summary>
+        /// Is renew pass
+        /// </summary>
+        public bool IsRenewPass { get; set; }
         public double? CreatedDateTS { get; set; }
 
         public double? UpdatedDateTS { get; set; }

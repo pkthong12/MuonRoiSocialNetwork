@@ -1,22 +1,33 @@
 ﻿using MuonRoi.Social_Network.Users;
 using Microsoft.EntityFrameworkCore;
 using MuonRoiSocialNetwork.Domains.Interfaces.Commands;
-using BaseConfig.Extentions;
 using MuonRoi.Social_Network.Roles;
+using BaseConfig.Extentions.Datetime;
+using BaseConfig.Extentions.String;
+using MuonRoiSocialNetwork.Application.Commands.Base;
+using AutoMapper;
+using MuonRoiSocialNetwork.Domains.Interfaces.Queries;
 
 namespace MuonRoiSocialNetwork.Infrastructure.Repositories
 {
     /// <summary>
     /// Handler user
     /// </summary>
-    public class UserRepository : IUserRepository
+    public class UserRepository : BaseCommandHandler, IUserRepository
     {
         private readonly MuonRoiSocialNetworkDbContext _dbcontext;
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="dbContext"></param>
-        public UserRepository(MuonRoiSocialNetworkDbContext dbContext)
+        /// <param name="mapper"></param>
+        /// <param name="userRepository"></param>
+        /// <param name="userQueries"></param>
+        /// <param name="configuration"></param>
+        public UserRepository(MuonRoiSocialNetworkDbContext dbContext, IMapper mapper,
+            IUserRepository userRepository,
+            IUserQueries userQueries,
+            IConfiguration configuration) : base(mapper, configuration, userQueries, userRepository)
         {
             _dbcontext = dbContext;
         }
@@ -30,6 +41,17 @@ namespace MuonRoiSocialNetwork.Infrastructure.Repositories
             return await _dbcontext.AppUsers.AsNoTracking()
                  .AnyAsync(x => x.UserName.Equals(username))
                  .ConfigureAwait(false);
+        }
+        /// <summary>
+        /// Handle check user is exist ? by guid
+        /// </summary>
+        /// <param name="userGuid"></param>
+        /// <returns></returns>
+        public async Task<bool> ExistUserByGuidAsync(Guid userGuid)
+        {
+            return await _dbcontext.AppUsers.AsNoTracking()
+                .AnyAsync(x => x.Id.Equals(userGuid))
+                .ConfigureAwait(false);
         }
         /// <summary>
         /// Handle create new user no role
@@ -84,7 +106,9 @@ namespace MuonRoiSocialNetwork.Infrastructure.Repositories
         /// <returns></returns>
         public async Task<int> DeleteUserAsync(Guid userGuid)
         {
+#pragma warning disable CS8600
             AppUser userDelete = await _dbcontext.AppUsers.Where(x => x.Id.Equals(userGuid) && !x.IsDeleted).FirstOrDefaultAsync();
+#pragma warning restore CS8600
             if (userDelete == null)
             {
                 return -1;
@@ -94,6 +118,24 @@ namespace MuonRoiSocialNetwork.Infrastructure.Repositories
             userDelete.IsDeleted = true;
             _dbcontext.AppUsers.Update(userDelete);
             return await _dbcontext.SaveChangesAsync();
+        }
+        /// <summary>
+        /// Handle change password
+        /// </summary>
+        /// <param name="confirmPassword"></param>
+        /// <param name="userGuid"></param>
+        /// <returns></returns>
+        public async Task<bool> UpdatePassworAsync(string confirmPassword, Guid userGuid)
+        {
+            AppUser? appUser = await _dbcontext.AppUsers.FirstOrDefaultAsync(x => x.Id.Equals(userGuid)).ConfigureAwait(false);
+            if (appUser == null)
+            {
+                return false;
+            }
+            appUser.UpdatedDateTS = DateTime.UtcNow.GetTimeStamp(includedTimeValue: true);
+            appUser.Salt = GenarateSalt();
+            appUser.PasswordHash = HashPassword(confirmPassword ?? "", appUser.Salt);
+            return true;
         }
     }
 }

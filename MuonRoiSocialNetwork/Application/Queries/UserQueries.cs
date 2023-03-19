@@ -9,7 +9,9 @@ using Microsoft.EntityFrameworkCore;
 using BaseConfig.EntityObject.Entity;
 using MuonRoiSocialNetwork.Common.Models.Users.Response;
 using MuonRoiSocialNetwork.Common.Models.Users.Base.Response;
-using BaseConfig.Extentions;
+using BaseConfig.Extentions.Datetime;
+using BaseConfig.Extentions.Image;
+
 namespace MuonRoiSocialNetwork.Application.Queries
 {
     /// <summary>
@@ -18,16 +20,19 @@ namespace MuonRoiSocialNetwork.Application.Queries
     public class UserQueries : IUserQueries
     {
         private readonly IMapper _mapper;
+        private readonly IConfiguration _configuration;
         private readonly MuonRoiSocialNetworkDbContext _dbcontext;
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="dbContext"></param>
         /// <param name="mapper"></param>
-        public UserQueries(MuonRoiSocialNetworkDbContext dbContext, IMapper mapper)
+        /// <param name="configuration"></param>
+        public UserQueries(MuonRoiSocialNetworkDbContext dbContext, IMapper mapper, IConfiguration configuration)
         {
             _dbcontext = dbContext;
             _mapper = mapper;
+            _configuration = configuration;
         }
         /// <summary>
         /// Handle get user by guid
@@ -74,6 +79,7 @@ namespace MuonRoiSocialNetwork.Application.Queries
             methodResult.Result.GroupName = roleUser?.GroupName ?? "";
             methodResult.Result.CreateDate = DateTimeExtensions.TimeStampToDateTime(appUser.CreatedDateTS ?? 0).AddHours(7);
             methodResult.Result.UpdateDate = DateTimeExtensions.TimeStampToDateTime(appUser.UpdatedDateTS ?? 0).AddHours(7);
+            methodResult.Result.Avatar = HandlerImg.GetLinkImg(_configuration, methodResult.Result.Avatar ?? "");
             return methodResult;
         }
         /// <summary>
@@ -98,17 +104,20 @@ namespace MuonRoiSocialNetwork.Application.Queries
             }
             List<AppRole> roles = await _dbcontext.AppRoles.Where(x => !x.IsDeleted).ToListAsync();
             List<GroupUserMember> groups = await _dbcontext.GroupUserMembers.Where(x => !x.IsDeleted).ToListAsync();
+#pragma warning disable CS8600
             GroupUserMember userRole = (from role in roles
                                         join gr in groups
                                         on role.Id equals gr.AppRoleKey
                                         where gr.Id == appUser.GroupId
                                         select gr).FirstOrDefault();
+#pragma warning restore CS8600
 
             methodResult.Result = _mapper.Map<UserModelResponse>(appUser);
             methodResult.Result.RoleName = userRole?.GroupName ?? "";
             methodResult.Result.GroupName = userRole?.GroupName ?? "";
             methodResult.Result.CreateDate = DateTimeExtensions.TimeStampToDateTime(appUser.CreatedDateTS ?? 0).AddHours(7);
             methodResult.Result.UpdateDate = DateTimeExtensions.TimeStampToDateTime(appUser.UpdatedDateTS ?? 0).AddHours(7);
+            methodResult.Result.Avatar = HandlerImg.GetLinkImg(_configuration, methodResult.Result.Avatar ?? "");
             return methodResult;
         }
         /// <summary>

@@ -11,7 +11,6 @@ using MuonRoiSocialNetwork.Infrastructure;
 using MuonRoiSocialNetwork.Infrastructure.Map.Users;
 using MuonRoiSocialNetwork.Infrastructure.Repositories;
 using MuonRoiSocialNetwork.Infrastructure.Services;
-using System;
 
 namespace MuonRoiSocialNetwork.Test
 {
@@ -43,7 +42,7 @@ namespace MuonRoiSocialNetwork.Test
                 c.AddProfile<UserProfile>();
             });
             _maperBase = _mapperConfiguration.CreateMapper();
-            _userQueriesBase = new UserQueries(_userdbContext, _maperBase);
+            _userQueriesBase = new UserQueries(_userdbContext, _maperBase, _configBase);
 
             #region InitData User
             AppUser user1 = new()

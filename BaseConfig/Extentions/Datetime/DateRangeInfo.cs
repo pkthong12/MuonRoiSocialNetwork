@@ -1,4 +1,4 @@
-﻿namespace BaseConfig.Extentions
+﻿namespace BaseConfig.Extentions.Datetime
 {
     public class DateRangeInfo
     {

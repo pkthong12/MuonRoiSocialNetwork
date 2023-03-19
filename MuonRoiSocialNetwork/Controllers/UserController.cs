@@ -8,7 +8,6 @@ using MuonRoiSocialNetwork.Application.Commands.Email;
 using MuonRoiSocialNetwork.Domains.Interfaces.Queries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using MuonRoiSocialNetwork.Common.Models.Users.Request;
 using MuonRoiSocialNetwork.Common.Models.Users.Response;
 using MuonRoiSocialNetwork.Common.Models.Users.Base.Response;
 
@@ -39,7 +38,7 @@ namespace MuonRoiSocialNetwork.Controllers
         /// Register new user API
         /// </summary>
         /// <returns></returns>
-        [HttpPost("register")]
+        [HttpPost]
         [AllowAnonymous]
         [ProducesResponseType(typeof(MethodResult<UserModelResponse>), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.BadRequest)]
@@ -83,7 +82,7 @@ namespace MuonRoiSocialNetwork.Controllers
         /// Verification email
         /// </summary>
         /// <returns></returns>
-        [HttpPatch("verificationEmail/{uid}/{token}")]
+        [HttpPatch("{uid}/{token}")]
         [ProducesResponseType(typeof(MethodResult<bool>), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> VerificationEmail([FromRoute] Guid uid, string token)
@@ -109,14 +108,13 @@ namespace MuonRoiSocialNetwork.Controllers
         /// Update informations for user
         /// </summary>
         /// <returns></returns>
-        [HttpPut("ByGuid/{uid}")]
+        [HttpPut]
         [ProducesResponseType(typeof(MethodResult<BaseUserResponse>), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> UpdateInformation([FromRoute] Guid uid, [FromBody] UpdateInformationCommand userChange)
+        public async Task<IActionResult> UpdateInformation([FromForm] UpdateInformationCommand userChange)
         {
             try
             {
-                userChange.UserGuid = uid;
                 MethodResult<BaseUserResponse> methodResult = await _mediator.Send(userChange).ConfigureAwait(false);
                 return methodResult.GetActionResult();
             }
@@ -131,7 +129,7 @@ namespace MuonRoiSocialNetwork.Controllers
         /// Get user by username
         /// </summary>
         /// <returns>UserModel</returns>
-        [HttpGet("ByUserName/{username}")]
+        [HttpGet("{username}")]
         [ProducesResponseType(typeof(MethodResult<BaseUserResponse>), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetUserByUserName([FromRoute] string username)
@@ -152,7 +150,7 @@ namespace MuonRoiSocialNetwork.Controllers
         /// Get user by Guid
         /// </summary>
         /// <returns>UserModel</returns>
-        [HttpGet("ByGuidUser/{guidUser}")]
+        [HttpGet("{guidUser}")]
         [ProducesResponseType(typeof(MethodResult<BaseUserResponse>), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetUserByGuid([FromRoute] Guid guidUser)
@@ -173,7 +171,7 @@ namespace MuonRoiSocialNetwork.Controllers
         /// Delete user by Guid
         /// </summary>
         /// <returns>UserModel</returns>
-        [HttpDelete("ByGuidUser/{guidUser}")]
+        [HttpDelete("{guidUser}")]
         [ProducesResponseType(typeof(MethodResult<bool>), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> DeleteUserByGuid([FromRoute] Guid guidUser)
@@ -184,6 +182,48 @@ namespace MuonRoiSocialNetwork.Controllers
                 {
                     GuidUser = guidUser
                 };
+                MethodResult<bool> methodResult = await _mediator.Send(cmd).ConfigureAwait(false);
+                return methodResult.GetActionResult();
+            }
+            catch (Exception ex)
+            {
+                var errCommandResult = new VoidMethodResult();
+                errCommandResult.AddErrorMessage(Helpers.GetExceptionMessage(ex), ex.StackTrace ?? "");
+                return errCommandResult.GetActionResult();
+            }
+        }
+        /// <summary>
+        /// User forgot password
+        /// </summary>
+        /// <returns>UserModel</returns>
+        [HttpPost("forgot-password")]
+        [ProducesResponseType(typeof(MethodResult<bool>), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> DeleteUserByGuid([FromForm] ForgotPasswordUserCommand cmd)
+        {
+            try
+            {
+                MethodResult<bool> methodResult = await _mediator.Send(cmd).ConfigureAwait(false);
+                return methodResult.GetActionResult();
+            }
+            catch (Exception ex)
+            {
+                var errCommandResult = new VoidMethodResult();
+                errCommandResult.AddErrorMessage(Helpers.GetExceptionMessage(ex), ex.StackTrace ?? "");
+                return errCommandResult.GetActionResult();
+            }
+        }
+        /// <summary>
+        /// User change forgot password
+        /// </summary>
+        /// <returns>UserModel</returns>
+        [HttpPatch("forgot-passoword")]
+        [ProducesResponseType(typeof(MethodResult<bool>), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> ChangePasswordForgot([FromForm] ChangePasswordForgotCommand cmd)
+        {
+            try
+            {
                 MethodResult<bool> methodResult = await _mediator.Send(cmd).ConfigureAwait(false);
                 return methodResult.GetActionResult();
             }

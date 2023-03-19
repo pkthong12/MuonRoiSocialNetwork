@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace BaseConfig.Extentions
+namespace BaseConfig.Extentions.String
 {
     public static class FormatString
     {

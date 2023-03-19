@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using BaseConfig.EntityObject.Entity;
-using BaseConfig.Extentions;
+using BaseConfig.Extentions.ObjectHandle;
 using BaseConfig.MethodResult;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;

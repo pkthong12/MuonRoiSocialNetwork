@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace BaseConfig.Extentions
+namespace BaseConfig.Extentions.ObjectHandle
 {
     public static class CheckObjectEqual
     {

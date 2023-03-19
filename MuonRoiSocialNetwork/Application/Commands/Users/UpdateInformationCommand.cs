@@ -1,14 +1,13 @@
 ﻿using AutoMapper;
 using BaseConfig.EntityObject.Entity;
 using BaseConfig.Exeptions;
-using BaseConfig.Infrashtructure;
+using BaseConfig.Extentions.Image;
 using BaseConfig.MethodResult;
 using MediatR;
 using MuonRoi.Social_Network.Users;
 using MuonRoiSocialNetwork.Application.Commands.Base;
+using MuonRoiSocialNetwork.Common.Models.Users.Base.Request;
 using MuonRoiSocialNetwork.Common.Models.Users.Base.Response;
-using MuonRoiSocialNetwork.Common.Models.Users.Request;
-using MuonRoiSocialNetwork.Common.Models.Users.Response;
 using MuonRoiSocialNetwork.Domains.Interfaces.Commands;
 using MuonRoiSocialNetwork.Domains.Interfaces.Queries;
 
@@ -17,12 +16,10 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
     /// <summary>
     /// Update user command
     /// </summary>
-    public class UpdateInformationCommand : UserModelRequest, IRequest<MethodResult<BaseUserResponse>>
+    public class UpdateInformationCommand : BaseUserRequest, IRequest<MethodResult<BaseUserResponse>>
     {
-        /// <summary>
-        /// Guid user update
-        /// </summary>
-        public Guid UserGuid { get; set; }
+        public IFormFile? AvatarTemp { get; set; }
+
     }
     /// <summary>
     /// Handler update infor user
@@ -78,19 +75,26 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                         return methodResult;
                     }
                 }
-                #region Validation
-                _mapper.Map(request, userIsExist);
-                if (!userIsExist.IsValid())
+                #region upload avatar
+
+                if (request.AvatarTemp != null)
                 {
-                    methodResult.StatusCode = StatusCodes.Status400BadRequest;
-                    methodResult.AddResultFromErrorList(userIsExist.ErrorMessages);
-                    return methodResult;
+                    Dictionary<string, string> result = await HandlerImg.UploadImgAsync(_configuration, request.AvatarTemp);
+                    userIsExist.Avatar = result.Keys.FirstOrDefault();
+                    if (result.Values.Equals("OK"))
+                    {
+                        methodResult.StatusCode = StatusCodes.Status400BadRequest;
+                        methodResult.AddApiErrorMessage(
+                            nameof(EnumUserErrorCodes.USRC41C),
+                            new[] { Helpers.GenerateErrorResult(nameof(request.UserName), request.UserName ?? "") }
+                        );
+                        return methodResult;
+                    }
                 }
                 #endregion
 
                 #region Update info user
-                userIsExist.Salt = GenarateSalt();
-                userIsExist.PasswordHash = HashPassword(request.PasswordHash ?? "", userIsExist.Salt);
+                _mapper.Map(request, userIsExist);
                 if (await _userRepository.UpdateUserAsync(userIsExist) < 1)
                 {
                     methodResult.StatusCode = StatusCodes.Status400BadRequest;

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
 using MediatR;
 using MongoDB.Bson.Serialization.Attributes;
-using BaseConfig.Extentions;
+using BaseConfig.Extentions.Datetime;
 
 namespace BaseConfig.EntityObject.Entity
 {

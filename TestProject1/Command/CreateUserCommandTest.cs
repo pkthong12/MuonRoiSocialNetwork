@@ -9,11 +9,11 @@ using MuonRoi.Social_Network.Users;
 using MuonRoiSocialNetwork.Infrastructure.Repositories;
 using BaseConfig.EntityObject.Entity;
 using Microsoft.AspNetCore.Http;
-using BaseConfig.Extentions;
 using MuonRoiSocialNetwork.Infrastructure.Services;
 using MuonRoiSocialNetwork.Application.Queries;
 using MuonRoiSocialNetwork.Common.Models.Users.Request;
 using MuonRoiSocialNetwork.Common.Models.Users.Response;
+using BaseConfig.Extentions.ObjectHandle;
 
 namespace TestProject1
 {

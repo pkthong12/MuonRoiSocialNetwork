@@ -1,6 +1,6 @@
 ﻿using BaseConfig.BaseDbContext.Common;
 using BaseConfig.EntityObject.Entity;
-using BaseConfig.Extentions;
+using BaseConfig.Extentions.Datetime;
 using BaseConfig.Infrashtructure;
 using BaseConfig.Infrashtructure.Interface.Events;
 using BaseConfig.MethodResult;

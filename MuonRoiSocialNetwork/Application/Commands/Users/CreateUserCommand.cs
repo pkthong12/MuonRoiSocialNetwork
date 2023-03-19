@@ -20,7 +20,10 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
     /// Command for user
     /// </summary>
     public class CreateUserCommand : UserModelRequest, IRequest<MethodResult<UserModelResponse>>
-    { }
+    {
+        public string? PasswordHash { get; set; }
+
+    }
     /// <summary>
     /// Handler create user
     /// </summary>

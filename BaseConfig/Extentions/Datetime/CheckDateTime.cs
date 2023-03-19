@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 
-namespace BaseConfig.Extentions
+namespace BaseConfig.Extentions.Datetime
 {
     public static class CheckDateTime
     {

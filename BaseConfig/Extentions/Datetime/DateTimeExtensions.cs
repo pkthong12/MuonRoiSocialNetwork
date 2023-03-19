@@ -1,4 +1,4 @@
-﻿namespace BaseConfig.Extentions
+﻿namespace BaseConfig.Extentions.Datetime
 {
     public static class DateTimeExtensions
     {
@@ -9,13 +9,13 @@
 
         public static DateTime TimeStampToDate(double timeStamp)
         {
-            timeStamp = ((timeStamp < 0.0) ? 0.0 : timeStamp);
+            timeStamp = timeStamp < 0.0 ? 0.0 : timeStamp;
             return TimeStampToDateTime(timeStamp).Date;
         }
 
         public static DateTime TimeStampToDateTime(double timeStamp)
         {
-            timeStamp = ((timeStamp < 0.0) ? 0.0 : timeStamp);
+            timeStamp = timeStamp < 0.0 ? 0.0 : timeStamp;
             return DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt64(timeStamp)).DateTime;
         }
 
@@ -68,8 +68,8 @@
             {
                 DateRangeInfo item2 = new DateRangeInfo
                 {
-                    FromDate = ((!list.Any()) ? fromDateTime : new DateTime(fromDateTime.Year, fromDateTime.Month, 1)),
-                    ToDate = (toDateTime.GreaterThanWithoutDay(fromDateTime) ? new DateTime(fromDateTime.Year, fromDateTime.Month, DateTime.DaysInMonth(fromDateTime.Year, fromDateTime.Month)) : toDateTime)
+                    FromDate = !list.Any() ? fromDateTime : new DateTime(fromDateTime.Year, fromDateTime.Month, 1),
+                    ToDate = toDateTime.GreaterThanWithoutDay(fromDateTime) ? new DateTime(fromDateTime.Year, fromDateTime.Month, DateTime.DaysInMonth(fromDateTime.Year, fromDateTime.Month)) : toDateTime
                 };
                 list.Add(item2);
                 fromDateTime = fromDateTime.AddMonths(1);
@@ -81,7 +81,7 @@
         public static int ConverTimestampToYearMonth(double timeStamp)
         {
             DateTime dateTime = TimeStampToDate(timeStamp);
-            string text = ((dateTime.Month < 10) ? ("0" + dateTime.Month) : (dateTime.Month.ToString() ?? ""));
+            string text = dateTime.Month < 10 ? "0" + dateTime.Month : dateTime.Month.ToString() ?? "";
             string s = dateTime.Year + text;
             return int.Parse(s);
         }
@@ -89,8 +89,8 @@
         public static int ConverTimestampToYearMonthDay(double timeStamp)
         {
             DateTime dateTime = TimeStampToDate(timeStamp);
-            string text = ((dateTime.Month < 10) ? ("0" + dateTime.Month) : (dateTime.Month.ToString() ?? ""));
-            string text2 = ((dateTime.Day < 10) ? ("0" + dateTime.Day) : (dateTime.Day.ToString() ?? ""));
+            string text = dateTime.Month < 10 ? "0" + dateTime.Month : dateTime.Month.ToString() ?? "";
+            string text2 = dateTime.Day < 10 ? "0" + dateTime.Day : dateTime.Day.ToString() ?? "";
             string s = dateTime.Year + text + text2;
             return int.Parse(s);
         }

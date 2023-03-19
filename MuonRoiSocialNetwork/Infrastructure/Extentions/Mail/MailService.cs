@@ -9,8 +9,6 @@ using MuonRoiSocialNetwork.Common.Models.Images;
 using Amazon;
 using Amazon.S3;
 using Amazon.S3.Model;
-using System.IO;
-
 namespace MuonRoiSocialNetwork.Infrastructure.Extentions.Mail
 {
     /// <summary>
@@ -112,9 +110,13 @@ namespace MuonRoiSocialNetwork.Infrastructure.Extentions.Mail
         /// <param name="userEmailOptions"></param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        public Task SendEmailForForgotPassword(UserEmailOptions userEmailOptions)
+        public async Task SendEmailForForgotPassword(UserEmailOptions userEmailOptions)
         {
-            throw new NotImplementedException();
+            userEmailOptions.Subject = UpdatePlaceHolders("Xin chào! {{UserName}}, Vui lòng xác nhận email của bạn", userEmailOptions.PlaceHolders);
+
+            userEmailOptions.Body = UpdatePlaceHolders(await GetEmailBodyAsync("ForgotPassword", _configuration), userEmailOptions.PlaceHolders);
+
+            await SendEmail(userEmailOptions);
         }
     }
 }

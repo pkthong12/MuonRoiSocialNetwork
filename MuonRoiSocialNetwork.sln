@@ -9,12 +9,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MuonRoiSocialNetwork.Common
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BaseConfig", "BaseConfig\BaseConfig.csproj", "{AE2B31BA-7BF8-476F-8EF8-E4540C79FBAE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MuonRoiSocialNetwork.Test", "TestProject1\MuonRoiSocialNetwork.Test.csproj", "{0A217DE1-D213-4370-AE3F-EFB3428C518E}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{52EB6D1B-31C9-4373-B52A-B73463150434}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MuonRoiSocialNetwork.Test", "MuonRoiSocialNetwork.Test\MuonRoiSocialNetwork.Test.csproj", "{6260F507-D27B-4235-90B7-ACB3D8DC12D6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -34,10 +34,10 @@ Global
 		{AE2B31BA-7BF8-476F-8EF8-E4540C79FBAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AE2B31BA-7BF8-476F-8EF8-E4540C79FBAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AE2B31BA-7BF8-476F-8EF8-E4540C79FBAE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0A217DE1-D213-4370-AE3F-EFB3428C518E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0A217DE1-D213-4370-AE3F-EFB3428C518E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0A217DE1-D213-4370-AE3F-EFB3428C518E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0A217DE1-D213-4370-AE3F-EFB3428C518E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6260F507-D27B-4235-90B7-ACB3D8DC12D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6260F507-D27B-4235-90B7-ACB3D8DC12D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6260F507-D27B-4235-90B7-ACB3D8DC12D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6260F507-D27B-4235-90B7-ACB3D8DC12D6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -126,7 +126,7 @@ namespace TestProject1
             {
                 StatusCode = StatusCodes.Status400BadRequest
             };
-            var _users = new UserRepository(null);
+            var _users = new UserRepository(null, null, null, null, null);
             CreateUserCommandHandler handler = new(_mapper, _users, _userQueries, _config, _mail.Object);
             MethodResult<UserModelResponse> result = await handler.Handle(user, CancellationToken.None);
             bool resultMessageAndCode = CheckObjectEqual.ObjectAreEqual(result, methodResult);

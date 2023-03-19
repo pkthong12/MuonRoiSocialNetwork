@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "MuonRoiSocialNetwork.Test": {
-      "commandName": "Project",
-      "nativeDebugging": false
-    }
-  }
-}

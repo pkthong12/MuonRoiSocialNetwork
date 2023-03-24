@@ -1,39 +1,37 @@
 ﻿using AutoMapper;
 using BaseConfig.EntityObject.Entity;
+using BaseConfig.Exeptions;
 using BaseConfig.MethodResult;
 using MediatR;
 using MuonRoi.Social_Network.Users;
 using MuonRoiSocialNetwork.Application.Commands.Base;
 using MuonRoiSocialNetwork.Common.Models.Users.Base.Response;
+using MuonRoiSocialNetwork.Common.Models.Users.Request;
 using MuonRoiSocialNetwork.Domains.Interfaces.Commands;
 using MuonRoiSocialNetwork.Domains.Interfaces.Queries;
 
 namespace MuonRoiSocialNetwork.Application.Commands.Users
 {
     /// <summary>
-    /// Request delete user
+    /// Command change status account request
     /// </summary>
-    public class DeleteUserCommand : IRequest<MethodResult<bool>>
-    {
-        /// <summary>
-        /// Guid for user
-        /// </summary>
-        public Guid GuidUser { get; set; }
-    }
+    public class ChangeStatusCommand : ChangeStatusUserModel, IRequest<MethodResult<bool>>
+    { }
     /// <summary>
-    /// Handler delete user
+    /// Handler command
     /// </summary>
-    public class DeleteUserCommandHandler : BaseCommandHandler, IRequestHandler<DeleteUserCommand, MethodResult<bool>>
+    public class ChangeStatusCommandHandler : BaseCommandHandler, IRequestHandler<ChangeStatusCommand, MethodResult<bool>>
     {
         /// <summary>
-        /// constructor
+        /// Constructor
         /// </summary>
         /// <param name="mapper"></param>
         /// <param name="configuration"></param>
         /// <param name="userQueries"></param>
         /// <param name="userRepository"></param>
-        public DeleteUserCommandHandler(IMapper mapper, IConfiguration configuration, IUserQueries userQueries, IUserRepository userRepository) : base(mapper, configuration, userQueries, userRepository)
-        { }
+        public ChangeStatusCommandHandler(IMapper mapper, IConfiguration configuration, IUserQueries userQueries, IUserRepository userRepository) : base(mapper, configuration, userQueries, userRepository)
+        {
+        }
         /// <summary>
         /// Function handle
         /// </summary>
@@ -41,7 +39,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        public async Task<MethodResult<bool>> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
+        public async Task<MethodResult<bool>> Handle(ChangeStatusCommand request, CancellationToken cancellationToken)
         {
             MethodResult<bool> methodResult = new();
             try
@@ -73,28 +71,35 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                 }
                 #endregion
 
-                #region Delete User
-                if (await _userRepository.DeleteUserAsync(request.GuidUser) <= 0)
+                #region Update status account
+                AppUser userChange = _mapper.Map<AppUser>(appUser);
+                userChange.AccountStatus = request.AccountStatus;
+                userChange.LockReason = request.Reason;
+                if (await _userRepository.UpdateUserAsync(userChange) < 1)
                 {
                     methodResult.StatusCode = StatusCodes.Status400BadRequest;
                     methodResult.AddApiErrorMessage(
                         nameof(EnumUserErrorCodes.USR29C),
-                       new[] { Helpers.GenerateErrorResult(nameof(appUser.Result.Username), appUser.Result?.Username ?? "") }
+                        new[] { Helpers.GenerateErrorResult(nameof(EnumUserErrorCodes.USR29C), EnumUserErrorCodes.USR29C.ToString()) }
                     );
                     methodResult.Result = false;
                     return methodResult;
                 }
+                methodResult.Result = false;
+                methodResult.StatusCode = StatusCodes.Status200OK;
+                return methodResult;
                 #endregion
+            }
+            catch (CustomException ex)
+            {
+                methodResult.StatusCode = StatusCodes.Status400BadRequest;
+                methodResult.AddResultFromErrorList(ex.ErrorMessages);
             }
             catch (Exception ex)
             {
                 methodResult.StatusCode = StatusCodes.Status400BadRequest;
-                methodResult.Result = false;
                 methodResult.AddErrorMessage(Helpers.GetExceptionMessage(ex), ex.StackTrace ?? "");
-                return methodResult;
             }
-            methodResult.Result = true;
-            methodResult.StatusCode = StatusCodes.Status200OK;
             return methodResult;
         }
     }

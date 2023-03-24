@@ -192,5 +192,9 @@
         /// Ảnh lỗi! Vui lòng thử lại.
         /// </summary>
         USRC41C,
+        /// <summary>
+        /// Không thể thay đổi mật khẩu bây giờ vui lòng thử lại sau ít phút.
+        /// </summary>
+        USRC42C,
     }
 }

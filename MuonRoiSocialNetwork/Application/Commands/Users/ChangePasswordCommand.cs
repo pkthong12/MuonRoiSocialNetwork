@@ -14,7 +14,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
     /// <summary>
     /// Handler request change password
     /// </summary>
-    public class ChangePasswordForgotCommand : IRequest<MethodResult<bool>>
+    public class ChangePasswordCommand : IRequest<MethodResult<bool>>
     {
         /// <summary>
         /// User change password
@@ -32,7 +32,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
     /// <summary>
     /// Handler command
     /// </summary>
-    public class ChangePasswordForgotCommandHandler : BaseCommandHandler, IRequestHandler<ChangePasswordForgotCommand, MethodResult<bool>>
+    public class ChangePasswordCommandHandler : BaseCommandHandler, IRequestHandler<ChangePasswordCommand, MethodResult<bool>>
     {
         /// <summary>
         /// Constructor
@@ -41,7 +41,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
         /// <param name="configuration"></param>
         /// <param name="userQueries"></param>
         /// <param name="userRepository"></param>
-        public ChangePasswordForgotCommandHandler(IMapper mapper, IConfiguration configuration, IUserQueries userQueries, IUserRepository userRepository) : base(mapper, configuration, userQueries, userRepository)
+        public ChangePasswordCommandHandler(IMapper mapper, IConfiguration configuration, IUserQueries userQueries, IUserRepository userRepository) : base(mapper, configuration, userQueries, userRepository)
         { }
         /// <summary>
         /// Function handler
@@ -49,7 +49,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
         /// <param name="request"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<MethodResult<bool>> Handle(ChangePasswordForgotCommand request, CancellationToken cancellationToken)
+        public async Task<MethodResult<bool>> Handle(ChangePasswordCommand request, CancellationToken cancellationToken)
         {
             MethodResult<bool> methodResult = new();
             #region Validator data
@@ -89,7 +89,9 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
             #endregion
 
             #region Change password
-            bool checkStatus = await _userRepository.UpdatePassworAsync(request.ConfirmPassword ?? "", request.UserGuid);
+            string salt = GenarateSalt();
+            string passwordHash = HashPassword(request.ConfirmPassword, salt);
+            bool checkStatus = await _userRepository.UpdatePassworAsync(request.UserGuid, salt, passwordHash);
             if (!checkStatus)
             {
                 methodResult.StatusCode = StatusCodes.Status400BadRequest;
@@ -98,9 +100,11 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                     new[] { Helpers.GenerateErrorResult(nameof(EnumUserErrorCodes.USR29C), nameof(EnumUserErrorCodes.USR29C) ?? "") }
                 );
                 methodResult.Result = false;
+                methodResult.StatusCode = StatusCodes.Status400BadRequest;
                 return methodResult;
             }
             #endregion
+            methodResult.StatusCode = StatusCodes.Status200OK;
             return methodResult;
         }
     }

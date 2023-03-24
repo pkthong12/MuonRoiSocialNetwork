@@ -129,7 +129,7 @@ namespace MuonRoiSocialNetwork.Controllers
         /// Get user by username
         /// </summary>
         /// <returns>UserModel</returns>
-        [HttpGet("{username}")]
+        [HttpGet("default/{username}")]
         [ProducesResponseType(typeof(MethodResult<BaseUserResponse>), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetUserByUserName([FromRoute] string username)
@@ -199,7 +199,7 @@ namespace MuonRoiSocialNetwork.Controllers
         [HttpPost("forgot-password")]
         [ProducesResponseType(typeof(MethodResult<bool>), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> DeleteUserByGuid([FromForm] ForgotPasswordUserCommand cmd)
+        public async Task<IActionResult> FotgotPassword([FromForm] ForgotPasswordUserCommand cmd)
         {
             try
             {

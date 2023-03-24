@@ -13,21 +13,14 @@ namespace MuonRoiSocialNetwork.Infrastructure.Repositories
     /// <summary>
     /// Handler user
     /// </summary>
-    public class UserRepository : BaseCommandHandler, IUserRepository
+    public class UserRepository : IUserRepository
     {
         private readonly MuonRoiSocialNetworkDbContext _dbcontext;
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="dbContext"></param>
-        /// <param name="mapper"></param>
-        /// <param name="userRepository"></param>
-        /// <param name="userQueries"></param>
-        /// <param name="configuration"></param>
-        public UserRepository(MuonRoiSocialNetworkDbContext dbContext, IMapper mapper,
-            IUserRepository userRepository,
-            IUserQueries userQueries,
-            IConfiguration configuration) : base(mapper, configuration, userQueries, userRepository)
+        public UserRepository(MuonRoiSocialNetworkDbContext dbContext)
         {
             _dbcontext = dbContext;
         }
@@ -122,10 +115,11 @@ namespace MuonRoiSocialNetwork.Infrastructure.Repositories
         /// <summary>
         /// Handle change password
         /// </summary>
-        /// <param name="confirmPassword"></param>
         /// <param name="userGuid"></param>
+        /// <param name="salt"></param>
+        /// <param name="passwordHash"></param>
         /// <returns></returns>
-        public async Task<bool> UpdatePassworAsync(string confirmPassword, Guid userGuid)
+        public async Task<bool> UpdatePassworAsync(Guid userGuid, string salt, string passwordHash)
         {
             AppUser? appUser = await _dbcontext.AppUsers.FirstOrDefaultAsync(x => x.Id.Equals(userGuid)).ConfigureAwait(false);
             if (appUser == null)
@@ -133,8 +127,8 @@ namespace MuonRoiSocialNetwork.Infrastructure.Repositories
                 return false;
             }
             appUser.UpdatedDateTS = DateTime.UtcNow.GetTimeStamp(includedTimeValue: true);
-            appUser.Salt = GenarateSalt();
-            appUser.PasswordHash = HashPassword(confirmPassword ?? "", appUser.Salt);
+            appUser.Salt = salt;
+            appUser.PasswordHash = passwordHash;
             return true;
         }
     }

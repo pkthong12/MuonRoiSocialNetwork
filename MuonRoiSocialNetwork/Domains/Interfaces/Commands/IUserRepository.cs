@@ -42,10 +42,11 @@ namespace MuonRoiSocialNetwork.Domains.Interfaces.Commands
         /// <summary>
         /// Change password forgot
         /// </summary>
-        /// <param name="confirmPassword"></param>
         /// <param name="userGuid"></param>
+        /// <param name="salt"></param>
+        /// <param name="passwordHash"></param>
         /// <returns></returns>
-        Task<bool> UpdatePassworAsync(string confirmPassword, Guid userGuid);
+        Task<bool> UpdatePassworAsync(Guid userGuid, string salt, string passwordHash);
 
         /// <summary>
         /// Update info user

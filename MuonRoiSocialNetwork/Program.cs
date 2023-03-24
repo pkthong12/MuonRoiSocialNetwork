@@ -20,6 +20,7 @@ using Microsoft.IdentityModel.Tokens;
 using Autofac;
 using BaseConfig.BaseStartUp;
 using Autofac.Extensions.DependencyInjection;
+using MuonRoiSocialNetwork.Application.Commands.Base;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
@@ -64,7 +65,7 @@ builder.Services.AddSwaggerGen(x =>
                     Id="Bearer"
                 }
             },
-            new string[]{}
+            Array.Empty<string>()
         }
     });
     var filePath = Path.Combine(AppContext.BaseDirectory, $"{typeof(Program).Assembly.GetName().Name}.xml");

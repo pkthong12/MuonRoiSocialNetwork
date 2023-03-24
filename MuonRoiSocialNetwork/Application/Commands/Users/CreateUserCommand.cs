@@ -114,10 +114,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                 };
                 UserModelResponse resultUser = _mapper.Map<UserModelResponse>(getCreatedUser);
                 methodResult.Result = resultUser;
-                methodResult.StatusCode = StatusCodes.Status200OK;
                 #endregion
-
-                return methodResult;
             }
             catch (CustomException ex)
             {
@@ -129,6 +126,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                 methodResult.StatusCode = StatusCodes.Status400BadRequest;
                 methodResult.AddErrorMessage(Helpers.GetExceptionMessage(ex), ex.StackTrace ?? "");
             }
+            methodResult.StatusCode = StatusCodes.Status200OK;
             return methodResult;
         }
         /// <summary>

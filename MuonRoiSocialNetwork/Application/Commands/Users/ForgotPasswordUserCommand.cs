@@ -29,6 +29,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
     /// </summary>
     public class ForgotPasswordUserCommandHandler : BaseCommandHandler, IRequestHandler<ForgotPasswordUserCommand, MethodResult<bool>>
     {
+        private readonly IMediator _mediator;
         private readonly IEmailService _emailService;
         /// <summary>
         /// Constructor
@@ -38,9 +39,11 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
         /// <param name="userQueries"></param>
         /// <param name="userRepository"></param>
         /// <param name="emailService"></param>
-        public ForgotPasswordUserCommandHandler(IMapper mapper, IConfiguration configuration, IUserQueries userQueries, IUserRepository userRepository, IEmailService emailService) : base(mapper, configuration, userQueries, userRepository)
+        /// <param name="mediator"></param>
+        public ForgotPasswordUserCommandHandler(IMapper mapper, IConfiguration configuration, IUserQueries userQueries, IUserRepository userRepository, IEmailService emailService, IMediator mediator) : base(mapper, configuration, userQueries, userRepository)
         {
             _emailService = emailService;
+            _mediator = mediator;
         }
         /// <summary>
         /// Handler function
@@ -84,6 +87,25 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                 #region SendMail
                 await GenerateEmailConfirmationTokenAsync(existUser);
                 #endregion
+
+                #region Update status when forgot password
+                ChangeStatusCommand changeStatus = new();
+                _mapper.Map(existUser, changeStatus);
+                changeStatus.AccountStatus = EnumAccountStatus.IsRenew;
+                changeStatus.Reason = EnumAccountStatus.IsRenew.ToString();
+                MethodResult<bool> methodResultStatus = await _mediator.Send(changeStatus, cancellationToken).ConfigureAwait(false);
+                if (!methodResultStatus.Result)
+                {
+                    methodResult.StatusCode = StatusCodes.Status400BadRequest;
+                    methodResult.AddApiErrorMessage(
+                        nameof(EnumUserErrorCodes.USRC42C),
+                        new[] { Helpers.GenerateErrorResult(nameof(request.Username), nameof(request.Username) ?? "") }
+                    );
+                    methodResult.Result = false;
+                    return methodResult;
+                }
+                #endregion
+
             }
             catch (Exception ex)
             {
@@ -93,6 +115,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                 return methodResult;
             }
             methodResult.Result = true;
+            methodResult.StatusCode = StatusCodes.Status200OK;
             return methodResult;
         }
         /// <summary>

@@ -24,5 +24,17 @@
         /// Non confirm email
         /// </summary>
         UnConfirm = 5,
+        /// <summary>
+        /// Account is online
+        /// </summary>
+        IsOnl = 6,
+        /// <summary>
+        /// Account is offline
+        /// </summary>
+        IsOf = 7,
+        /// <summary>
+        /// Is renewPassword
+        /// </summary>
+        IsRenew = 8,
     }
 }

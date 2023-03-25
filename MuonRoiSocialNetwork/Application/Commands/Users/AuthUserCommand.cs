@@ -121,7 +121,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                     methodResult.StatusCode = StatusCodes.Status400BadRequest;
                     methodResult.AddApiErrorMessage(
                         nameof(EnumUserErrorCodes.USRC39C),
-                        new[] { Helpers.GenerateErrorResult(nameof(LoginAttemp.loginAttemp), LoginAttemp.loginAttemp - appUser.AccessFailedCount) }
+                        new[] { Helpers.GenerateErrorResult(nameof(LoginAttemp.loginAttempDefault), LoginAttemp.loginAttempDefault - appUser.AccessFailedCount) }
                     );
                     appUser.AccessFailedCount++;
                     if (appUser.AccessFailedCount >= 5)

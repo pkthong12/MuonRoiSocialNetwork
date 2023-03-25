@@ -5,6 +5,10 @@
         /// <summary>
         /// The numbers maximum of fail login attemps for current user
         /// </summary>
-        public static int loginAttemp = 5;
+        public static int loginAttempDefault = 5;
+        /// <summary>
+        /// The numbers maximum of fail login attemps for current user
+        /// </summary>
+        public static int genarePasswordDefaultCharacter = 8;
     }
 }

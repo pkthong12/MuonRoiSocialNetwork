@@ -1,11 +1,13 @@
 ﻿using AutoMapper;
 using BaseConfig.EntityObject.Entity;
+using BaseConfig.Extentions.Datetime;
 using BaseConfig.Infrashtructure;
 using BaseConfig.JWT;
 using BaseConfig.MethodResult;
 using MediatR;
 using MuonRoi.Social_Network.Users;
 using MuonRoiSocialNetwork.Application.Commands.Base;
+using MuonRoiSocialNetwork.Common.Models.Users.Base.Response;
 using MuonRoiSocialNetwork.Common.Models.Users.Response;
 using MuonRoiSocialNetwork.Common.Settings.UserSettings;
 using MuonRoiSocialNetwork.Domains.Interfaces.Commands;
@@ -61,6 +63,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
             GenarateJwtToken genarateJwtToken = new(_configuration);
             try
             {
+
                 #region Check valid username and password
                 if (string.IsNullOrEmpty(request.Username) || string.IsNullOrEmpty(request.Password))
                 {
@@ -99,6 +102,18 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                 }
                 #endregion
 
+                #region check user is renew password
+                if (appUser.Status == EnumAccountStatus.IsRenew)
+                {
+                    methodResult.StatusCode = StatusCodes.Status400BadRequest;
+                    methodResult.AddApiErrorMessage(
+                        nameof(EnumUserErrorCodes.USRC43C),
+                        new[] { Helpers.GenerateErrorResult(nameof(request.Username), request.Username ?? "") }
+                    );
+                    return methodResult;
+                }
+                #endregion
+
                 #region check password user
                 string password = HashPassword(request.Password, appUser.Salt ?? "");
                 if (password != appUser.PasswordHash)
@@ -130,6 +145,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                 #region Update info user when login success
                 appUser.AccessFailedCount = 0;
                 appUser.LastLogin = DateTime.UtcNow;
+                appUser.AccountStatus = EnumAccountStatus.IsOnl;
                 if (await _userRepository.UpdateUserAsync(appUser) < 1)
                 {
                     methodResult.StatusCode = StatusCodes.Status400BadRequest;
@@ -143,6 +159,11 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
 
                 #region Return info user was login
                 UserModelResponse resultInforLoginUser = _mapper.Map<UserModelResponse>(appUser);
+                resultInforLoginUser.CreateDate = DateTimeExtensions.TimeStampToDateTime(appUser.CreatedDateTS.GetValueOrDefault());
+                resultInforLoginUser.UpdateDate = DateTimeExtensions.TimeStampToDateTime(appUser.UpdatedDateTS.GetValueOrDefault());
+                MethodResult<BaseUserResponse> userInfo = await _userQueries.GetUserModelByGuidAsync(resultInforLoginUser.Id);
+                resultInforLoginUser.RoleName = userInfo.Result?.RoleName;
+                resultInforLoginUser.GroupName = userInfo.Result?.GroupName;
                 resultInforLoginUser.JwtToken = genarateJwtToken.GenarateJwt(resultInforLoginUser);
                 methodResult.Result = resultInforLoginUser;
                 methodResult.StatusCode = StatusCodes.Status200OK;

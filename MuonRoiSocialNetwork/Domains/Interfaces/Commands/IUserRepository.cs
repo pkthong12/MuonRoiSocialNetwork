@@ -52,7 +52,9 @@ namespace MuonRoiSocialNetwork.Domains.Interfaces.Commands
         /// Update info user
         /// </summary>
         /// <param name="user"></param>
+        /// <param name="salt"></param>
+        /// <param name="passwordHash"></param>
         /// <returns></returns>
-        Task<int> UpdateUserAsync(AppUser user);
+        Task<int> UpdateUserAsync(AppUser user, string? salt = null, string? passwordHash = null);
     }
 }

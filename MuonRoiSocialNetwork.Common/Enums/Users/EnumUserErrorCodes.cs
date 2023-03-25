@@ -196,5 +196,9 @@
         /// Không thể thay đổi mật khẩu bây giờ vui lòng thử lại sau ít phút.
         /// </summary>
         USRC42C,
+        /// <summary>
+        /// Vui lòng đổi mật khẩu mặc định thành mật khẩu mới.
+        /// </summary>
+        USRC43C,
     }
 }

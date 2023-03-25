@@ -90,7 +90,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
 
             #region Change password
             string salt = GenarateSalt();
-            string passwordHash = HashPassword(request.ConfirmPassword, salt);
+            string passwordHash = HashPassword(request.ConfirmPassword ?? "", salt);
             bool checkStatus = await _userRepository.UpdatePassworAsync(request.UserGuid, salt, passwordHash);
             if (!checkStatus)
             {

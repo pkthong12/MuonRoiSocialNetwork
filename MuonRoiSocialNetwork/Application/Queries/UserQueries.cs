@@ -127,6 +127,5 @@ namespace MuonRoiSocialNetwork.Application.Queries
         /// <returns></returns>
         public async Task<AppUser> GetUserByEmailAsync(string email)
             => await _dbcontext.AppUsers.AsNoTracking().FirstOrDefaultAsync(x => x.Email == email && !x.IsDeleted).ConfigureAwait(false);
-
     }
 }

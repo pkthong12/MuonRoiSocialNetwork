@@ -4,9 +4,6 @@ using MuonRoiSocialNetwork.Domains.Interfaces.Commands;
 using MuonRoi.Social_Network.Roles;
 using BaseConfig.Extentions.Datetime;
 using BaseConfig.Extentions.String;
-using MuonRoiSocialNetwork.Application.Commands.Base;
-using AutoMapper;
-using MuonRoiSocialNetwork.Domains.Interfaces.Queries;
 
 namespace MuonRoiSocialNetwork.Infrastructure.Repositories
 {
@@ -84,11 +81,20 @@ namespace MuonRoiSocialNetwork.Infrastructure.Repositories
         /// Handle update info user
         /// </summary>
         /// <param name="user"></param>
+        /// <param name="salt"></param>
+        /// <param name="passwordHash"></param>
         /// <returns></returns>
-        public async Task<int> UpdateUserAsync(AppUser user)
+        public async Task<int> UpdateUserAsync(AppUser user, string? salt, string? passwordHash)
         {
             DateTime utcNow = DateTime.UtcNow;
             user.UpdatedDateTS = utcNow.GetTimeStamp(includedTimeValue: true);
+            if (salt != null && passwordHash != null)
+            {
+                user.Salt = salt;
+                user.PasswordHash = passwordHash;
+                _dbcontext.AppUsers.Update(user);
+                return await _dbcontext.SaveChangesAsync();
+            }
             _dbcontext.AppUsers.Update(user);
             return await _dbcontext.SaveChangesAsync();
         }
@@ -119,7 +125,7 @@ namespace MuonRoiSocialNetwork.Infrastructure.Repositories
         /// <param name="salt"></param>
         /// <param name="passwordHash"></param>
         /// <returns></returns>
-        public async Task<bool> UpdatePassworAsync(Guid userGuid, string salt, string passwordHash)
+        public async Task<bool> UpdatePassworAsync(Guid userGuid, string? salt, string? passwordHash)
         {
             AppUser? appUser = await _dbcontext.AppUsers.FirstOrDefaultAsync(x => x.Id.Equals(userGuid)).ConfigureAwait(false);
             if (appUser == null)
@@ -129,6 +135,13 @@ namespace MuonRoiSocialNetwork.Infrastructure.Repositories
             appUser.UpdatedDateTS = DateTime.UtcNow.GetTimeStamp(includedTimeValue: true);
             appUser.Salt = salt;
             appUser.PasswordHash = passwordHash;
+            appUser.Status = EnumAccountStatus.Active;
+            _dbcontext.AppUsers.Update(appUser);
+            int resultUpdate = await _dbcontext.SaveChangesAsync();
+            if (resultUpdate <= 0)
+            {
+                return false;
+            }
             return true;
         }
     }

@@ -3,6 +3,10 @@
     public enum EnumAccountStatus
     {
         /// <summary>
+        /// No change
+        /// </summary>
+        None = 0,
+        /// <summary>
         /// Active
         /// </summary>
         Active = 1,

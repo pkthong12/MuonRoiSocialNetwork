@@ -18,8 +18,26 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
     /// </summary>
     public class UpdateInformationCommand : BaseUserRequest, IRequest<MethodResult<BaseUserResponse>>
     {
+        /// <summary>
+        /// Avatar raw
+        /// </summary>
         public IFormFile? AvatarTemp { get; set; }
-
+        /// <summary>
+        /// New salf when fotgot password
+        /// </summary>
+        public string? NewSalf { get; set; }
+        /// <summary>
+        /// New password when fotgot password
+        /// </summary>
+        public string? NewPassword { get; set; }
+        /// <summary>
+        /// Status for account
+        /// </summary>
+        public EnumAccountStatus AccountStatus { get; set; }
+        /// <summary>
+        /// Reason set status for account
+        /// </summary>
+        public string? Reason { get; set; }
     }
     /// <summary>
     /// Handler update infor user
@@ -70,7 +88,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                         methodResult.StatusCode = StatusCodes.Status400BadRequest;
                         methodResult.AddApiErrorMessage(
                             nameof(EnumUserErrorCodes.USRC34C),
-                            new[] { Helpers.GenerateErrorResult(nameof(request.Email), request.Email) }
+                            new[] { Helpers.GenerateErrorResult(nameof(request.Email), request.Email ?? "") }
                         );
                         return methodResult;
                     }
@@ -95,7 +113,9 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
 
                 #region Update info user
                 _mapper.Map(request, userIsExist);
-                if (await _userRepository.UpdateUserAsync(userIsExist) < 1)
+                userIsExist.Status = request.AccountStatus == EnumAccountStatus.None ? request.AccountStatus : userIsExist.AccountStatus;
+                userIsExist.LockReason = request.Reason ?? userIsExist.LockReason;
+                if (await _userRepository.UpdateUserAsync(userIsExist, request.NewSalf, request.NewPassword) < 1)
                 {
                     methodResult.StatusCode = StatusCodes.Status400BadRequest;
                     methodResult.AddApiErrorMessage(

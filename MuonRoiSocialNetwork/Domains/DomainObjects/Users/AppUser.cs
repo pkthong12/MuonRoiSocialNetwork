@@ -107,7 +107,7 @@ namespace MuonRoi.Social_Network.Users
         /// </summary>
         public int? GroupId { get; set; }
         /// <summary>
-        /// Account status
+        /// Account status isOn | isOf
         /// </summary>
         public EnumAccountStatus AccountStatus { get; set; }
         /// <summary>

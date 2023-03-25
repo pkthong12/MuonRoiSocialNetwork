@@ -5,7 +5,7 @@ namespace MuonRoiSocialNetwork.Common.Models.Users.Request
 {
     public class ChangeStatusUserModel : BaseUserRequest
     {
-        public Guid GuidUser { get; set; }
+        public Guid Id { get; set; }
         public EnumAccountStatus AccountStatus { get; set; }
         public string? Reason { get; set; }
     }

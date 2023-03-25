@@ -58,13 +58,13 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                 #endregion
 
                 #region Check is exist user
-                MethodResult<BaseUserResponse> appUser = await _userQueries.GetUserModelByGuidAsync(request.GuidUser);
-                if (appUser.Result == null)
+                MethodResult<BaseUserResponse> baseUserResponse = await _userQueries.GetUserModelByGuidAsync(request.Id);
+                if (baseUserResponse.Result == null)
                 {
                     methodResult.StatusCode = StatusCodes.Status400BadRequest;
                     methodResult.AddApiErrorMessage(
                         nameof(EnumUserErrorCodes.USR13C),
-                        new[] { Helpers.GenerateErrorResult(nameof(appUser.Result.Username), appUser.Result?.Username ?? "") }
+                        new[] { Helpers.GenerateErrorResult(nameof(baseUserResponse.Result.Username), baseUserResponse.Result?.Username ?? "") }
                     );
                     methodResult.Result = false;
                     return methodResult;
@@ -72,7 +72,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                 #endregion
 
                 #region Update status account
-                AppUser userChange = _mapper.Map<AppUser>(appUser);
+                AppUser userChange = await _userQueries.GetByGuidAsync(baseUserResponse.Result.Id);
                 userChange.AccountStatus = request.AccountStatus;
                 userChange.LockReason = request.Reason;
                 if (await _userRepository.UpdateUserAsync(userChange) < 1)
@@ -85,7 +85,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                     methodResult.Result = false;
                     return methodResult;
                 }
-                methodResult.Result = false;
+                methodResult.Result = true;
                 methodResult.StatusCode = StatusCodes.Status200OK;
                 return methodResult;
                 #endregion

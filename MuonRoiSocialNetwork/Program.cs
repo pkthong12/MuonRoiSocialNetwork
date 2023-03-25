@@ -111,6 +111,14 @@ builder.Services.AddDbContext<MuonRoiSocialNetworkDbContext>(opt =>
 #region Mail
 builder.Services.Configure<SMTPConfigModel>(builder.Configuration.GetSection($"{NameAppSetting.SMTPCONFIG}"));
 #endregion
+
+#region logger
+ILoggerFactory loggerFactory = LoggerFactory.Create(builder =>
+{
+    builder.AddConsole();
+    builder.AddDebug();
+});
+#endregion
 SymmetricSecurityKey symmetricKey = new(Convert.FromBase64String(configuration[ConstAppSettings.APPLICATIONSERECT]));
 string? myIssuer = configuration[ConstAppSettings.ENV_SERECT];
 string? myAudience = configuration[ConstAppSettings.APPLICATIONAPPDOMAIN];

@@ -34,6 +34,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
     /// </summary>
     public class ChangePasswordCommandHandler : BaseCommandHandler, IRequestHandler<ChangePasswordCommand, MethodResult<bool>>
     {
+        private readonly ILogger<ChangePasswordCommandHandler> _logger;
         /// <summary>
         /// Constructor
         /// </summary>
@@ -41,8 +42,11 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
         /// <param name="configuration"></param>
         /// <param name="userQueries"></param>
         /// <param name="userRepository"></param>
-        public ChangePasswordCommandHandler(IMapper mapper, IConfiguration configuration, IUserQueries userQueries, IUserRepository userRepository) : base(mapper, configuration, userQueries, userRepository)
-        { }
+        /// <param name="logger"></param>
+        public ChangePasswordCommandHandler(IMapper mapper, IConfiguration configuration, IUserQueries userQueries, IUserRepository userRepository, ILoggerFactory logger) : base(mapper, configuration, userQueries, userRepository)
+        {
+            _logger = logger.CreateLogger<ChangePasswordCommandHandler>();
+        }
         /// <summary>
         /// Function handler
         /// </summary>
@@ -52,60 +56,69 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
         public async Task<MethodResult<bool>> Handle(ChangePasswordCommand request, CancellationToken cancellationToken)
         {
             MethodResult<bool> methodResult = new();
-            #region Validator data
-            bool existUser = await _userRepository.ExistUserByGuidAsync(request.UserGuid);
-            if (!existUser)
+            try
             {
-                methodResult.StatusCode = StatusCodes.Status400BadRequest;
-                methodResult.AddApiErrorMessage(
-                    nameof(EnumUserErrorCodes.USR02C),
-                    new[] { Helpers.GenerateErrorResult(nameof(EnumUserErrorCodes.USR02C), nameof(EnumUserErrorCodes.USR02C) ?? "") }
-                );
-                methodResult.Result = false;
-                return methodResult;
-            }
-            if (request.NewPassword.IsNullOrEmpty() || request.NewPassword.IsNullOrEmpty())
-            {
-                methodResult.StatusCode = StatusCodes.Status400BadRequest;
-                methodResult.AddApiErrorMessage(
-                    nameof(EnumUserErrorCodes.USR06C),
-                    new[] { Helpers.GenerateErrorResult(nameof(EnumUserErrorCodes.USR06C), nameof(EnumUserErrorCodes.USR06C) ?? "") }
-                );
-                methodResult.Result = false;
-                return methodResult;
-            }
-            string pwdPattern = @"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$";
-            bool isComplex = Regex.IsMatch(request.ConfirmPassword ?? "", pwdPattern);
-            if (!isComplex)
-            {
-                methodResult.StatusCode = StatusCodes.Status400BadRequest;
-                methodResult.AddApiErrorMessage(
-                    nameof(EnumUserErrorCodes.USR17C),
-                    new[] { Helpers.GenerateErrorResult(nameof(request.ConfirmPassword), request.ConfirmPassword ?? "") }
-                );
-                methodResult.Result = false;
-                return methodResult;
-            }
-            #endregion
+                #region Validator data
+                bool existUser = await _userRepository.ExistUserByGuidAsync(request.UserGuid);
+                if (!existUser)
+                {
+                    methodResult.StatusCode = StatusCodes.Status400BadRequest;
+                    methodResult.AddApiErrorMessage(
+                        nameof(EnumUserErrorCodes.USR02C),
+                        new[] { Helpers.GenerateErrorResult(nameof(EnumUserErrorCodes.USR02C), nameof(EnumUserErrorCodes.USR02C) ?? "") }
+                    );
+                    methodResult.Result = false;
+                    return methodResult;
+                }
+                if (request.NewPassword.IsNullOrEmpty() || request.NewPassword.IsNullOrEmpty())
+                {
+                    methodResult.StatusCode = StatusCodes.Status400BadRequest;
+                    methodResult.AddApiErrorMessage(
+                        nameof(EnumUserErrorCodes.USR06C),
+                        new[] { Helpers.GenerateErrorResult(nameof(EnumUserErrorCodes.USR06C), nameof(EnumUserErrorCodes.USR06C) ?? "") }
+                    );
+                    methodResult.Result = false;
+                    return methodResult;
+                }
+                string pwdPattern = @"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$";
+                bool isComplex = Regex.IsMatch(request.ConfirmPassword ?? "", pwdPattern);
+                if (!isComplex)
+                {
+                    methodResult.StatusCode = StatusCodes.Status400BadRequest;
+                    methodResult.AddApiErrorMessage(
+                        nameof(EnumUserErrorCodes.USR17C),
+                        new[] { Helpers.GenerateErrorResult(nameof(request.ConfirmPassword), request.ConfirmPassword ?? "") }
+                    );
+                    methodResult.Result = false;
+                    return methodResult;
+                }
+                #endregion
 
-            #region Change password
-            string salt = GenarateSalt();
-            string passwordHash = HashPassword(request.ConfirmPassword ?? "", salt);
-            bool checkStatus = await _userRepository.UpdatePassworAsync(request.UserGuid, salt, passwordHash);
-            if (!checkStatus)
-            {
-                methodResult.StatusCode = StatusCodes.Status400BadRequest;
-                methodResult.AddApiErrorMessage(
-                    nameof(EnumUserErrorCodes.USR29C),
-                    new[] { Helpers.GenerateErrorResult(nameof(EnumUserErrorCodes.USR29C), nameof(EnumUserErrorCodes.USR29C) ?? "") }
-                );
-                methodResult.Result = false;
-                methodResult.StatusCode = StatusCodes.Status400BadRequest;
+                #region Change password
+                string salt = GenarateSalt();
+                string passwordHash = HashPassword(request.ConfirmPassword ?? "", salt);
+                bool checkStatus = await _userRepository.UpdatePassworAsync(request.UserGuid, salt, passwordHash);
+                if (!checkStatus)
+                {
+                    methodResult.StatusCode = StatusCodes.Status400BadRequest;
+                    methodResult.AddApiErrorMessage(
+                        nameof(EnumUserErrorCodes.USR29C),
+                        new[] { Helpers.GenerateErrorResult(nameof(EnumUserErrorCodes.USR29C), nameof(EnumUserErrorCodes.USR29C) ?? "") }
+                    );
+                    methodResult.Result = false;
+                    methodResult.StatusCode = StatusCodes.Status400BadRequest;
+                    return methodResult;
+                }
+                #endregion
+                methodResult.StatusCode = StatusCodes.Status200OK;
                 return methodResult;
             }
-            #endregion
-            methodResult.StatusCode = StatusCodes.Status200OK;
-            return methodResult;
+            catch (Exception ex)
+            {
+                _logger.LogError($" -->(CHANGE PASSWORD) STEP CHECK {"Exception".ToUpper()} --> EXEPTION: {ex}");
+                _logger.LogError($" -->(CHANGE PASSWORD) STEP CHECK {"Exception".ToUpper()} --> EXEPTION{" StackTrace".ToUpper()}: {ex.StackTrace}");
+                throw;
+            }
         }
     }
 }

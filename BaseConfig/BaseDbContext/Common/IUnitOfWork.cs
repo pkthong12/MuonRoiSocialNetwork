@@ -1,5 +1,4 @@
-﻿using System;
-namespace BaseConfig.BaseDbContext.Common
+﻿namespace BaseConfig.BaseDbContext.Common
 {
     public interface IUnitOfWork : IDisposable
     {

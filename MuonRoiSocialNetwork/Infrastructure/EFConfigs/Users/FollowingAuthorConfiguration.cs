@@ -4,8 +4,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MuonRoi.Social_Network.Configurations.Users
 {
+    /// <summary>
+    /// Configuration FollowingAuthor
+    /// </summary>
     public class FollowingAuthorConfiguration : IEntityTypeConfiguration<FollowingAuthor>
     {
+        /// <summary>
+        /// Configuration FollowingAuthor
+        /// </summary>
         public void Configure(EntityTypeBuilder<FollowingAuthor> builder)
         {
             builder.ToTable(nameof(FollowingAuthor));

@@ -22,6 +22,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
     /// </summary>
     public class ChangeStatusCommandHandler : BaseCommandHandler, IRequestHandler<ChangeStatusCommand, MethodResult<bool>>
     {
+        private readonly ILogger<ChangePasswordCommandHandler> _logger;
         /// <summary>
         /// Constructor
         /// </summary>
@@ -29,8 +30,10 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
         /// <param name="configuration"></param>
         /// <param name="userQueries"></param>
         /// <param name="userRepository"></param>
-        public ChangeStatusCommandHandler(IMapper mapper, IConfiguration configuration, IUserQueries userQueries, IUserRepository userRepository) : base(mapper, configuration, userQueries, userRepository)
+        /// <param name="logger"></param>
+        public ChangeStatusCommandHandler(IMapper mapper, IConfiguration configuration, IUserQueries userQueries, IUserRepository userRepository, ILoggerFactory logger) : base(mapper, configuration, userQueries, userRepository)
         {
+            _logger = logger.CreateLogger<ChangePasswordCommandHandler>();
         }
         /// <summary>
         /// Function handle
@@ -93,11 +96,14 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
             catch (CustomException ex)
             {
                 methodResult.StatusCode = StatusCodes.Status400BadRequest;
+                _logger.LogError($" -->(CHANGE STATUS) STEP CHECK {"CustomException".ToUpper()} --> EXEPTION: {ex}");
                 methodResult.AddResultFromErrorList(ex.ErrorMessages);
             }
             catch (Exception ex)
             {
                 methodResult.StatusCode = StatusCodes.Status400BadRequest;
+                _logger.LogError($" -->(CHANGE STATUS) STEP CHECK {"Exception".ToUpper()} --> EXEPTION: {ex}");
+                _logger.LogError($" -->(CHANGE STATUS) STEP CHECK {"Exception".ToUpper()} --> EXEPTION{" StackTrace".ToUpper()}: {ex.StackTrace}");
                 methodResult.AddErrorMessage(Helpers.GetExceptionMessage(ex), ex.StackTrace ?? "");
             }
             return methodResult;

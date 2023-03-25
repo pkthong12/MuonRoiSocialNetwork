@@ -5,23 +5,23 @@
         /// <summary>
         /// User send
         /// </summary>
-        public string SenderAddress { get; set; }
+        public string? SenderAddress { get; set; }
         /// <summary>
         /// Display name user send
         /// </summary>
-        public string SenderDisplayName { get; set; }
+        public string? SenderDisplayName { get; set; }
         /// <summary>
         /// User name user send
         /// </summary>
-        public string UserName { get; set; }
+        public string? UserName { get; set; }
         /// <summary>
         /// Password
         /// </summary>
-        public string Password { get; set; }
+        public string? Password { get; set; }
         /// <summary>
         /// Host send mail default is: smtp.gmail.com
         /// </summary>
-        public string Host { get; set; }
+        public string? Host { get; set; }
         /// <summary>
         /// Port send mail default is: 587
         /// </summary>

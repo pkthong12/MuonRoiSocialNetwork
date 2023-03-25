@@ -12,14 +12,22 @@ namespace MuonRoi.Social_Network.Roles
         /// <summary>
         /// Name of groups
         /// </summary>
-        public string GroupName { get; set; }
+        public string? GroupName { get; set; }
         /// <summary>
-        /// Guest (haven't account)
+        /// AppUserKey
         /// </summary>
         public Guid AppUserKey { get; set; }
+        /// <summary>
+        /// AppRoleKey
+        /// </summary>
         public Guid AppRoleKey { get; set; }
-
-        public AppUser UserMember { get; set; }
-        public AppRole AppRole { get; set; }
+        /// <summary>
+        /// UserMember
+        /// </summary>
+        public AppUser? UserMember { get; set; }
+        /// <summary>
+        /// AppRole
+        /// </summary>
+        public AppRole? AppRole { get; set; }
     }
 }

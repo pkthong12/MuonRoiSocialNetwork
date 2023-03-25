@@ -5,16 +5,15 @@ namespace BaseConfig.EntityObject.EntityObject
     [NotMapped]
     public class ErrorResult
     {
-        public string ErrorCode { get; set; }
+        private List<string>? errorValues;
 
-        public string ErrorMessage { get; set; }
+        public string? ErrorCode { get; set; }
 
-        public List<string> ErrorValues { get; set; }
+        public string? ErrorMessage { get; set; }
 
-        public ErrorResult()
-        {
-            ErrorValues = new List<string>();
-        }
+        public List<string>? ErrorValues { get => errorValues; set => errorValues = value; }
+
+        public ErrorResult() => ErrorValues = new List<string>();
 
         public override string ToString()
         {

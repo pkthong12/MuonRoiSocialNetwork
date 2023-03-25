@@ -4,16 +4,10 @@ using BaseConfig.MethodResult;
 using MediatR;
 using MuonRoi.Social_Network.Users;
 using MuonRoiSocialNetwork.Application.Commands.Base;
-using System.Security.Cryptography;
 using MuonRoiSocialNetwork.Domains.Interfaces.Commands;
 using MuonRoiSocialNetwork.Domains.Interfaces.Queries;
 using MuonRoiSocialNetwork.Infrastructure.Extentions.Mail;
 using MuonRoiSocialNetwork.Infrastructure.Services;
-using System.Text;
-using System.ComponentModel;
-using System;
-using Microsoft.Extensions.Primitives;
-using System.Diagnostics;
 using MuonRoiSocialNetwork.Common.Models.Users.Base.Response;
 using MuonRoiSocialNetwork.Common.Settings.UserSettings;
 
@@ -36,6 +30,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
     {
         private readonly IMediator _mediator;
         private readonly IEmailService _emailService;
+        private readonly ILogger<ForgotPasswordUserCommandHandler> _logger;
         /// <summary>
         /// Constructor
         /// </summary>
@@ -45,10 +40,12 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
         /// <param name="userRepository"></param>
         /// <param name="emailService"></param>
         /// <param name="mediator"></param>
-        public ForgotPasswordUserCommandHandler(IMapper mapper, IConfiguration configuration, IUserQueries userQueries, IUserRepository userRepository, IEmailService emailService, IMediator mediator) : base(mapper, configuration, userQueries, userRepository)
+        /// <param name="logger"></param>
+        public ForgotPasswordUserCommandHandler(IMapper mapper, IConfiguration configuration, IUserQueries userQueries, IUserRepository userRepository, IEmailService emailService, IMediator mediator, ILoggerFactory logger) : base(mapper, configuration, userQueries, userRepository)
         {
             _emailService = emailService;
             _mediator = mediator;
+            _logger = logger.CreateLogger<ForgotPasswordUserCommandHandler>();
         }
         /// <summary>
         /// Handler function
@@ -91,7 +88,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
 
                 #region Send new password
                 string newSalt = GenarateSalt();
-                string rawPassword = RandomString(LoginAttemp.genarePasswordDefaultCharacter);
+                string rawPassword = RandomString(SettingUserDefault.genarePasswordDefaultCharacter);
                 string newPassword = HashPassword(rawPassword, newSalt);
                 await SendEmailConfirmationEmail(existUser, rawPassword);
                 #endregion
@@ -122,38 +119,14 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
             {
                 methodResult.StatusCode = StatusCodes.Status400BadRequest;
                 methodResult.Result = false;
+                _logger.LogError($" -->(FORGOT PASSWORD) STEP CHECK {"Exception".ToUpper()} --> EXEPTION: {ex}");
+                _logger.LogError($" -->(FORGOT PASSWORD) STEP CHECK {"Exception".ToUpper()} --> EXEPTION{" StackTrace".ToUpper()}: {ex.StackTrace}");
                 methodResult.AddErrorMessage(Helpers.GetExceptionMessage(ex), ex.StackTrace ?? "");
                 return methodResult;
             }
             methodResult.Result = true;
             methodResult.StatusCode = StatusCodes.Status200OK;
             return methodResult;
-        }
-        private static string RandomString(int length)
-        {
-            if (length < 0) { return null; }
-            const string alphabet = "ab$%cdefoGHvwBCDEghi!$%^*jklmnpuFx789y@#zAK@#LMNO^^STUVPQqr^&XYRWZ1IJ456st0";
-            StringBuilder stringBuilder = new();
-            using (var rng = RandomNumberGenerator.Create())
-            {
-                int count = (int)Math.Ceiling(Math.Log(alphabet.Length, 2) / 8.0);
-                Debug.Assert(count <= sizeof(uint));
-                int offset = BitConverter.IsLittleEndian ? 0 : sizeof(uint) - count;
-                int max = (int)(Math.Pow(2, count * 8) / alphabet.Length) * alphabet.Length;
-                byte[] uintBuffer = new byte[sizeof(uint)];
-
-                while (stringBuilder.Length < length)
-                {
-                    rng.GetBytes(uintBuffer, offset, count);
-                    uint num = BitConverter.ToUInt32(uintBuffer, 0);
-                    if (num < max)
-                    {
-                        stringBuilder.Append(alphabet[(int)(num % alphabet.Length)]);
-                    }
-                }
-
-            }
-            return stringBuilder.ToString();
         }
         private async Task SendEmailConfirmationEmail(AppUser user, string newPass)
         {

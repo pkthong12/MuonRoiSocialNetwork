@@ -44,6 +44,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
     /// </summary>
     public class UpdateInformationCommandHandler : BaseCommandHandler, IRequestHandler<UpdateInformationCommand, MethodResult<BaseUserResponse>>
     {
+        private readonly ILogger<UpdateInformationCommandHandler> _logger;
         /// <summary>
         /// Constructor
         /// </summary>
@@ -51,9 +52,12 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
         /// <param name="configuration"></param>
         /// <param name="userRepository"></param>
         /// <param name="userQueries"></param>
+        /// <param name="logger"></param>
         public UpdateInformationCommandHandler(IMapper mapper,
-            IConfiguration configuration, IUserRepository userRepository, IUserQueries userQueries) : base(mapper, configuration, userQueries, userRepository)
-        { }
+            IConfiguration configuration, IUserRepository userRepository, IUserQueries userQueries, ILoggerFactory logger) : base(mapper, configuration, userQueries, userRepository)
+        {
+            _logger = logger.CreateLogger<UpdateInformationCommandHandler>();
+        }
         /// <summary>
         /// Function Handle
         /// </summary>
@@ -136,11 +140,14 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
             catch (CustomException ex)
             {
                 methodResult.StatusCode = StatusCodes.Status400BadRequest;
+                _logger.LogError($" -->(UPDATE INFO) STEP CHECK {"CustomException".ToUpper()} --> EXEPTION: {ex}");
                 methodResult.AddResultFromErrorList(ex.ErrorMessages);
             }
             catch (Exception ex)
             {
                 methodResult.StatusCode = StatusCodes.Status400BadRequest;
+                _logger.LogError($" -->(UPDATE INFO) STEP CHECK {"Exception".ToUpper()} --> EXEPTION: {ex}");
+                _logger.LogError($" -->(UPDATE INFO) STEP CHECK {"Exception".ToUpper()} --> EXEPTION{" StackTrace".ToUpper()}: {ex.StackTrace}");
                 methodResult.AddErrorMessage(Helpers.GetExceptionMessage(ex), ex.StackTrace ?? "");
             }
             return methodResult;

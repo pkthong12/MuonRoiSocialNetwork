@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using BaseConfig.EntityObject.Entity;
 using BaseConfig.Extentions.Datetime;
-using BaseConfig.Infrashtructure;
 using BaseConfig.JWT;
 using BaseConfig.MethodResult;
 using MediatR;
@@ -36,6 +35,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
     /// </summary>
     public class AuthUserCommandHandler : BaseCommandHandler, IRequestHandler<AuthUserCommand, MethodResult<UserModelResponse>>
     {
+        private readonly ILogger<AuthUserCommandHandler> _logger;
         /// <summary>
         /// Constructor
         /// </summary>
@@ -43,12 +43,14 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
         /// <param name="userRepository"></param>
         /// <param name="userQueries"></param>
         /// <param name="configuration"></param>
+        /// <param name="logger"></param>
         public AuthUserCommandHandler(IMapper mapper,
             IUserRepository userRepository,
             IUserQueries userQueries,
-            IConfiguration configuration) : base(mapper, configuration, userQueries, userRepository)
+            IConfiguration configuration,
+            ILoggerFactory logger) : base(mapper, configuration, userQueries, userRepository)
         {
-
+            _logger = logger.CreateLogger<AuthUserCommandHandler>();
         }
         /// <summary>
         /// Handler function
@@ -68,6 +70,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                 if (string.IsNullOrEmpty(request.Username) || string.IsNullOrEmpty(request.Password))
                 {
                     methodResult.StatusCode = StatusCodes.Status400BadRequest;
+                    _logger.LogError($" --> STEP CHECK {"Check valid username and password".ToUpper()} --> USERNAME: {request.Username} | PASSWORD: {request.Password} -->");
                     methodResult.AddApiErrorMessage(
                         string.IsNullOrEmpty(request.Username) ? nameof(EnumUserErrorCodes.USR05C) : nameof(EnumUserErrorCodes.USR06C),
                         new[] { Helpers.GenerateErrorResult(nameof(request.Username), request.Username ?? "") }
@@ -121,7 +124,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                     methodResult.StatusCode = StatusCodes.Status400BadRequest;
                     methodResult.AddApiErrorMessage(
                         nameof(EnumUserErrorCodes.USRC39C),
-                        new[] { Helpers.GenerateErrorResult(nameof(LoginAttemp.loginAttempDefault), LoginAttemp.loginAttempDefault - appUser.AccessFailedCount) }
+                        new[] { Helpers.GenerateErrorResult(nameof(SettingUserDefault.loginAttempDefault), SettingUserDefault.loginAttempDefault - appUser.AccessFailedCount) }
                     );
                     appUser.AccessFailedCount++;
                     if (appUser.AccessFailedCount >= 5)
@@ -159,8 +162,8 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
 
                 #region Return info user was login
                 UserModelResponse resultInforLoginUser = _mapper.Map<UserModelResponse>(appUser);
-                resultInforLoginUser.CreateDate = DateTimeExtensions.TimeStampToDateTime(appUser.CreatedDateTS.GetValueOrDefault());
-                resultInforLoginUser.UpdateDate = DateTimeExtensions.TimeStampToDateTime(appUser.UpdatedDateTS.GetValueOrDefault());
+                resultInforLoginUser.CreateDate = DateTimeExtensions.TimeStampToDateTime(appUser.CreatedDateTS.GetValueOrDefault()).AddHours(7);
+                resultInforLoginUser.UpdateDate = DateTimeExtensions.TimeStampToDateTime(appUser.UpdatedDateTS.GetValueOrDefault()).AddHours(7);
                 MethodResult<BaseUserResponse> userInfo = await _userQueries.GetUserModelByGuidAsync(resultInforLoginUser.Id);
                 resultInforLoginUser.RoleName = userInfo.Result?.RoleName;
                 resultInforLoginUser.GroupName = userInfo.Result?.GroupName;
@@ -173,6 +176,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
             catch (Exception ex)
             {
                 methodResult.StatusCode = StatusCodes.Status400BadRequest;
+                _logger.LogError($" -->(AUTH) STEP {"Exception".ToUpper()} --> EXEPTION: {ex} ---->");
                 methodResult.AddApiErrorMessage(
                     nameof(EnumUserErrorCodes.USR29C),
                     new[] { Helpers.GenerateErrorResult(nameof(ex.Message), ex.Message ?? "") }

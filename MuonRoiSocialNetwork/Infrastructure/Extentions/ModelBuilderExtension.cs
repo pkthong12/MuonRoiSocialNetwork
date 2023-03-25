@@ -12,8 +12,14 @@ using BaseConfig.Extentions.Datetime;
 
 namespace MuonRoiSocialNetwork.Infrastructure.Extentions
 {
+    /// <summary>
+    /// Seeding data
+    /// </summary>
     public static class ModelBuilderExtension
     {
+        /// <summary>
+        /// Seeding data
+        /// </summary>
         public static void Seed(this ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Story>().HasData(

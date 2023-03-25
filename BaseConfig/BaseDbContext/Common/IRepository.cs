@@ -1,6 +1,5 @@
 ﻿using BaseConfig.EntityObject.Entity;
 using BaseConfig.MethodResult;
-using Microsoft.AspNetCore.Identity;
 
 namespace BaseConfig.BaseDbContext.Common
 {

@@ -4,8 +4,14 @@ using MuonRoi.Social_Network.Tags;
 
 namespace MuonRoi.Social_Network.Configurations.Tags
 {
+    /// <summary>
+    /// Configuration TagInStory
+    /// </summary>
     public class TagInStoryConfiguration : IEntityTypeConfiguration<TagInStory>
     {
+        /// <summary>
+        /// Configuration TagInStory
+        /// </summary>
         public void Configure(EntityTypeBuilder<TagInStory> builder)
         {
             builder.ToTable(nameof(TagInStory));

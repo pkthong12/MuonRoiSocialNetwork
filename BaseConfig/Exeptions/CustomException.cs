@@ -4,7 +4,7 @@ namespace BaseConfig.Exeptions
 {
     public class CustomException : Exception
     {
-        public IReadOnlyCollection<ErrorResult> ErrorMessages;
+        public IReadOnlyCollection<ErrorResult>? ErrorMessages;
 
         public CustomException()
         {

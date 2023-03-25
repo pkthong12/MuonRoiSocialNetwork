@@ -30,9 +30,7 @@ namespace MuonRoiSocialNetwork.Infrastructure
         /// </summary>
         /// <param name="options"></param>
         /// <param name="mediator"></param>
-#pragma warning disable CS8618
         public MuonRoiSocialNetworkDbContext(DbContextOptions<MuonRoiSocialNetworkDbContext> options, IMediator mediator) : base(options, mediator)
-#pragma warning restore CS8618
         { }
         /// <summary>
         /// Apply config
@@ -63,56 +61,56 @@ namespace MuonRoiSocialNetwork.Infrastructure
 
         }
         /// <summary>
-        /// 
+        /// Categories
         /// </summary>
-        public DbSet<Category> Categories { get; set; }
+        public DbSet<Category>? Categories { get; set; }
         /// <summary>
-        /// 
+        /// Chapters
         /// </summary>
-        public DbSet<Chapter> Chapters { get; set; }
+        public DbSet<Chapter>? Chapters { get; set; }
         /// <summary>
-        /// 
+        /// GroupUserMembers
         /// </summary>
-        public DbSet<GroupUserMember> GroupUserMembers { get; set; }
+        public DbSet<GroupUserMember>? GroupUserMembers { get; set; }
         /// <summary>
-        /// 
+        /// Stories
         /// </summary>
-        public DbSet<Story> Stories { get; set; }
+        public DbSet<Story>? Stories { get; set; }
         /// <summary>
-        /// 
+        /// StoryNotifications
         /// </summary>
-        public DbSet<StoryNotifications> StoryNotifications { get; set; }
+        public DbSet<StoryNotifications>? StoryNotifications { get; set; }
         /// <summary>
-        /// 
+        /// StoryPublishes
         /// </summary>
-        public DbSet<StoryPublish> StoryPublishes { get; set; }
+        public DbSet<StoryPublish>? StoryPublishes { get; set; }
         /// <summary>
-        /// 
+        /// StoryReviews
         /// </summary>
-        public DbSet<StoryReview> StoryReviews { get; set; }
+        public DbSet<StoryReview>? StoryReviews { get; set; }
         /// <summary>
-        /// 
+        /// Tags
         /// </summary>
-        public DbSet<Tag> Tags { get; set; }
+        public DbSet<Tag>? Tags { get; set; }
         /// <summary>
-        /// 
+        /// TagInStories
         /// </summary>
-        public DbSet<TagInStory> TagInStories { get; set; }
+        public DbSet<TagInStory>? TagInStories { get; set; }
         /// <summary>
-        /// 
+        /// AppUsers
         /// </summary>
-        public DbSet<AppUser> AppUsers { get; set; }
+        public DbSet<AppUser>? AppUsers { get; set; }
         /// <summary>
-        /// 
+        /// BookMarkStories
         /// </summary>
-        public DbSet<BookMarkStory> BookMarkStories { get; set; }
+        public DbSet<BookMarkStory>? BookMarkStories { get; set; }
         /// <summary>
-        /// 
+        /// FollowingAuthors
         /// </summary>
-        public DbSet<FollowingAuthor> FollowingAuthors { get; set; }
+        public DbSet<FollowingAuthor>? FollowingAuthors { get; set; }
         /// <summary>
-        /// 
+        /// AppRoles
         /// </summary>
-        public DbSet<AppRole> AppRoles { get; set; }
+        public DbSet<AppRole>? AppRoles { get; set; }
     }
 }

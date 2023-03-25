@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using MuonRoiSocialNetwork.Common.Settings.UserSettings;
 using MuonRoiSocialNetwork.Domains.Interfaces.Commands;
 using MuonRoiSocialNetwork.Domains.Interfaces.Queries;
+using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -70,6 +72,37 @@ namespace MuonRoiSocialNetwork.Application.Commands.Base
             using var generator = RandomNumberGenerator.Create();
             generator.GetBytes(randomBytes);
             return Convert.ToBase64String(randomBytes);
+        }
+        /// <summary>
+        /// Genarete random string with length
+        /// </summary>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        protected static string RandomString(int length)
+        {
+            if (length < 0) { return null; }
+            string alphabet = SettingUserDefault.alphabet;
+            StringBuilder stringBuilder = new();
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                int count = (int)Math.Ceiling(Math.Log(alphabet.Length, 2) / 8.0);
+                Debug.Assert(count <= sizeof(uint));
+                int offset = BitConverter.IsLittleEndian ? 0 : sizeof(uint) - count;
+                int max = (int)(Math.Pow(2, count * 8) / alphabet.Length) * alphabet.Length;
+                byte[] uintBuffer = new byte[sizeof(uint)];
+
+                while (stringBuilder.Length < length)
+                {
+                    rng.GetBytes(uintBuffer, offset, count);
+                    uint num = BitConverter.ToUInt32(uintBuffer, 0);
+                    if (num < max)
+                    {
+                        stringBuilder.Append(alphabet[(int)(num % alphabet.Length)]);
+                    }
+                }
+
+            }
+            return stringBuilder.ToString();
         }
     }
 }

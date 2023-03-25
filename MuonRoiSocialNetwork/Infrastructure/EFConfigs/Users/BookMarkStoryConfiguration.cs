@@ -4,8 +4,14 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace MuonRoi.Social_Network.Configurations.Users
 {
+    /// <summary>
+    /// Configuration BookMarkStory
+    /// </summary>
     public class BookMarkStoryConfiguration : IEntityTypeConfiguration<BookMarkStory>
     {
+        /// <summary>
+        /// Configuration BookMarkStory
+        /// </summary>
         public void Configure(EntityTypeBuilder<BookMarkStory> builder)
         {
             builder.ToTable(nameof(BookMarkStory));

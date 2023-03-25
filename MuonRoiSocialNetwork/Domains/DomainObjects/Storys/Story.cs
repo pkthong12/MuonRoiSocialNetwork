@@ -11,18 +11,6 @@ namespace MuonRoi.Social_Network.Storys
     /// </summary>
     public class Story : Entity
     {
-        public Story()
-        { }
-        public Story(Guid storyGuid, string story_Title, string story_Synopsis,
-                        string img_Url,
-                        bool isShow)
-        {
-            Guid = storyGuid;
-            Story_Title = story_Title;
-            Story_Synopsis = story_Synopsis;
-            Img_Url = img_Url;
-            IsShow = isShow;
-        }
         /// <summary>
         /// Guid in story 
         /// </summary>

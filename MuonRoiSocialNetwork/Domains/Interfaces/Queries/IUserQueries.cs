@@ -1,7 +1,6 @@
 ﻿using BaseConfig.MethodResult;
 using MuonRoi.Social_Network.Users;
 using MuonRoiSocialNetwork.Common.Models.Users.Base.Response;
-using MuonRoiSocialNetwork.Common.Models.Users.Response;
 
 namespace MuonRoiSocialNetwork.Domains.Interfaces.Queries
 {

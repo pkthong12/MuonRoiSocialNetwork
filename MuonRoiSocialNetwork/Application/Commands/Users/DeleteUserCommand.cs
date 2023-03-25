@@ -25,6 +25,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
     /// </summary>
     public class DeleteUserCommandHandler : BaseCommandHandler, IRequestHandler<DeleteUserCommand, MethodResult<bool>>
     {
+        private readonly ILogger<DeleteUserCommandHandler> _logger;
         /// <summary>
         /// constructor
         /// </summary>
@@ -32,8 +33,11 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
         /// <param name="configuration"></param>
         /// <param name="userQueries"></param>
         /// <param name="userRepository"></param>
-        public DeleteUserCommandHandler(IMapper mapper, IConfiguration configuration, IUserQueries userQueries, IUserRepository userRepository) : base(mapper, configuration, userQueries, userRepository)
-        { }
+        /// <param name="logger"></param>
+        public DeleteUserCommandHandler(IMapper mapper, IConfiguration configuration, IUserQueries userQueries, IUserRepository userRepository, ILoggerFactory logger) : base(mapper, configuration, userQueries, userRepository)
+        {
+            _logger = logger.CreateLogger<DeleteUserCommandHandler>();
+        }
         /// <summary>
         /// Function handle
         /// </summary>
@@ -90,6 +94,8 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
             {
                 methodResult.StatusCode = StatusCodes.Status400BadRequest;
                 methodResult.Result = false;
+                _logger.LogError($" -->(DELETE USER) STEP CHECK {"Exception".ToUpper()} --> EXEPTION: {ex}");
+                _logger.LogError($" -->(DELETE USER) STEP CHECK {"Exception".ToUpper()} --> EXEPTION{" StackTrace".ToUpper()}: {ex.StackTrace}");
                 methodResult.AddErrorMessage(Helpers.GetExceptionMessage(ex), ex.StackTrace ?? "");
                 return methodResult;
             }

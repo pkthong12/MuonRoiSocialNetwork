@@ -4,8 +4,14 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace MuonRoi.Social_Network.Configurations.Storys
 {
+    /// <summary>
+    /// Configuration StoryNotification
+    /// </summary>
     public class StoryNotificationConfiguration : IEntityTypeConfiguration<StoryNotifications>
     {
+        /// <summary>
+        /// Configuration StoryNotification
+        /// </summary>
         public void Configure(EntityTypeBuilder<StoryNotifications> builder)
         {
             builder.ToTable(nameof(StoryNotifications));

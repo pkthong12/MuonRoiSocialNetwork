@@ -32,6 +32,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Email
     /// </summary>
     public class VerificationEmailCommandHandler : BaseCommandHandler, IRequestHandler<VerificationEmailCommand, MethodResult<bool>>
     {
+        private readonly ILogger<VerificationEmailCommandHandler> _logger;
         /// <summary>
         /// Constructor
         /// </summary>
@@ -39,9 +40,12 @@ namespace MuonRoiSocialNetwork.Application.Commands.Email
         /// <param name="configuration"></param>
         /// <param name="userRepository"></param>
         /// <param name="userQueries"></param>
+        /// <param name="logger"></param>
         public VerificationEmailCommandHandler(IMapper mapper,
-            IConfiguration configuration, IUserRepository userRepository, IUserQueries userQueries) : base(mapper, configuration, userQueries, userRepository)
-        { }
+            IConfiguration configuration, IUserRepository userRepository, IUserQueries userQueries, ILoggerFactory logger) : base(mapper, configuration, userQueries, userRepository)
+        {
+            _logger = logger.CreateLogger<VerificationEmailCommandHandler>();
+        }
         /// <summary>
         /// Handle
         /// </summary>
@@ -89,6 +93,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Email
                 {
                     methodResult.Result = false;
                     methodResult.StatusCode = StatusCodes.Status400BadRequest;
+                    _logger.LogError($" --> STEP {"Valid token and check exp time".ToUpper()} --> JWT TOKEN {request.TokenJWT} ---->");
                     methodResult.AddApiErrorMessage(
                         nameof(EnumUserErrorCodes.USRC36C),
                         new[] { Helpers.GenerateErrorResult(nameof(request.TokenJWT), request.TokenJWT ?? "") }
@@ -117,8 +122,8 @@ namespace MuonRoiSocialNetwork.Application.Commands.Email
             }
             catch (Exception ex)
             {
-
                 methodResult.StatusCode = StatusCodes.Status400BadRequest;
+                _logger.LogError($" -->(VERIFICATION EMAIL) STEP {"Exception".ToUpper()} --> MESSAGE: {ex} ---->");
                 methodResult.AddApiErrorMessage(
                     nameof(EnumUserErrorCodes.USR29C),
                     new[] { Helpers.GenerateErrorResult(nameof(ex.Message), ex.Message) }

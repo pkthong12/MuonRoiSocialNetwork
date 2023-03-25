@@ -2,8 +2,8 @@
 {
     public class PagingItemsDTO<T>
     {
-        public IEnumerable<T> Items { get; set; }
+        public IEnumerable<T>? Items { get; set; }
 
-        public PagingInfoDTO PagingInfo { get; set; }
+        public PagingInfoDTO? PagingInfo { get; set; }
     }
 }

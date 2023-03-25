@@ -22,7 +22,7 @@ namespace BaseConfig.BaseDbContext
             return _currentTransaction;
         }
 
-        public async Task<Guid> SaveEntitiesAsync(CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<Guid> SaveEntitiesAsync(CancellationToken cancellationToken = default)
         {
             IExecutionStrategy strategy = Database.CreateExecutionStrategy();
             if (Database.IsInMemory())

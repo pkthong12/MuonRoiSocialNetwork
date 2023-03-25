@@ -1,6 +1,5 @@
 ﻿using Amazon;
 using Amazon.Runtime;
-using Amazon.Runtime.Internal.Transform;
 using Amazon.S3;
 using Amazon.S3.Model;
 using BaseConfig.Setting.AppSettings.Images;

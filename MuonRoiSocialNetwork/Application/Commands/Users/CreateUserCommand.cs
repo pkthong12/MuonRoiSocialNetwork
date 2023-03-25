@@ -21,6 +21,9 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
     /// </summary>
     public class CreateUserCommand : UserModelRequest, IRequest<MethodResult<UserModelResponse>>
     {
+        /// <summary>
+        /// Password register
+        /// </summary>
         public string? PasswordHash { get; set; }
 
     }
@@ -30,6 +33,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
     public class CreateUserCommandHandler : BaseCommandHandler, IRequestHandler<CreateUserCommand, MethodResult<UserModelResponse>>
     {
         private readonly IEmailService _emailService;
+        private readonly ILogger<CreateUserCommandHandler> _logger;
         /// <summary>
         /// Constructor
         /// </summary>
@@ -38,13 +42,16 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
         /// <param name="userQueries"></param>
         /// <param name="configuration"></param>
         /// <param name="emailService"></param>
+        /// <param name="logger"></param>
         public CreateUserCommandHandler(IMapper mapper,
             IUserRepository userRepository,
             IUserQueries userQueries,
             IConfiguration configuration,
-            IEmailService emailService) : base(mapper, configuration, userQueries, userRepository)
+            IEmailService emailService,
+            ILoggerFactory logger) : base(mapper, configuration, userQueries, userRepository)
         {
             _emailService = emailService;
+            _logger = logger.CreateLogger<CreateUserCommandHandler>();
         }
         /// <summary>
         /// Handle register
@@ -57,6 +64,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
             MethodResult<UserModelResponse> methodResult = new();
             try
             {
+
                 #region Validation
                 AppUser newUser = _mapper.Map<AppUser>(request);
                 newUser.LastLogin = DateTime.UtcNow;
@@ -119,11 +127,14 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
             catch (CustomException ex)
             {
                 methodResult.StatusCode = StatusCodes.Status400BadRequest;
+                _logger.LogError($" -->(REGISTER) STEP CUSTOMEXCEPTION --> ID USER {ex} ---->");
                 methodResult.AddResultFromErrorList(ex.ErrorMessages);
             }
             catch (Exception ex)
             {
                 methodResult.StatusCode = StatusCodes.Status400BadRequest;
+                _logger.LogError($" -->(REGISTER) STEP EXEPTION MESSAGE --> ID USER {ex} ---->");
+                _logger.LogError($" -->(REGISTER) STEP EXEPTION STACK --> ID USER {ex.StackTrace} ---->");
                 methodResult.AddErrorMessage(Helpers.GetExceptionMessage(ex), ex.StackTrace ?? "");
             }
             methodResult.StatusCode = StatusCodes.Status200OK;

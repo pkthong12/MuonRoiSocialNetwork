@@ -255,5 +255,26 @@ namespace MuonRoiSocialNetwork.Controllers
                 return errCommandResult.GetActionResult();
             }
         }
+        /// <summary>
+        /// Change status account ( lock | active )
+        /// </summary>
+        /// <returns>UserModel</returns>
+        [HttpPatch("statusAccount")]
+        [ProducesResponseType(typeof(MethodResult<bool>), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> ChangeStatusAccount([FromForm] ChangeStatusCommand cmd)
+        {
+            try
+            {
+                MethodResult<bool> methodResult = await _mediator.Send(cmd).ConfigureAwait(false);
+                return methodResult.GetActionResult();
+            }
+            catch (Exception ex)
+            {
+                var errCommandResult = new VoidMethodResult();
+                errCommandResult.AddErrorMessage(Helpers.GetExceptionMessage(ex), ex.StackTrace ?? "");
+                return errCommandResult.GetActionResult();
+            }
+        }
     }
 }

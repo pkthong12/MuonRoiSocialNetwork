@@ -4,8 +4,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MuonRoi.Social_Network.Configurations.Chapters
 {
+    /// <summary>
+    /// Configuration chapter
+    /// </summary>
     public class ChapterConfiguration : IEntityTypeConfiguration<Chapter>
     {
+        /// <summary>
+        /// Configuration chapter
+        /// </summary>
         public void Configure(EntityTypeBuilder<Chapter> builder)
         {
             builder.ToTable(nameof(Chapter));

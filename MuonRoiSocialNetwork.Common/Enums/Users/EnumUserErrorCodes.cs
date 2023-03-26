@@ -200,5 +200,17 @@
         /// Vui lòng đổi mật khẩu mặc định thành mật khẩu mới.
         /// </summary>
         USRC43C,
+        /// <summary>
+        /// Không tìm thấy refresh token thuộc người dùng
+        /// </summary>
+        USRC44C,
+        /// <summary>
+        /// Refresh token không hợp lệ
+        /// </summary>
+        USRC45C,
+        /// <summary>
+        /// Nhóm không tồn tại
+        /// </summary>
+        USRC46C,
     }
 }

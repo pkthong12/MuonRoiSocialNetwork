@@ -1,8 +1,12 @@
+using Amazon.Runtime.Internal.Util;
 using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Moq;
 using MuonRoi.Social_Network.Users;
 using MuonRoiSocialNetwork.Application.Queries;
@@ -24,6 +28,8 @@ namespace MuonRoiSocialNetwork.Test
         public MapperConfiguration _mapperConfiguration;
         public IMapper _maperBase;
         public Mock<IMediator> _mediator;
+        public Mock<ILoggerFactory> _loggerBase;
+        public Mock<IDistributedCache> _cacheBase;
         public MockDataBase()
         {
             ServiceProvider serviceProvider = new ServiceCollection()
@@ -33,10 +39,12 @@ namespace MuonRoiSocialNetwork.Test
                         .UseInMemoryDatabase(Guid.NewGuid().ToString())
                         .UseInternalServiceProvider(serviceProvider);
             _mediator = new Mock<IMediator>();
+            _loggerBase = new Mock<ILoggerFactory>();
             _userdbContext = new MuonRoiSocialNetworkDbContext(builder.Options, _mediator.Object);
-            _userRepoBase = new UserRepository(_userdbContext, _maperBase, _userRepoBase, _userQueriesBase, _configBase);
+            _userRepoBase = new UserRepository(_userdbContext);
             _configBase = new ConfigurationBuilder().AddJsonFile($"{NameAppSetting.APPSETTINGS}.json", optional: false).Build();
             _emailServiceBase = new Mock<IEmailService>();
+            _cacheBase = new Mock<IDistributedCache>();
             _mapperConfiguration = new MapperConfiguration(c =>
             {
                 c.AddProfile<UserProfile>();

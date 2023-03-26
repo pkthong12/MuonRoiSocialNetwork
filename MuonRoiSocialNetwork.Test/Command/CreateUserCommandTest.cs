@@ -11,9 +11,9 @@ using BaseConfig.EntityObject.Entity;
 using Microsoft.AspNetCore.Http;
 using MuonRoiSocialNetwork.Infrastructure.Services;
 using MuonRoiSocialNetwork.Application.Queries;
-using MuonRoiSocialNetwork.Common.Models.Users.Request;
 using MuonRoiSocialNetwork.Common.Models.Users.Response;
 using BaseConfig.Extentions.ObjectHandle;
+using Microsoft.Extensions.Logging;
 
 namespace TestProject1
 {
@@ -25,6 +25,7 @@ namespace TestProject1
         public readonly UserQueries _userQueries;
         private readonly IConfiguration _config;
         private readonly Mock<IEmailService> _mail;
+        private readonly ILoggerFactory _logger;
         public CreateUserCommandTest()
         {
             _user = _baseData._userRepoBase;
@@ -32,6 +33,7 @@ namespace TestProject1
             _config = _baseData._configBase;
             _userQueries = _baseData._userQueriesBase;
             _mail = _baseData._emailServiceBase;
+            _logger = _baseData._loggerBase.Object;
         }
         [Fact]
         public async Task RegisterSuccess()
@@ -48,7 +50,7 @@ namespace TestProject1
                 Address = "string",
                 Gender = MuonRoi.Social_Network.User.EnumGender.Male,
             };
-            CreateUserCommandHandler handler = new(_mapper, _user, _userQueries, _config, _mail.Object);
+            CreateUserCommandHandler handler = new(_mapper, _user, _userQueries, _config, _mail.Object, _logger);
             MethodResult<UserModelResponse> result = await handler.Handle(user, CancellationToken.None);
             result.ShouldBeOfType<MethodResult<UserModelResponse>>();
         }
@@ -74,7 +76,7 @@ namespace TestProject1
             };
             newUser.IsValid();
             methodResult.AddResultFromErrorList(newUser.ErrorMessages);
-            CreateUserCommandHandler handler = new(_mapper, _user, _userQueries, _config, _mail.Object);
+            CreateUserCommandHandler handler = new(_mapper, _user, _userQueries, _config, _mail.Object, _logger);
             MethodResult<UserModelResponse> result = await handler.Handle(user, CancellationToken.None);
             bool resultMessageAndCode = CheckObjectEqual.ObjectAreEqual(result, methodResult);
             Assert.True(resultMessageAndCode);
@@ -102,7 +104,7 @@ namespace TestProject1
                         nameof(EnumUserErrorCodes.USR13C),
                         new[] { Helpers.GenerateErrorResult(nameof(user.UserName), user.UserName ?? "") }
                     );
-            CreateUserCommandHandler handler = new(_mapper, _user, _userQueries, _config, _mail.Object);
+            CreateUserCommandHandler handler = new(_mapper, _user, _userQueries, _config, _mail.Object, _logger);
             MethodResult<UserModelResponse> result = await handler.Handle(user, CancellationToken.None);
             bool resultMessageAndCode = CheckObjectEqual.ObjectAreEqual(result, methodResult);
             Assert.True(resultMessageAndCode);
@@ -126,8 +128,8 @@ namespace TestProject1
             {
                 StatusCode = StatusCodes.Status400BadRequest
             };
-            var _users = new UserRepository(null, null, null, null, null);
-            CreateUserCommandHandler handler = new(_mapper, _users, _userQueries, _config, _mail.Object);
+            var _users = new UserRepository(null);
+            CreateUserCommandHandler handler = new(_mapper, _users, _userQueries, _config, _mail.Object, _logger);
             MethodResult<UserModelResponse> result = await handler.Handle(user, CancellationToken.None);
             bool resultMessageAndCode = CheckObjectEqual.ObjectAreEqual(result, methodResult);
             Assert.False(resultMessageAndCode);

@@ -16,14 +16,7 @@ namespace MuonRoi.Social_Network.Configurations.Roles
         public void Configure(EntityTypeBuilder<GroupUserMember> builder)
         {
             builder.ToTable(nameof(GroupUserMember));
-            builder.HasKey(x => new { x.AppUserKey, x.AppRoleKey });
-            builder.HasOne(x => x.UserMember)
-                .WithMany(x => x.GroupUserMember)
-                .HasForeignKey(x => x.AppUserKey);
-
-            builder.HasOne(x => x.AppRole)
-                .WithMany(x => x.GroupUserMember)
-                .HasForeignKey(x => x.AppRoleKey);
+            builder.HasKey(x => x.Id);
         }
     }
 }

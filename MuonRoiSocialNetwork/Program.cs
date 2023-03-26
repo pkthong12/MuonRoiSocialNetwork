@@ -20,7 +20,7 @@ using Microsoft.IdentityModel.Tokens;
 using Autofac;
 using BaseConfig.BaseStartUp;
 using Autofac.Extensions.DependencyInjection;
-using MuonRoiSocialNetwork.Application.Commands.Base;
+using System.Net.Http.Headers;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
@@ -29,6 +29,14 @@ builder.Services.AddEndpointsApiExplorer();
 
 #region mediatR
 builder.Services.AddMediatR(config => config.RegisterServicesFromAssembly(typeof(Program).Assembly));
+#endregion
+
+#region redis setup
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = builder.Configuration.GetConnectionString("Redis");
+    options.InstanceName = "MemoryMuonroi_";
+});
 #endregion
 
 #region swagger
@@ -88,6 +96,7 @@ IMapper mapper = mapperCfg.CreateMapper();
 #region transient
 builder.Services.AddTransient<IUserRepository, UserRepository>();
 builder.Services.AddTransient<IUserQueries, UserQueries>();
+builder.Services.AddTransient<IRefreshtokenRepository, RefreshTokenRepository>();
 #endregion
 
 #region scoped
@@ -119,6 +128,8 @@ ILoggerFactory loggerFactory = LoggerFactory.Create(builder =>
     builder.AddDebug();
 });
 #endregion
+
+#region config authentication
 SymmetricSecurityKey symmetricKey = new(Convert.FromBase64String(configuration[ConstAppSettings.APPLICATIONSERECT]));
 string? myIssuer = configuration[ConstAppSettings.ENV_SERECT];
 string? myAudience = configuration[ConstAppSettings.APPLICATIONAPPDOMAIN];
@@ -142,9 +153,22 @@ builder.Services.AddAuthentication(delegate (AuthenticationOptions x)
     x.RequireHttpsMetadata = false;
     x.SaveToken = true;
     x.TokenValidationParameters = validationParameters;
+    x.Events = new JwtBearerEvents()
+    {
+        OnAuthenticationFailed = context =>
+        {
+            if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
+            {
+                context.Request.Headers.Add("Token-Expired", "true");
+            }
+            return Task.CompletedTask;
+        }
+    };
 });
 ContainerBuilder containerBuilder = new();
 builder.Host.ConfigureContainer<ContainerBuilder>(builder => builder.RegisterModule(new AuthContextModule()));
+#endregion
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -155,6 +179,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

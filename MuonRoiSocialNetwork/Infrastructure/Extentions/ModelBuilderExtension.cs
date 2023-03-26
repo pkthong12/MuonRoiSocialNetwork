@@ -139,23 +139,23 @@ namespace MuonRoiSocialNetwork.Infrastructure.Extentions
             });
             modelBuilder.Entity<AppRole>().HasData(new AppRole()
             {
-                //[Guid("72377426-B057-46CA-98FF-1CA9D33EA0C1")]
                 Id = new Guid("72377426-B057-46CA-98FF-1CA9D33EA0C1"),
                 Name = "Administratior",
-                Description = "Người quản lý cao nhất"
+                Description = "Người quản lý cao nhất",
+                GroupId = 1
             });
             modelBuilder.Entity<AppRole>().HasData(new AppRole()
             {
                 Id = new Guid("5EF7D163-8249-445C-8895-4EB97329AF7E"),
                 Name = "Default User",
-                Description = "Người dùng mặc định"
+                Description = "Người dùng mặc định",
+                GroupId = 2,
             });
             modelBuilder.Entity<GroupUserMember>().HasData(new GroupUserMember()
             {
                 Id = 1,
                 GroupName = "Administratior",
                 AppRoleKey = new Guid("72377426-B057-46CA-98FF-1CA9D33EA0C1"),
-                AppUserKey = new Guid("E0223A03-2945-49DB-976E-736433465B7F"),
                 CreatedDateTS = new DateTime(2023, 01, 01).GetTimeStamp(),
                 CreatedUserName = "muonroi",
                 CreatedUserId = 1
@@ -165,7 +165,6 @@ namespace MuonRoiSocialNetwork.Infrastructure.Extentions
                 Id = 2,
                 GroupName = "Default User",
                 AppRoleKey = new Guid("5EF7D163-8249-445C-8895-4EB97329AF7E"),
-                AppUserKey = new Guid("05075755-688D-4987-9C1E-F3BEF1746D52"),
                 CreatedDateTS = new DateTime(2023, 01, 01).GetTimeStamp(),
                 CreatedUserName = "muonroi",
                 CreatedUserId = 1

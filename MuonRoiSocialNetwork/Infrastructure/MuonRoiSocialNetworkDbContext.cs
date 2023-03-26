@@ -17,6 +17,8 @@ using MuonRoiSocialNetwork.Infrastructure.EFConfigs.Groups;
 using MuonRoiSocialNetwork.Infrastructure.Extentions;
 using BaseConfig.BaseDbContext;
 using MediatR;
+using MuonRoiSocialNetwork.Domains.DomainObjects.Users;
+using MuonRoiSocialNetwork.Infrastructure.EFConfigs.Users;
 
 namespace MuonRoiSocialNetwork.Infrastructure
 {
@@ -50,12 +52,20 @@ namespace MuonRoiSocialNetwork.Infrastructure
             builder.ApplyConfiguration(new BookMarkStoryConfiguration());
             builder.ApplyConfiguration(new FollowingAuthorConfiguration());
             builder.ApplyConfiguration(new AppRoleConfiguration());
+            builder.ApplyConfiguration(new UserLoginConfiguration());
 
-            builder.Entity<IdentityUserClaim<Guid>>().ToTable("UserClaim");
-            builder.Entity<IdentityUserRole<Guid>>().ToTable("UserRole").HasKey(x => new { x.RoleId, x.UserId });
-            builder.Entity<IdentityUserLogin<Guid>>().ToTable("UserLogin").HasKey(x => x.UserId);
-            builder.Entity<IdentityRoleClaim<Guid>>().ToTable("RoleClaim");
-            builder.Entity<IdentityUserToken<Guid>>().ToTable("UserToken").HasKey(x => x.UserId);
+            builder.Entity<AppUser>().HasOne(x => x.UserLoggin)
+            .WithOne(x => x.AppUser)
+            .HasForeignKey<UserLogin>(x => x.UserId);
+
+            builder.Entity<AppRole>().HasOne(x => x.GroupUserMember)
+           .WithMany(x => x.AppRole)
+           .HasForeignKey(x => x.GroupId);
+
+            builder.Entity<AppUser>().HasOne(x => x.GroupUserMember)
+          .WithMany(x => x.UserMember)
+          .HasForeignKey(x => x.GroupId);
+
             builder.Seed();
             base.OnModelCreating(builder);
 
@@ -112,5 +122,9 @@ namespace MuonRoiSocialNetwork.Infrastructure
         /// AppRoles
         /// </summary>
         public DbSet<AppRole>? AppRoles { get; set; }
+        /// <summary>
+        /// AppRoles
+        /// </summary>
+        public DbSet<UserLogin>? UserLoggins { get; set; }
     }
 }

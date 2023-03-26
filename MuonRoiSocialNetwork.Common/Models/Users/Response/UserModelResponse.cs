@@ -7,5 +7,6 @@ namespace MuonRoiSocialNetwork.Common.Models.Users.Response
         public string? Name { get; set; }
         public bool IsDeleted { get; set; }
         public string? JwtToken { get; set; }
+        public string? RefreshToken { get; set; }
     }
 }

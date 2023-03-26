@@ -80,6 +80,10 @@
   "USRC41C": "Ảnh lỗi! Vui lòng thử lại.",
   "USRC42C": "Không thể thay đổi mật khẩu bây giờ vui lòng thử lại sau ít phút.",
   "USRC43C": "Vui lòng đổi mật khẩu mặc định thành mật khẩu mới.",
+  "USRC44C": "Không tìm thấy refresh token thuộc người dùng",
+  "USRC45C": "Refresh token không hợp lệ",
+  "USRC46C": "Nhóm không tồn tại",
+
   //--------------------\
 
   //Role

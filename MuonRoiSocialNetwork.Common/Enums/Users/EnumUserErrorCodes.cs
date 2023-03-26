@@ -212,5 +212,13 @@
         /// Nhóm không tồn tại
         /// </summary>
         USRC46C,
+        /// <summary>
+        /// Vui lòng đăng nhập lại
+        /// </summary>
+        USRC47C,
+        /// <summary>
+        /// Yêu cầu quá nhiều vui lòng thử lại sau
+        /// </summary>
+        USRC48C,
     }
 }

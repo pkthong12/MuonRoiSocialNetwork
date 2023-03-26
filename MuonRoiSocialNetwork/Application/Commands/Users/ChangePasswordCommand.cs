@@ -110,6 +110,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                     return methodResult;
                 }
                 #endregion
+
                 methodResult.StatusCode = StatusCodes.Status200OK;
                 methodResult.Result = true;
                 return methodResult;
@@ -118,8 +119,11 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
             {
                 _logger.LogError($" -->(CHANGE PASSWORD) STEP CHECK {"Exception".ToUpper()} --> EXEPTION: {ex}");
                 _logger.LogError($" -->(CHANGE PASSWORD) STEP CHECK {"Exception".ToUpper()} --> EXEPTION{" StackTrace".ToUpper()}: {ex.StackTrace}");
-                throw;
+                methodResult.AddErrorMessage(Helpers.GetExceptionMessage(ex), ex.StackTrace ?? "");
+                methodResult.Result = false;
+                return methodResult;
             }
+
         }
     }
 }

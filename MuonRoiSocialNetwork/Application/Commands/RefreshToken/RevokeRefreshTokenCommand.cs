@@ -25,6 +25,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.RefreshToken
     public class RevokeRefreshTokenCommandHandler : BaseCommandHandler, IRequestHandler<RevokeRefreshTokenCommand, MethodResult<bool>>
     {
         private readonly IRefreshtokenRepository _refreshtokenRepository;
+        private readonly ILogger<RevokeRefreshTokenCommandHandler> _logger;
         /// <summary>
         /// Constructor
         /// </summary>
@@ -33,8 +34,11 @@ namespace MuonRoiSocialNetwork.Application.Commands.RefreshToken
         /// <param name="userQueries"></param>
         /// <param name="userRepository"></param>
         /// <param name="refreshtokenRepository"></param>
-        public RevokeRefreshTokenCommandHandler(IMapper mapper, IConfiguration configuration, IUserQueries userQueries, IUserRepository userRepository, IRefreshtokenRepository refreshtokenRepository) : base(mapper, configuration, userQueries, userRepository)
+        /// <param name="logger"></param>
+        public RevokeRefreshTokenCommandHandler(IMapper mapper, IConfiguration configuration, IUserQueries userQueries, IUserRepository userRepository, IRefreshtokenRepository refreshtokenRepository,
+            ILoggerFactory logger) : base(mapper, configuration, userQueries, userRepository)
         {
+            _logger = logger.CreateLogger<RevokeRefreshTokenCommandHandler>();
             _refreshtokenRepository = refreshtokenRepository;
         }
 
@@ -48,32 +52,61 @@ namespace MuonRoiSocialNetwork.Application.Commands.RefreshToken
         public async Task<MethodResult<bool>> Handle(RevokeRefreshTokenCommand request, CancellationToken cancellationToken)
         {
             MethodResult<bool> methodResult = new();
+            try
+            {
+                #region Check is exist User
+                AppUser checkUser = await _userQueries.GetByGuidAsync(request.UserId);
+                if (checkUser == null)
+                {
+                    methodResult.StatusCode = StatusCodes.Status400BadRequest;
+                    methodResult.AddApiErrorMessage(
+                        nameof(EnumUserErrorCodes.USR02C),
+                        new[] { Helpers.GenerateErrorResult(nameof(request.UserId), request.UserId) }
+                    );
+                    methodResult.Result = false;
+                    return methodResult;
+                }
+                #endregion
 
-            #region Check is exist User
-            AppUser checkUser = await _userQueries.GetByGuidAsync(request.UserId);
-            if (checkUser == null)
+                #region Revoke refresh token
+
+                if (await _refreshtokenRepository.RevokeRefreshTokenAsync(checkUser.Id) < 1)
+                {
+                    methodResult.StatusCode = StatusCodes.Status400BadRequest;
+                    methodResult.AddApiErrorMessage(
+                        nameof(EnumUserErrorCodes.USR29C),
+                        new[] { Helpers.GenerateErrorResult(nameof(request.UserId), request.UserId) }
+                    );
+                    methodResult.Result = false;
+                    return methodResult;
+                }
+                #endregion
+
+                #region Set status user is off
+                checkUser.AccountStatus = EnumAccountStatus.IsOf;
+                if (await _userRepository.UpdateUserAsync(checkUser) < 1)
+                {
+                    methodResult.StatusCode = StatusCodes.Status400BadRequest;
+                    methodResult.AddApiErrorMessage(
+                        nameof(EnumUserErrorCodes.USR29C),
+                        new[] { Helpers.GenerateErrorResult(nameof(checkUser.UserName), checkUser.UserName ?? "") }
+                    );
+                    return methodResult;
+                }
+                #endregion
+
+                methodResult.Result = true;
+                return methodResult;
+            }
+            catch (Exception ex)
             {
                 methodResult.StatusCode = StatusCodes.Status400BadRequest;
-                methodResult.AddApiErrorMessage(
-                    nameof(EnumUserErrorCodes.USR02C),
-                    new[] { Helpers.GenerateErrorResult(nameof(request.UserId), request.UserId) }
-                );
+                _logger.LogError($" -->(RevokeRefreshToken) STEP EXEPTION MESSAGE --> ID USER {ex} ---->");
+                _logger.LogError($" -->(RevokeRefreshToken) STEP EXEPTION STACK --> ID USER {ex.StackTrace} ---->");
+                methodResult.AddErrorMessage(Helpers.GetExceptionMessage(ex), ex.StackTrace ?? "");
                 methodResult.Result = false;
                 return methodResult;
             }
-            #endregion
-            if (await _refreshtokenRepository.RevokeRefreshTokenAsync(checkUser.Id) < 1)
-            {
-                methodResult.StatusCode = StatusCodes.Status400BadRequest;
-                methodResult.AddApiErrorMessage(
-                    nameof(EnumUserErrorCodes.USR29C),
-                    new[] { Helpers.GenerateErrorResult(nameof(request.UserId), request.UserId) }
-                );
-                methodResult.Result = false;
-                return methodResult;
-            }
-            methodResult.Result = true;
-            return methodResult;
         }
     }
 }

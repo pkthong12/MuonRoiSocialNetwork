@@ -27,14 +27,22 @@ namespace MuonRoiSocialNetwork.Infrastructure.Repositories
         /// <returns></returns>
         public async Task<int> CreateRefreshTokenAsync(UserLogin userLoggin)
         {
-            if (userLoggin is null)
+            try
+            {
+                if (userLoggin is null)
+                {
+                    return -1;
+                }
+                userLoggin.CreateDateTS = DateTime.UtcNow.GetTimeStamp(true);
+                userLoggin.RefreshTokenExpiryTimeTS = DateTime.UtcNow.AddDays(SettingUserDefault.refreshTokenExpiryDay).GetTimeStamp(true);
+                _dbContext.UserLoggins?.Add(userLoggin);
+                return await _dbContext.SaveChangesAsync();
+            }
+            catch
             {
                 return -1;
             }
-            userLoggin.CreateDateTS = DateTime.UtcNow.GetTimeStamp(true);
-            userLoggin.RefreshTokenExpiryTimeTS = DateTime.UtcNow.AddDays(SettingUserDefault.refreshTokenExpiryDay).GetTimeStamp(true);
-            _dbContext.UserLoggins?.Add(userLoggin);
-            return await _dbContext.SaveChangesAsync();
+
         }
         /// <summary>
         /// Handle function revoke refresh token
@@ -43,21 +51,25 @@ namespace MuonRoiSocialNetwork.Infrastructure.Repositories
         /// <returns></returns>
         public async Task<int> RevokeRefreshTokenAsync(Guid id)
         {
+            try
+            {
 #pragma warning disable CS8600
 #pragma warning disable CS8604
-            UserLogin userLoggin = await _dbContext.UserLoggins.AsNoTracking().FirstOrDefaultAsync(x => x.UserId == id).ConfigureAwait(false);
+                UserLogin userLoggin = await _dbContext.UserLoggins.AsNoTracking().FirstOrDefaultAsync(x => x.UserId == id).ConfigureAwait(false);
 #pragma warning restore CS8604
 #pragma warning restore CS8600
-            if (id == Guid.Empty)
-            {
-                return -1;
+                if (id == Guid.Empty)
+                {
+                    return -1;
+                }
+                if (userLoggin is null)
+                {
+                    return -1;
+                }
+                _dbContext.UserLoggins?.Remove(userLoggin);
+                return await _dbContext.SaveChangesAsync();
             }
-            if (userLoggin is null)
-            {
-                return -1;
-            }
-            _dbContext.UserLoggins?.Remove(userLoggin);
-            return await _dbContext.SaveChangesAsync();
+            catch { return -1; }
         }
         /// <summary>
         /// Handle function get info refresh token
@@ -79,10 +91,12 @@ namespace MuonRoiSocialNetwork.Infrastructure.Repositories
             {
                 return new Dictionary<string, string[]> { { "false", new[] { "false" } } };
             }
+#pragma warning disable CS8620
             Dictionary<string, string[]> keyValuePairs = new()
             {
-               { userLoggin.UserId.ToString(), new[] { userLoggin.KeySalt, userLoggin.RefreshToken } }
+               { userLoggin.UserId.ToString(), new[] { userLoggin.KeySalt, userLoggin.RefreshToken,userLoggin.RefreshTokenExpiryTimeTS.ToString() } }
             };
+#pragma warning restore CS8620
             return keyValuePairs;
         }
     }

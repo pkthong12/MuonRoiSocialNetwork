@@ -34,6 +34,7 @@ namespace MuonRoiSocialNetwork.Controllers
             _mediator = mediator;
             _userQueries = userQueries;
         }
+        #region Repository
         /// <summary>
         /// Register new user API
         /// </summary>
@@ -82,7 +83,7 @@ namespace MuonRoiSocialNetwork.Controllers
         /// Verification email
         /// </summary>
         /// <returns></returns>
-        [HttpPatch("{uid}/{token}")]
+        [HttpPatch("mail/{uid}/{token}")]
         [ProducesResponseType(typeof(MethodResult<bool>), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> VerificationEmail([FromRoute] Guid uid, string token)
@@ -116,48 +117,6 @@ namespace MuonRoiSocialNetwork.Controllers
             try
             {
                 MethodResult<BaseUserResponse> methodResult = await _mediator.Send(userChange).ConfigureAwait(false);
-                return methodResult.GetActionResult();
-            }
-            catch (Exception ex)
-            {
-                var errCommandResult = new VoidMethodResult();
-                errCommandResult.AddErrorMessage(Helpers.GetExceptionMessage(ex), ex.StackTrace ?? "");
-                return errCommandResult.GetActionResult();
-            }
-        }
-        /// <summary>
-        /// Get user by username
-        /// </summary>
-        /// <returns>UserModel</returns>
-        [HttpGet("default/{username}")]
-        [ProducesResponseType(typeof(MethodResult<BaseUserResponse>), (int)HttpStatusCode.Created)]
-        [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetUserByUserName([FromRoute] string username)
-        {
-            try
-            {
-                MethodResult<BaseUserResponse> methodResult = await _userQueries.GetUserModelBynameAsync(username).ConfigureAwait(false);
-                return methodResult.GetActionResult();
-            }
-            catch (Exception ex)
-            {
-                var errCommandResult = new VoidMethodResult();
-                errCommandResult.AddErrorMessage(Helpers.GetExceptionMessage(ex), ex.StackTrace ?? "");
-                return errCommandResult.GetActionResult();
-            }
-        }
-        /// <summary>
-        /// Get user by Guid
-        /// </summary>
-        /// <returns>UserModel</returns>
-        [HttpGet("{uid}")]
-        [ProducesResponseType(typeof(MethodResult<BaseUserResponse>), (int)HttpStatusCode.Created)]
-        [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetUserByGuid([FromRoute] Guid uid)
-        {
-            try
-            {
-                MethodResult<BaseUserResponse> methodResult = await _userQueries.GetUserModelByGuidAsync(uid).ConfigureAwait(false);
                 return methodResult.GetActionResult();
             }
             catch (Exception ex)
@@ -215,7 +174,7 @@ namespace MuonRoiSocialNetwork.Controllers
             }
         }
         /// <summary>
-        /// User change forgot password
+        /// User change password
         /// </summary>
         /// <returns>UserModel</returns>
         [HttpPatch("change-passoword")]
@@ -256,5 +215,72 @@ namespace MuonRoiSocialNetwork.Controllers
                 return errCommandResult.GetActionResult();
             }
         }
+        /// <summary>
+        /// Resend veritifycation mail
+        /// </summary>
+        /// <returns>UserModel</returns>
+        [HttpPost("mail/resend")]
+        [ProducesResponseType(typeof(MethodResult<bool>), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> ResendMailVeritification([FromForm] ResendMailVeritificationCommand cmd)
+        {
+            try
+            {
+                MethodResult<bool> methodResult = await _mediator.Send(cmd).ConfigureAwait(false);
+                return methodResult.GetActionResult();
+            }
+            catch (Exception ex)
+            {
+                var errCommandResult = new VoidMethodResult();
+                errCommandResult.AddErrorMessage(Helpers.GetExceptionMessage(ex), ex.StackTrace ?? "");
+                return errCommandResult.GetActionResult();
+            }
+        }
+        #endregion
+
+        #region Queries
+        /// <summary>
+        /// Get user by username
+        /// </summary>
+        /// <returns>UserModel</returns>
+        [HttpGet("default/{username}")]
+        [ProducesResponseType(typeof(MethodResult<BaseUserResponse>), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetUserByUserName([FromRoute] string username)
+        {
+            try
+            {
+                MethodResult<BaseUserResponse> methodResult = await _userQueries.GetUserModelBynameAsync(username).ConfigureAwait(false);
+                return methodResult.GetActionResult();
+            }
+            catch (Exception ex)
+            {
+                var errCommandResult = new VoidMethodResult();
+                errCommandResult.AddErrorMessage(Helpers.GetExceptionMessage(ex), ex.StackTrace ?? "");
+                return errCommandResult.GetActionResult();
+            }
+        }
+        /// <summary>
+        /// Get user by Guid
+        /// </summary>
+        /// <returns>UserModel</returns>
+        [HttpGet("{uid}")]
+        [ProducesResponseType(typeof(MethodResult<BaseUserResponse>), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetUserByGuid([FromRoute] Guid uid)
+        {
+            try
+            {
+                MethodResult<BaseUserResponse> methodResult = await _userQueries.GetUserModelByGuidAsync(uid).ConfigureAwait(false);
+                return methodResult.GetActionResult();
+            }
+            catch (Exception ex)
+            {
+                var errCommandResult = new VoidMethodResult();
+                errCommandResult.AddErrorMessage(Helpers.GetExceptionMessage(ex), ex.StackTrace ?? "");
+                return errCommandResult.GetActionResult();
+            }
+        }
+        #endregion
     }
 }

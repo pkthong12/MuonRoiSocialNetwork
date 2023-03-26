@@ -89,19 +89,20 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                     return methodResult;
                 }
                 #endregion
+                methodResult.Result = true;
+                methodResult.StatusCode = StatusCodes.Status200OK;
+                return methodResult;
             }
             catch (Exception ex)
             {
                 methodResult.StatusCode = StatusCodes.Status400BadRequest;
-                methodResult.Result = false;
                 _logger.LogError($" -->(DELETE USER) STEP CHECK {"Exception".ToUpper()} --> EXEPTION: {ex}");
                 _logger.LogError($" -->(DELETE USER) STEP CHECK {"Exception".ToUpper()} --> EXEPTION{" StackTrace".ToUpper()}: {ex.StackTrace}");
                 methodResult.AddErrorMessage(Helpers.GetExceptionMessage(ex), ex.StackTrace ?? "");
+                methodResult.Result = false;
                 return methodResult;
             }
-            methodResult.Result = true;
-            methodResult.StatusCode = StatusCodes.Status200OK;
-            return methodResult;
+
         }
     }
 }

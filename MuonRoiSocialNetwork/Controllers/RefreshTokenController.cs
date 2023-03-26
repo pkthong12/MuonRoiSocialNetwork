@@ -1,10 +1,8 @@
 ﻿using BaseConfig.EntityObject.Entity;
 using BaseConfig.MethodResult;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MuonRoiSocialNetwork.Application.Commands.RefreshToken;
-using MuonRoiSocialNetwork.Common.Models.Users.Response;
 using System.Net;
 
 namespace MuonRoiSocialNetwork.Controllers
@@ -12,7 +10,7 @@ namespace MuonRoiSocialNetwork.Controllers
     /// <summary>
     /// Auth: PhiLe 20230325
     /// </summary>
-    [Route("api/users")]
+    [Route("api/token")]
     [ApiController]
     public class RefreshTokenController : Controller
     {
@@ -25,6 +23,8 @@ namespace MuonRoiSocialNetwork.Controllers
         {
             _mediator = mediator;
         }
+
+        #region Repository
         /// <summary>
         /// Genarate refresh token
         /// </summary>
@@ -51,10 +51,10 @@ namespace MuonRoiSocialNetwork.Controllers
             }
         }
         /// <summary>
-        /// Revoke refresh token
+        /// Revoke refresh token | logout
         /// </summary>
         /// <returns></returns>
-        [HttpPost("refresh/{userid}")]
+        [HttpPost("logout/{userid}")]
         [ProducesResponseType(typeof(MethodResult<bool>), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> RevokeRefreshToken([FromRoute] Guid userid)
@@ -101,5 +101,9 @@ namespace MuonRoiSocialNetwork.Controllers
                 return errCommandResult.GetActionResult();
             }
         }
+        #endregion
+
+        #region Queries
+        #endregion
     }
 }

@@ -15,7 +15,6 @@ using MuonRoiSocialNetwork.Common.Settings.UserSettings;
 using MuonRoiSocialNetwork.Domains.Interfaces.Commands;
 using MuonRoiSocialNetwork.Domains.Interfaces.Queries;
 using MuonRoiSocialNetwork.Infrastructure.Helpers;
-using MuonRoiSocialNetwork.Infrastructure.Repositories;
 
 namespace MuonRoiSocialNetwork.Application.Commands.Users
 {
@@ -75,6 +74,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
         {
             MethodResult<UserModelResponse> methodResult = new();
             GenarateJwtToken genarateJwtToken = new(_configuration);
+            MethodResult<string> refreshToken = new();
             try
             {
 
@@ -127,7 +127,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                         new[] { Helpers.GenerateErrorResult(nameof(SettingUserDefault.loginAttempDefault), SettingUserDefault.loginAttempDefault - appUser.AccessFailedCount) }
                     );
                     appUser.AccessFailedCount++;
-                    if (appUser.AccessFailedCount >= 5)
+                    if (appUser.AccessFailedCount >= SettingUserDefault.loginAttempDefault)
                     {
                         appUser.Status = EnumAccountStatus.Locked;
                         appUser.LockReason = $"Login failed {appUser.AccessFailedCount} times";
@@ -157,7 +157,6 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                 }
                 #endregion
 
-
                 #region Update info user when login success
                 appUser.AccessFailedCount = 0;
                 appUser.LastLogin = DateTime.UtcNow;
@@ -185,18 +184,14 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                 resultInforLoginUser.JwtToken = genarateJwtToken.GenarateJwt(resultInforLoginUser, SettingUserDefault.minuteExpitryLogin);
                 #endregion
 
-#pragma warning disable CS8602
-                UserModelResponse? userGet = await _cache?.GetRecordAsync<UserModelResponse>($"{RefreshTokenDefault.keyUserModelResponse}_{resultInforLoginUser.Id}");
-#pragma warning restore CS8602
-                MethodResult<string> refreshToken = null;
                 #region Check -> genarate refresh token and set cache
+#pragma warning disable CS8602
+                UserModelResponse? userGet = await _cache?.GetRecordAsync<UserModelResponse>($"{RefreshTokenDefault.keyUserModelResponseLogin}_{resultInforLoginUser.Id}");
+#pragma warning restore CS8602
                 if (userGet is null)
                 {
-                    TimeSpan expirationTime = RefreshTokenDefault.expirationTime;
-                    TimeSpan slidingExpirationTime = RefreshTokenDefault.slidingExpiration;
-#pragma warning disable CS8602
-                    await _cache?.SetRecordAsync<BaseUserResponse>($"{RefreshTokenDefault.keyUserModelResponse}_{resultInforLoginUser.Id}", resultInforLoginUser, expirationTime, slidingExpirationTime);
-#pragma warning restore CS8602
+                    TimeSpan expirationTime = RefreshTokenDefault.expirationTimeLogin;
+                    TimeSpan slidingExpirationTime = RefreshTokenDefault.slidingExpirationLogin;
                     GennerateRefreshTokenCommand gennerateRefreshToken = new()
                     {
                         UserId = resultInforLoginUser.Id,
@@ -211,9 +206,14 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                         );
                         return methodResult;
                     }
+#pragma warning disable CS8602
+                    resultInforLoginUser.RefreshToken = refreshToken.Result;
+                    await _cache?.SetRecordAsync<BaseUserResponse>($"{RefreshTokenDefault.keyUserModelResponseLogin}_{resultInforLoginUser.Id}", resultInforLoginUser, expirationTime, slidingExpirationTime);
+#pragma warning restore CS8602
                 }
                 #endregion
-                resultInforLoginUser.RefreshToken = refreshToken?.Result;
+
+                resultInforLoginUser.RefreshToken = userGet?.RefreshToken ?? refreshToken.Result;
                 methodResult.Result = resultInforLoginUser;
                 methodResult.StatusCode = StatusCodes.Status200OK;
                 return methodResult;

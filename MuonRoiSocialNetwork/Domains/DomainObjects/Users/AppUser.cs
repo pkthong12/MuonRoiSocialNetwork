@@ -112,9 +112,9 @@ namespace MuonRoi.Social_Network.Users
         /// </summary>
         public EnumAccountStatus AccountStatus { get; set; }
         /// <summary>
-        /// Is renew pass
+        /// Number request send mail
         /// </summary>
-        public bool IsRenewPass { get; set; }
+        public int CountRequestSendMail { get; set; }
         /// <summary>
         /// CreatedDateTS
         /// </summary>

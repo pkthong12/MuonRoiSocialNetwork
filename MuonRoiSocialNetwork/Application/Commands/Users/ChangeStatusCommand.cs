@@ -88,16 +88,20 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                     methodResult.Result = false;
                     return methodResult;
                 }
+                #endregion
                 methodResult.Result = true;
                 methodResult.StatusCode = StatusCodes.Status200OK;
                 return methodResult;
-                #endregion
             }
             catch (CustomException ex)
             {
                 methodResult.StatusCode = StatusCodes.Status400BadRequest;
                 _logger.LogError($" -->(CHANGE STATUS) STEP CHECK {"CustomException".ToUpper()} --> EXEPTION: {ex}");
+#pragma warning disable CS8604 // Possible null reference argument.
                 methodResult.AddResultFromErrorList(ex.ErrorMessages);
+#pragma warning restore CS8604 // Possible null reference argument.
+                methodResult.Result = false;
+                return methodResult;
             }
             catch (Exception ex)
             {
@@ -105,8 +109,9 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                 _logger.LogError($" -->(CHANGE STATUS) STEP CHECK {"Exception".ToUpper()} --> EXEPTION: {ex}");
                 _logger.LogError($" -->(CHANGE STATUS) STEP CHECK {"Exception".ToUpper()} --> EXEPTION{" StackTrace".ToUpper()}: {ex.StackTrace}");
                 methodResult.AddErrorMessage(Helpers.GetExceptionMessage(ex), ex.StackTrace ?? "");
+                methodResult.Result = false;
+                return methodResult;
             }
-            return methodResult;
         }
     }
 }

@@ -82,6 +82,8 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                     return methodResult;
                 }
                 #endregion
+
+                #region Check is update email
                 if (request.Email != userIsExist.Email)
                 {
                     AppUser existingUser = await _userQueries
@@ -97,6 +99,8 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                         return methodResult;
                     }
                 }
+                #endregion
+
                 #region upload avatar
 
                 if (request.AvatarTemp != null)
@@ -136,12 +140,15 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                 methodResult.Result = resultInforLoginUser;
                 methodResult.StatusCode = StatusCodes.Status200OK;
                 #endregion
+
             }
             catch (CustomException ex)
             {
                 methodResult.StatusCode = StatusCodes.Status400BadRequest;
                 _logger.LogError($" -->(UPDATE INFO) STEP CHECK {"CustomException".ToUpper()} --> EXEPTION: {ex}");
+#pragma warning disable CS8604 // Possible null reference argument.
                 methodResult.AddResultFromErrorList(ex.ErrorMessages);
+#pragma warning restore CS8604 // Possible null reference argument.
             }
             catch (Exception ex)
             {

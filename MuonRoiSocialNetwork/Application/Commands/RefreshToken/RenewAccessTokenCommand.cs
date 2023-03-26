@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BaseConfig.EntityObject.Entity;
+using BaseConfig.Extentions.Datetime;
 using BaseConfig.JWT;
 using BaseConfig.MethodResult;
 using MediatR;
@@ -10,7 +11,6 @@ using MuonRoiSocialNetwork.Common.Models.Users.Base.Response;
 using MuonRoiSocialNetwork.Common.Models.Users.Response;
 using MuonRoiSocialNetwork.Common.Settings.RefreshTokenSettings;
 using MuonRoiSocialNetwork.Common.Settings.UserSettings;
-using MuonRoiSocialNetwork.Domains.DomainObjects.Users;
 using MuonRoiSocialNetwork.Domains.Interfaces.Commands;
 using MuonRoiSocialNetwork.Domains.Interfaces.Queries;
 using MuonRoiSocialNetwork.Infrastructure.Helpers;
@@ -38,7 +38,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.RefreshToken
     {
         private readonly IRefreshtokenRepository _refreshtokenRepository;
         private readonly IDistributedCache _cache;
-
+        private readonly ILogger<RenewAccessTokenCommandHandler> _logger;
         /// <summary>
         /// Constructor
         /// </summary>
@@ -48,10 +48,13 @@ namespace MuonRoiSocialNetwork.Application.Commands.RefreshToken
         /// <param name="userRepository"></param>
         /// <param name="refreshtokenRepository"></param>
         /// <param name="cache"></param>
-        public RenewAccessTokenCommandHandler(IMapper mapper, IConfiguration configuration, IUserQueries userQueries, IUserRepository userRepository, IRefreshtokenRepository refreshtokenRepository, IDistributedCache cache) : base(mapper, configuration, userQueries, userRepository)
+        /// <param name="logger"></param>
+        public RenewAccessTokenCommandHandler(IMapper mapper, IConfiguration configuration, IUserQueries userQueries, IUserRepository userRepository, IRefreshtokenRepository refreshtokenRepository, IDistributedCache cache,
+            ILoggerFactory logger) : base(mapper, configuration, userQueries, userRepository)
         {
             _refreshtokenRepository = refreshtokenRepository;
             _cache = cache;
+            _logger = logger.CreateLogger<RenewAccessTokenCommandHandler>();
         }
 
         /// <summary>
@@ -65,53 +68,87 @@ namespace MuonRoiSocialNetwork.Application.Commands.RefreshToken
         {
             MethodResult<string> methodResult = new();
             GenarateJwtToken genarateJwtToken = new(_configuration);
-            #region Check is exist User
-            AppUser checkUser = await _userQueries.GetByGuidAsync(request.UserId);
-            if (checkUser == null)
+            string accessToken = string.Empty;
+            try
             {
-                methodResult.StatusCode = StatusCodes.Status400BadRequest;
-                methodResult.AddApiErrorMessage(
-                    nameof(EnumUserErrorCodes.USR02C),
-                    new[] { Helpers.GenerateErrorResult(nameof(request.UserId), request.UserId) }
-                );
-                return methodResult;
-            }
-            #endregion
+                #region Check is exist User
+                AppUser checkUser = await _userQueries.GetByGuidAsync(request.UserId);
+                if (checkUser == null)
+                {
+                    methodResult.StatusCode = StatusCodes.Status400BadRequest;
+                    methodResult.AddApiErrorMessage(
+                        nameof(EnumUserErrorCodes.USR02C),
+                        new[] { Helpers.GenerateErrorResult(nameof(request.UserId), request.UserId) }
+                    );
+                    return methodResult;
+                }
+                #endregion
 
-            Dictionary<string, string[]> keyValuePairs = await _refreshtokenRepository.GetInfoRefreshTokenAsync(request.UserId);
-            if (keyValuePairs.Any(x => x.Key == "false"))
-            {
-                methodResult.StatusCode = StatusCodes.Status400BadRequest;
-                methodResult.AddApiErrorMessage(
-                    nameof(EnumUserErrorCodes.USRC44C),
-                    new[] { Helpers.GenerateErrorResult(nameof(request.UserId), request.UserId) }
-                );
-                return methodResult;
-            }
-            string[] valueRefreshToken = keyValuePairs.FirstOrDefault(x => x.Key == request.UserId.ToString()).Value;
-            string salt = valueRefreshToken.Length <= 0 ? "" : valueRefreshToken[0];
-            string refreshToken = valueRefreshToken.Length <= 0 ? "" : valueRefreshToken[1];
+                #region Get info refresh token
 
+                Dictionary<string, string[]> keyValuePairs = await _refreshtokenRepository.GetInfoRefreshTokenAsync(request.UserId);
+                if (keyValuePairs.Any(x => x.Key == "false"))
+                {
+                    methodResult.StatusCode = StatusCodes.Status400BadRequest;
+                    methodResult.AddApiErrorMessage(
+                        nameof(EnumUserErrorCodes.USRC44C),
+                        new[] { Helpers.GenerateErrorResult(nameof(request.UserId), request.UserId) }
+                    );
+                    return methodResult;
+                }
+                string[] valueRefreshToken = keyValuePairs.FirstOrDefault(x => x.Key == request.UserId.ToString()).Value;
+                string salt = valueRefreshToken.Length <= 0 ? "" : valueRefreshToken[0];
+                string refreshToken = valueRefreshToken.Length <= 0 ? "" : valueRefreshToken[1];
+                double timeExpired = valueRefreshToken.Length <= 0 ? 0 : Convert.ToDouble(valueRefreshToken[2]);
+                if (DateTime.UtcNow >= DateTimeExtensions.TimeStampToDateTime(timeExpired))
+                {
+                    methodResult.StatusCode = StatusCodes.Status400BadRequest;
+                    methodResult.AddApiErrorMessage(
+                        nameof(EnumUserErrorCodes.USRC36C),
+                        new[] { Helpers.GenerateErrorResult(nameof(request.UserId), request.UserId) }
+                    );
+                    return methodResult;
+                }
+                #endregion
+
+                #region Check valid refresh token
 #pragma warning disable CS8604
-            if (refreshToken != HashPassword(request.RefreshToken, salt))
+                if (refreshToken != HashPassword(request.RefreshToken, salt))
+                {
+                    methodResult.StatusCode = StatusCodes.Status400BadRequest;
+                    methodResult.AddApiErrorMessage(
+                        nameof(EnumUserErrorCodes.USRC45C),
+                        new[] { Helpers.GenerateErrorResult(nameof(request.RefreshToken), request.RefreshToken) }
+                    );
+                    return methodResult;
+                }
+#pragma warning restore CS8604
+                #endregion
+
+                #region Get cache
+                UserModelResponse? resultInforLoginUser = await _cache.GetRecordAsync<UserModelResponse>($"{RefreshTokenDefault.keyUserModelResponseRegister}_{request.UserId}");
+                MethodResult<BaseUserResponse> userResponse = new();
+                if (resultInforLoginUser == null)
+                {
+                    userResponse = await _userQueries.GetUserModelByGuidAsync(request.UserId);
+                }
+                resultInforLoginUser = _mapper.Map<UserModelResponse>(userResponse.Result);
+                #endregion
+
+                #region Renew access token
+#pragma warning disable CS8604
+                accessToken = genarateJwtToken.GenarateJwt(resultInforLoginUser, SettingUserDefault.minuteExpitryLogin);
+#pragma warning restore CS8604
+                #endregion
+            }
+            catch (Exception ex)
             {
                 methodResult.StatusCode = StatusCodes.Status400BadRequest;
-                methodResult.AddApiErrorMessage(
-                    nameof(EnumUserErrorCodes.USRC45C),
-                    new[] { Helpers.GenerateErrorResult(nameof(request.RefreshToken), request.RefreshToken) }
-                );
-                return methodResult;
+                _logger.LogError($" -->(RenewAccessToken) STEP EXEPTION MESSAGE --> ID USER {ex} ---->");
+                _logger.LogError($" -->(RenewAccessToken) STEP EXEPTION STACK --> ID USER {ex.StackTrace} ---->");
+                methodResult.AddErrorMessage(Helpers.GetExceptionMessage(ex), ex.StackTrace ?? "");
             }
-#pragma warning restore CS8604
-
-            UserModelResponse? resultInforLoginUser = await _cache.GetRecordAsync<UserModelResponse>($"{RefreshTokenDefault.keyUserModelResponse}_{request.UserId}");
-            if (resultInforLoginUser == null)
-            {
-                MethodResult<BaseUserResponse> userResponse = await _userQueries.GetUserModelByGuidAsync(request.UserId);
-                _mapper.Map(userResponse.Result, resultInforLoginUser);
-            }
-            string newAccessToken = genarateJwtToken.GenarateJwt(resultInforLoginUser, SettingUserDefault.minuteExpitryLogin);
-            methodResult.Result = newAccessToken;
+            methodResult.Result = accessToken;
             return methodResult;
         }
     }

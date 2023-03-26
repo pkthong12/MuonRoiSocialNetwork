@@ -36,6 +36,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
     {
         private readonly IEmailService _emailService;
         private readonly ILogger<CreateUserCommandHandler> _logger;
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -66,7 +67,6 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
             MethodResult<UserModelResponse> methodResult = new();
             try
             {
-
                 #region Validation
                 AppUser newUser = _mapper.Map<AppUser>(request);
                 newUser.LastLogin = DateTime.UtcNow;
@@ -123,7 +123,8 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                     return methodResult;
                 };
                 UserModelResponse responseUserRegister = _mapper.Map<UserModelResponse>(getCreatedUser.Result);
-                responseUserRegister.Name = string.Concat(getCreatedUser?.Result?.Surname + " ", getCreatedUser?.Result?.Name);
+                string? name = getCreatedUser?.Result?.Name;
+                responseUserRegister.Name = string.Concat(getCreatedUser?.Result?.Surname + " ", name);
                 methodResult.Result = responseUserRegister;
                 #endregion
             }
@@ -131,7 +132,9 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
             {
                 methodResult.StatusCode = StatusCodes.Status400BadRequest;
                 _logger.LogError($" -->(REGISTER) STEP CUSTOMEXCEPTION --> ID USER {ex} ---->");
+#pragma warning disable CS8604
                 methodResult.AddResultFromErrorList(ex?.ErrorMessages);
+#pragma warning restore CS8604
             }
             catch (Exception ex)
             {
@@ -173,7 +176,6 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                         string.Format(appDomain + confirmationLink, user.Id, token))
                 }
             };
-
             await _emailService.SendEmailForEmailConfirmation(options);
         }
     }

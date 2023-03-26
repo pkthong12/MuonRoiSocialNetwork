@@ -83,6 +83,8 @@
   "USRC44C": "Không tìm thấy refresh token thuộc người dùng",
   "USRC45C": "Refresh token không hợp lệ",
   "USRC46C": "Nhóm không tồn tại",
+  "USRC47C": "Vui lòng đăng nhập lại",
+  "USRC48C": "Yêu cầu quá nhiều vui lòng thử lại sau",
   //--------------------\
 
   //Role

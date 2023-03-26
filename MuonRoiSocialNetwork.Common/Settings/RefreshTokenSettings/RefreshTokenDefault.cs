@@ -5,14 +5,18 @@
         /// <summary>
         /// Key user info when login
         /// </summary>
-        public static string keyUserModelResponse = "UserModelResponse";
+        public const string keyUserModelResponseLogin = "ModelResponseLogin";
+        /// <summary>
+        /// Key user info when register
+        /// </summary>
+        public const string keyUserModelResponseRegister = "ModelResponseRegister";
         /// <summary>
         /// Life time expiration
         /// </summary>
-        public static TimeSpan expirationTime = TimeSpan.FromMinutes(61);
+        public static TimeSpan expirationTimeLogin = TimeSpan.FromMinutes(60);
         /// <summary>
         /// Life time slidingExpiration
         /// </summary>
-        public static TimeSpan slidingExpiration = TimeSpan.FromMinutes(70);
+        public static TimeSpan slidingExpirationLogin = TimeSpan.FromMinutes(65);
     }
 }

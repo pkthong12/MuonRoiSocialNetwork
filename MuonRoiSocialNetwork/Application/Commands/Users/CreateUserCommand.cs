@@ -13,6 +13,8 @@ using MuonRoiSocialNetwork.Infrastructure.Services;
 using MuonRoiSocialNetwork.Domains.Interfaces.Queries;
 using MuonRoiSocialNetwork.Common.Models.Users.Response;
 using MuonRoiSocialNetwork.Common.Models.Users.Request;
+using MuonRoiSocialNetwork.Common.Settings.UserSettings;
+using MuonRoiSocialNetwork.Common.Models.Users.Base.Response;
 
 namespace MuonRoiSocialNetwork.Application.Commands.Users
 {
@@ -93,7 +95,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                 #endregion
 
                 #region Create new user
-
+                newUser.GroupId = SettingUserDefault.groupDefault;
                 if (await _userRepository.CreateNewUserAsync(newUser) <= 0)
                 {
                     methodResult.StatusCode = StatusCodes.Status400BadRequest;
@@ -110,8 +112,8 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                 #endregion
 
                 #region return info new user registed
-                AppUser getCreatedUser = await _userQueries.GetByGuidAsync(newUser.Id);
-                if (getCreatedUser == null)
+                MethodResult<BaseUserResponse> getCreatedUser = await _userQueries.GetUserModelByGuidAsync(newUser.Id);
+                if (!getCreatedUser.IsOK)
                 {
                     methodResult.StatusCode = StatusCodes.Status400BadRequest;
                     methodResult.AddApiErrorMessage(
@@ -120,15 +122,16 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                     );
                     return methodResult;
                 };
-                UserModelResponse resultUser = _mapper.Map<UserModelResponse>(getCreatedUser);
-                methodResult.Result = resultUser;
+                UserModelResponse responseUserRegister = _mapper.Map<UserModelResponse>(getCreatedUser.Result);
+                responseUserRegister.Name = string.Concat(getCreatedUser?.Result?.Surname + " ", getCreatedUser?.Result?.Name);
+                methodResult.Result = responseUserRegister;
                 #endregion
             }
             catch (CustomException ex)
             {
                 methodResult.StatusCode = StatusCodes.Status400BadRequest;
                 _logger.LogError($" -->(REGISTER) STEP CUSTOMEXCEPTION --> ID USER {ex} ---->");
-                methodResult.AddResultFromErrorList(ex.ErrorMessages);
+                methodResult.AddResultFromErrorList(ex?.ErrorMessages);
             }
             catch (Exception ex)
             {
@@ -149,7 +152,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
         {
             GenarateJwtToken genarateJwtToken = new(_configuration);
             UserModelResponse userModel = _mapper.Map<UserModelResponse>(identityUser);
-            string token = genarateJwtToken.GenarateJwt(userModel, int.Parse(_configuration.GetSection(ConstAppSettings.LIFE_TIME).Value));
+            string token = genarateJwtToken.GenarateJwt(userModel, SettingUserDefault.minuteExpitryConfirmEmail);
             if (!string.IsNullOrEmpty(token))
             {
                 await SendEmailConfirmationEmail(identityUser, token);

@@ -17,8 +17,12 @@ namespace MuonRoiSocialNetwork.Domains.DomainObjects.Groups
         /// </summary>
         public bool IsDeleted { get; set; }
         /// <summary>
+        /// Group id
+        /// </summary>
+        public int GroupId { get; set; }
+        /// <summary>
         /// GroupUserMember
         /// </summary>
-        public List<GroupUserMember>? GroupUserMember { get; set; }
+        public GroupUserMember? GroupUserMember { get; set; }
     }
 }

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using System.Text.Json.Serialization;
+using MuonRoiSocialNetwork.Domains.DomainObjects.Users;
 
 namespace MuonRoi.Social_Network.Users
 {
@@ -114,47 +115,76 @@ namespace MuonRoi.Social_Network.Users
         /// Is renew pass
         /// </summary>
         public bool IsRenewPass { get; set; }
+        /// <summary>
+        /// CreatedDateTS
+        /// </summary>
         public double? CreatedDateTS { get; set; }
+        /// <summary>
+        /// UpdatedDateTS
+        /// </summary>
 
         public double? UpdatedDateTS { get; set; }
+        /// <summary>
+        /// DeletedDateTS
+        /// </summary>
 
         public double? DeletedDateTS { get; set; }
+        /// <summary>
+        /// IsDeleted
+        /// </summary>
         public bool IsDeleted { get; set; }
         /// <summary>
         /// Foreign key
         /// </summary>
-        public List<GroupUserMember> GroupUserMember { get; set; }
+        public GroupUserMember? GroupUserMember { get; set; }
         /// <summary>
         /// Foreign key
         /// </summary>
-        public List<BookMarkStory> BookMarkStory { get; set; }
+        public List<BookMarkStory>? BookMarkStory { get; set; }
         /// <summary>
         /// Foreign key
         /// </summary>
-        public List<StoryNotifications> StoryNotifications { get; set; }
+        public List<StoryNotifications>? StoryNotifications { get; set; }
         /// <summary>
         /// Foreign key
         /// </summary>
-        public List<StoryPublish> StoryPublish { get; set; }
+        public List<StoryPublish>? StoryPublish { get; set; }
         /// <summary>
         /// Foreign key
         /// </summary>
-        public List<StoryReview> StoryReview { get; set; }
+        public List<StoryReview>? StoryReview { get; set; }
         /// <summary>
         /// Foreign key
         /// </summary>
-        public List<FollowingAuthor> FollowingAuthor { get; set; }
+        public List<FollowingAuthor>? FollowingAuthor { get; set; }
+
+        /// <summary>
+        /// Foreign key
+        /// </summary>
+        public UserLogin? UserLoggin { get; set; }
+
         /// <summary>
         /// Foreign key
         /// </summary>
         protected List<ErrorResult> _errorMessages = new();
 
+        /// <summary>
+        /// ErrorMessages
+        /// </summary>
         [JsonIgnore]
         public IReadOnlyCollection<ErrorResult> ErrorMessages => _errorMessages;
-        public Assembly GetAssembly()
+        /// <summary>
+        /// GetAssembly
+        /// </summary>
+        /// <returns></returns>
+        public Assembly? GetAssembly()
         {
             return GetType().Assembly;
         }
+        /// <summary>
+        /// IsValid
+        /// </summary>
+        /// <returns></returns>
         public bool IsValid()
         {
             ValidationContext validationContext = new(this, null, null);
@@ -170,9 +200,13 @@ namespace MuonRoi.Social_Network.Users
                     errorResult.ErrorMessage = Helpers.GetErrorMessage(item.ErrorMessage, GetAssembly());
                     foreach (string memberName in item.MemberNames)
                     {
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
                         PropertyInfo property = validationContext.ObjectType.GetProperty(memberName);
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
                         object value = property.GetValue(validationContext.ObjectInstance, null);
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
                         errorResult.ErrorValues.Add(Helpers.GenerateErrorResult(memberName, value));
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
                     }
 
                     _errorMessages.Add(errorResult);

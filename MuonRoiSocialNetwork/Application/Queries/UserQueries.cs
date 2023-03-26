@@ -11,6 +11,7 @@ using MuonRoiSocialNetwork.Common.Models.Users.Response;
 using MuonRoiSocialNetwork.Common.Models.Users.Base.Response;
 using BaseConfig.Extentions.Datetime;
 using BaseConfig.Extentions.Image;
+using MuonRoiSocialNetwork.Common.Settings.UserSettings;
 
 namespace MuonRoiSocialNetwork.Application.Queries
 {
@@ -40,18 +41,22 @@ namespace MuonRoiSocialNetwork.Application.Queries
         /// <param name="id"></param>
         /// <returns></returns>
         public async Task<AppUser> GetByGuidAsync(Guid id)
+#pragma warning disable CS8604
             => await _dbcontext.AppUsers
                         .AsNoTracking()
                         .FirstOrDefaultAsync(x => x.Id.Equals(id) && !x.IsDeleted);
+#pragma warning restore CS8604
         /// <summary>
         /// handle get user by username
         /// </summary>
         /// <param name="username"></param>
         /// <returns></returns>
         public async Task<AppUser> GetByUsernameAsync(string username)
+#pragma warning disable CS8604
         => await _dbcontext.AppUsers
                        .AsNoTracking()
                        .FirstOrDefaultAsync(x => x.UserName.Equals(username) && !x.IsDeleted);
+#pragma warning restore CS8604
         /// <summary>
         /// handle get user by username
         /// </summary>
@@ -60,9 +65,11 @@ namespace MuonRoiSocialNetwork.Application.Queries
         public async Task<MethodResult<BaseUserResponse>> GetUserModelBynameAsync(string username)
         {
             MethodResult<BaseUserResponse> methodResult = new();
+#pragma warning disable CS8604
             AppUser? appUser = await _dbcontext.AppUsers
                        .AsNoTracking()
                        .FirstOrDefaultAsync(x => x.UserName.Equals(username) && !x.IsDeleted);
+#pragma warning restore CS8604
             if (appUser == null)
             {
                 methodResult.StatusCode = StatusCodes.Status400BadRequest;
@@ -72,13 +79,31 @@ namespace MuonRoiSocialNetwork.Application.Queries
                 );
                 return methodResult;
             }
-            List<AppRole> roles = await _dbcontext.AppRoles.Where(x => !x.IsDeleted).ToListAsync();
-            GroupUserMember? roleUser = _dbcontext.GroupUserMembers.FirstOrDefault(x => x.AppUserKey.Equals(appUser.Id) && !x.IsDeleted);
+#pragma warning disable CS8604
+            List<AppRole>? roles = await _dbcontext.AppRoles.Where(x => !x.IsDeleted).ToListAsync();
+#pragma warning restore CS8604
+#pragma warning disable CS8604 
+            List<GroupUserMember>? groups = await _dbcontext.GroupUserMembers.Where(x => !x.IsDeleted).ToListAsync();
+#pragma warning restore CS8604
+            if (!roles.Any() || !groups.Any())
+            {
+                methodResult.StatusCode = StatusCodes.Status400BadRequest;
+                methodResult.AddApiErrorMessage(
+                    nameof(EnumUserErrorCodes.USRC46C),
+                    new[] { Helpers.GenerateErrorResult(nameof(EnumUserErrorCodes.USRC46C), nameof(EnumUserErrorCodes.USRC46C) ?? "") }
+                );
+                return methodResult;
+            }
+            var userRole = (from role in roles
+                            join gr in groups
+                            on role.GroupId equals gr.Id
+                            where gr.Id == appUser.GroupId
+                            select new { role, gr }).FirstOrDefault();
             methodResult.Result = _mapper.Map<UserModelResponse>(appUser);
-            methodResult.Result.RoleName = roles.FirstOrDefault(x => x.Id.Equals(roleUser?.AppRoleKey))?.Name ?? "";
-            methodResult.Result.GroupName = roleUser?.GroupName ?? "";
-            methodResult.Result.CreateDate = DateTimeExtensions.TimeStampToDateTime(appUser.CreatedDateTS ?? 0).AddHours(7);
-            methodResult.Result.UpdateDate = DateTimeExtensions.TimeStampToDateTime(appUser.UpdatedDateTS ?? 0).AddHours(7);
+            methodResult.Result.RoleName = userRole?.role.Name ?? "";
+            methodResult.Result.GroupName = userRole?.gr.GroupName ?? "";
+            methodResult.Result.CreateDate = DateTimeExtensions.TimeStampToDateTime(appUser.CreatedDateTS ?? 0).AddHours(SettingUserDefault.hourAsia);
+            methodResult.Result.UpdateDate = DateTimeExtensions.TimeStampToDateTime(appUser.UpdatedDateTS ?? 0).AddHours(SettingUserDefault.hourAsia);
             methodResult.Result.Avatar = HandlerImg.GetLinkImg(_configuration, methodResult.Result.Avatar ?? "");
             return methodResult;
         }
@@ -90,9 +115,11 @@ namespace MuonRoiSocialNetwork.Application.Queries
         public async Task<MethodResult<BaseUserResponse>> GetUserModelByGuidAsync(Guid guidUser)
         {
             MethodResult<BaseUserResponse> methodResult = new();
+#pragma warning disable CS8604
             AppUser? appUser = await _dbcontext.AppUsers
                        .AsNoTracking()
                        .FirstOrDefaultAsync(x => x.Id.Equals(guidUser) && !x.IsDeleted);
+#pragma warning restore CS8604
             if (appUser == null)
             {
                 methodResult.StatusCode = StatusCodes.Status400BadRequest;
@@ -102,21 +129,31 @@ namespace MuonRoiSocialNetwork.Application.Queries
                 );
                 return methodResult;
             }
-            List<AppRole> roles = await _dbcontext.AppRoles.Where(x => !x.IsDeleted).ToListAsync();
-            List<GroupUserMember> groups = await _dbcontext.GroupUserMembers.Where(x => !x.IsDeleted).ToListAsync();
-#pragma warning disable CS8600
-            GroupUserMember userRole = (from role in roles
-                                        join gr in groups
-                                        on role.Id equals gr.AppRoleKey
-                                        where gr.Id == appUser.GroupId
-                                        select gr).FirstOrDefault();
-#pragma warning restore CS8600
-
+#pragma warning disable CS8604
+            List<AppRole>? roles = await _dbcontext.AppRoles.Where(x => !x.IsDeleted).ToListAsync();
+#pragma warning restore CS8604
+#pragma warning disable CS8604 
+            List<GroupUserMember>? groups = await _dbcontext.GroupUserMembers.Where(x => !x.IsDeleted).ToListAsync();
+#pragma warning restore CS8604
+            if (!roles.Any() || !groups.Any())
+            {
+                methodResult.StatusCode = StatusCodes.Status400BadRequest;
+                methodResult.AddApiErrorMessage(
+                    nameof(EnumUserErrorCodes.USRC46C),
+                    new[] { Helpers.GenerateErrorResult(nameof(EnumUserErrorCodes.USRC46C), nameof(EnumUserErrorCodes.USRC46C) ?? "") }
+                );
+                return methodResult;
+            }
+            var userRole = (from role in roles
+                            join gr in groups
+                            on role.GroupId equals gr.Id
+                            where gr.Id == appUser.GroupId
+                            select new { role, gr }).FirstOrDefault();
             methodResult.Result = _mapper.Map<UserModelResponse>(appUser);
-            methodResult.Result.RoleName = userRole?.GroupName ?? "";
-            methodResult.Result.GroupName = userRole?.GroupName ?? "";
-            methodResult.Result.CreateDate = DateTimeExtensions.TimeStampToDateTime(appUser.CreatedDateTS ?? 0).AddHours(7);
-            methodResult.Result.UpdateDate = DateTimeExtensions.TimeStampToDateTime(appUser.UpdatedDateTS ?? 0).AddHours(7);
+            methodResult.Result.RoleName = userRole?.role.Name ?? "";
+            methodResult.Result.GroupName = userRole?.gr.GroupName ?? "";
+            methodResult.Result.CreateDate = DateTimeExtensions.TimeStampToDateTime(appUser.CreatedDateTS ?? 0).AddHours(SettingUserDefault.hourAsia);
+            methodResult.Result.UpdateDate = DateTimeExtensions.TimeStampToDateTime(appUser.UpdatedDateTS ?? 0).AddHours(SettingUserDefault.hourAsia);
             methodResult.Result.Avatar = HandlerImg.GetLinkImg(_configuration, methodResult.Result.Avatar ?? "");
             return methodResult;
         }
@@ -126,6 +163,8 @@ namespace MuonRoiSocialNetwork.Application.Queries
         /// <param name="email"></param>
         /// <returns></returns>
         public async Task<AppUser> GetUserByEmailAsync(string email)
+#pragma warning disable CS8604
             => await _dbcontext.AppUsers.AsNoTracking().FirstOrDefaultAsync(x => x.Email == email && !x.IsDeleted).ConfigureAwait(false);
+#pragma warning restore CS8604
     }
 }

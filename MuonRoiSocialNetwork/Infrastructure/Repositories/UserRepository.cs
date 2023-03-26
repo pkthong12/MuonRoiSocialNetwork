@@ -28,9 +28,11 @@ namespace MuonRoiSocialNetwork.Infrastructure.Repositories
         /// <returns></returns>
         public async Task<bool> ExistUserByUsernameAsync(string username)
         {
+#pragma warning disable CS8604
             return await _dbcontext.AppUsers.AsNoTracking()
                  .AnyAsync(x => x.UserName.Equals(username))
                  .ConfigureAwait(false);
+#pragma warning restore CS8604
         }
         /// <summary>
         /// Handle check user is exist ? by guid
@@ -39,9 +41,11 @@ namespace MuonRoiSocialNetwork.Infrastructure.Repositories
         /// <returns></returns>
         public async Task<bool> ExistUserByGuidAsync(Guid userGuid)
         {
+#pragma warning disable CS8604
             return await _dbcontext.AppUsers.AsNoTracking()
                 .AnyAsync(x => x.Id.Equals(userGuid))
                 .ConfigureAwait(false);
+#pragma warning restore CS8604
         }
         /// <summary>
         /// Handle create new user no role
@@ -74,7 +78,9 @@ namespace MuonRoiSocialNetwork.Infrastructure.Repositories
             checkUser.Status = EnumAccountStatus.Confirmed;
             DateTime utcNow = DateTime.UtcNow;
             checkUser.UpdatedDateTS = utcNow.GetTimeStamp(includedTimeValue: true);
+#pragma warning disable CS8602
             _dbcontext.AppUsers.Update(checkUser);
+#pragma warning restore CS8602
             return await _dbcontext.SaveChangesAsync();
         }
         /// <summary>
@@ -92,10 +98,14 @@ namespace MuonRoiSocialNetwork.Infrastructure.Repositories
             {
                 user.Salt = salt;
                 user.PasswordHash = passwordHash;
+#pragma warning disable CS8602
                 _dbcontext.AppUsers.Update(user);
+#pragma warning restore CS8602
                 return await _dbcontext.SaveChangesAsync();
             }
+#pragma warning disable CS8602 
             _dbcontext.AppUsers.Update(user);
+#pragma warning restore CS8602
             return await _dbcontext.SaveChangesAsync();
         }
         /// <summary>
@@ -105,9 +115,9 @@ namespace MuonRoiSocialNetwork.Infrastructure.Repositories
         /// <returns></returns>
         public async Task<int> DeleteUserAsync(Guid userGuid)
         {
-#pragma warning disable CS8600
-            AppUser userDelete = await _dbcontext.AppUsers.Where(x => x.Id.Equals(userGuid) && !x.IsDeleted).FirstOrDefaultAsync();
-#pragma warning restore CS8600
+#pragma warning disable CS8604
+            AppUser? userDelete = await _dbcontext.AppUsers.Where(x => x.Id.Equals(userGuid) && !x.IsDeleted).FirstOrDefaultAsync();
+#pragma warning restore CS8604
             if (userDelete == null)
             {
                 return -1;
@@ -127,7 +137,9 @@ namespace MuonRoiSocialNetwork.Infrastructure.Repositories
         /// <returns></returns>
         public async Task<bool> UpdatePassworAsync(Guid userGuid, string? salt, string? passwordHash)
         {
+#pragma warning disable CS8604
             AppUser? appUser = await _dbcontext.AppUsers.FirstOrDefaultAsync(x => x.Id.Equals(userGuid)).ConfigureAwait(false);
+#pragma warning restore CS8604
             if (appUser == null)
             {
                 return false;
@@ -135,7 +147,7 @@ namespace MuonRoiSocialNetwork.Infrastructure.Repositories
             appUser.UpdatedDateTS = DateTime.UtcNow.GetTimeStamp(includedTimeValue: true);
             appUser.Salt = salt;
             appUser.PasswordHash = passwordHash;
-            appUser.Status = EnumAccountStatus.Active;
+            appUser.AccountStatus = EnumAccountStatus.None;
             _dbcontext.AppUsers.Update(appUser);
             int resultUpdate = await _dbcontext.SaveChangesAsync();
             if (resultUpdate <= 0)

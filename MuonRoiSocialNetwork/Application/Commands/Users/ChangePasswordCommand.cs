@@ -111,6 +111,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                 }
                 #endregion
                 methodResult.StatusCode = StatusCodes.Status200OK;
+                methodResult.Result = true;
                 return methodResult;
             }
             catch (Exception ex)

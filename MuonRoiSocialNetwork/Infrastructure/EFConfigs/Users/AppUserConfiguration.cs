@@ -1,6 +1,7 @@
 ﻿using MuonRoi.Social_Network.Users;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
+using MuonRoiSocialNetwork.Domains.DomainObjects.Users;
 
 namespace MuonRoiSocialNetwork.Infrastructure.EFConfigs.Users
 {

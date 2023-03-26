@@ -10,13 +10,13 @@ namespace MuonRoi.Social_Network.Roles
     public class GroupUserMember : Entity
     {
         /// <summary>
+        /// Group id
+        /// </summary>
+        public override int Id { get; set; }
+        /// <summary>
         /// Name of groups
         /// </summary>
         public string? GroupName { get; set; }
-        /// <summary>
-        /// AppUserKey
-        /// </summary>
-        public Guid AppUserKey { get; set; }
         /// <summary>
         /// AppRoleKey
         /// </summary>
@@ -24,10 +24,10 @@ namespace MuonRoi.Social_Network.Roles
         /// <summary>
         /// UserMember
         /// </summary>
-        public AppUser? UserMember { get; set; }
+        public ICollection<AppUser>? UserMember { get; set; }
         /// <summary>
         /// AppRole
         /// </summary>
-        public AppRole? AppRole { get; set; }
+        public ICollection<AppRole>? AppRole { get; set; }
     }
 }

@@ -7,11 +7,14 @@ using Microsoft.Extensions.Configuration;
 using MuonRoi.Social_Network.Users;
 using MuonRoiSocialNetwork.Application.Commands.Users;
 using MuonRoiSocialNetwork.Application.Queries;
-using MuonRoiSocialNetwork.Common.Models.Users.Request;
 using MuonRoiSocialNetwork.Common.Models.Users.Response;
 using MuonRoiSocialNetwork.Infrastructure.Repositories;
 using NPOI.SS.Formula.Functions;
 using Shouldly;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Caching.Distributed;
+using MediatR;
+using Moq;
 
 namespace MuonRoiSocialNetwork.Test.Command
 {
@@ -19,15 +22,21 @@ namespace MuonRoiSocialNetwork.Test.Command
     {
         private readonly MockDataBase _baseData = new();
         private readonly IMapper _mapper;
+        private readonly IMediator _mediator;
         public readonly UserRepository _user;
         public readonly UserQueries _userQueries;
         private readonly IConfiguration _config;
+        private readonly ILoggerFactory _logger;
+        private readonly IDistributedCache _cache;
         public AuthUserCommandTest()
         {
             _user = _baseData._userRepoBase;
             _mapper = _baseData._maperBase;
             _config = _baseData._configBase;
             _userQueries = _baseData._userQueriesBase;
+            _logger = _baseData._loggerBase.Object;
+            _cache = _baseData._cacheBase.Object;
+            _mediator = _baseData._mediator.Object;
         }
         [Fact]
         public async Task LoginSuccess()
@@ -37,7 +46,7 @@ namespace MuonRoiSocialNetwork.Test.Command
                 Username = "test2",
                 Password = "1234567Az*99",
             };
-            AuthUserCommandHandler handler = new(_mapper, _user, _userQueries, _config);
+            AuthUserCommandHandler handler = new(_mapper, _user, _userQueries, _config, _logger, _mediator, _cache);
             MethodResult<UserModelResponse> result = await handler.Handle(user, CancellationToken.None);
             result.ShouldBeOfType<MethodResult<UserModelResponse>>();
         }
@@ -57,7 +66,7 @@ namespace MuonRoiSocialNetwork.Test.Command
                 string.IsNullOrEmpty(user.Username) ? nameof(EnumUserErrorCodes.USR05C) : nameof(EnumUserErrorCodes.USR06C),
                 new[] { Helpers.GenerateErrorResult(nameof(user.Username), user.Username ?? "") }
             );
-            AuthUserCommandHandler handler = new(_mapper, _user, _userQueries, _config);
+            AuthUserCommandHandler handler = new(_mapper, _user, _userQueries, _config, _logger, _mediator, _cache);
             MethodResult<UserModelResponse> result = await handler.Handle(user, CancellationToken.None);
             bool resultMessageAndCode = CheckObjectEqual.ObjectAreEqual(result, methodResult);
             Assert.True(resultMessageAndCode);
@@ -77,7 +86,7 @@ namespace MuonRoiSocialNetwork.Test.Command
                 nameof(EnumUserErrorCodes.USR02C),
                 new[] { Helpers.GenerateErrorResult(nameof(user.Username), user.Username ?? "") }
             );
-            AuthUserCommandHandler handler = new(_mapper, _user, _userQueries, _config);
+            AuthUserCommandHandler handler = new(_mapper, _user, _userQueries, _config, _logger, _mediator, _cache);
             MethodResult<UserModelResponse> result = await handler.Handle(user, CancellationToken.None);
             bool resultMessageAndCode = CheckObjectEqual.ObjectAreEqual(result, methodResult);
             Assert.True(resultMessageAndCode);
@@ -97,7 +106,7 @@ namespace MuonRoiSocialNetwork.Test.Command
                 nameof(EnumUserErrorCodes.USR28C),
                 new[] { Helpers.GenerateErrorResult(nameof(user.Username), user.Username ?? "") }
             );
-            AuthUserCommandHandler handler = new(_mapper, _user, _userQueries, _config);
+            AuthUserCommandHandler handler = new(_mapper, _user, _userQueries, _config, _logger, _mediator, _cache);
             MethodResult<UserModelResponse> result = await handler.Handle(user, CancellationToken.None);
             bool resultMessageAndCode = CheckObjectEqual.ObjectAreEqual(result, methodResult);
             Assert.True(resultMessageAndCode);

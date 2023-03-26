@@ -28,6 +28,7 @@ namespace MuonRoiSocialNetwork.Infrastructure.Map.Users
             CreateMap<AppUser, ChangeStatusCommand>();
             CreateMap<ChangeStatusCommand, AppUser>();
             CreateMap<ChangePasswordCommand, AppUser>();
+            CreateMap<BaseUserResponse, UserModelResponse>();
         }
     }
 }

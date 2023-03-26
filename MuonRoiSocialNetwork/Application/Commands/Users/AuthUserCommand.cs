@@ -4,13 +4,18 @@ using BaseConfig.Extentions.Datetime;
 using BaseConfig.JWT;
 using BaseConfig.MethodResult;
 using MediatR;
+using Microsoft.Extensions.Caching.Distributed;
 using MuonRoi.Social_Network.Users;
 using MuonRoiSocialNetwork.Application.Commands.Base;
+using MuonRoiSocialNetwork.Application.Commands.RefreshToken;
 using MuonRoiSocialNetwork.Common.Models.Users.Base.Response;
 using MuonRoiSocialNetwork.Common.Models.Users.Response;
+using MuonRoiSocialNetwork.Common.Settings.RefreshTokenSettings;
 using MuonRoiSocialNetwork.Common.Settings.UserSettings;
 using MuonRoiSocialNetwork.Domains.Interfaces.Commands;
 using MuonRoiSocialNetwork.Domains.Interfaces.Queries;
+using MuonRoiSocialNetwork.Infrastructure.Helpers;
+using MuonRoiSocialNetwork.Infrastructure.Repositories;
 
 namespace MuonRoiSocialNetwork.Application.Commands.Users
 {
@@ -36,6 +41,8 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
     public class AuthUserCommandHandler : BaseCommandHandler, IRequestHandler<AuthUserCommand, MethodResult<UserModelResponse>>
     {
         private readonly ILogger<AuthUserCommandHandler> _logger;
+        private readonly IMediator _mediator;
+        private readonly IDistributedCache _cache;
         /// <summary>
         /// Constructor
         /// </summary>
@@ -44,13 +51,18 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
         /// <param name="userQueries"></param>
         /// <param name="configuration"></param>
         /// <param name="logger"></param>
+        /// <param name="mediator"></param>
+        /// <param name="cache"></param>
         public AuthUserCommandHandler(IMapper mapper,
             IUserRepository userRepository,
             IUserQueries userQueries,
             IConfiguration configuration,
-            ILoggerFactory logger) : base(mapper, configuration, userQueries, userRepository)
+            ILoggerFactory logger,
+            IMediator mediator, IDistributedCache cache) : base(mapper, configuration, userQueries, userRepository)
         {
             _logger = logger.CreateLogger<AuthUserCommandHandler>();
+            _mediator = mediator;
+            _cache = cache;
         }
         /// <summary>
         /// Handler function
@@ -105,18 +117,6 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                 }
                 #endregion
 
-                #region check user is renew password
-                if (appUser.Status == EnumAccountStatus.IsRenew)
-                {
-                    methodResult.StatusCode = StatusCodes.Status400BadRequest;
-                    methodResult.AddApiErrorMessage(
-                        nameof(EnumUserErrorCodes.USRC43C),
-                        new[] { Helpers.GenerateErrorResult(nameof(request.Username), request.Username ?? "") }
-                    );
-                    return methodResult;
-                }
-                #endregion
-
                 #region check password user
                 string password = HashPassword(request.Password, appUser.Salt ?? "");
                 if (password != appUser.PasswordHash)
@@ -145,10 +145,24 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                 }
                 #endregion
 
+                #region check user is renew password
+                if (appUser.AccountStatus == EnumAccountStatus.IsRenew)
+                {
+                    methodResult.StatusCode = StatusCodes.Status400BadRequest;
+                    methodResult.AddApiErrorMessage(
+                        nameof(EnumUserErrorCodes.USRC43C),
+                        new[] { Helpers.GenerateErrorResult(nameof(request.Username), request.Username ?? "") }
+                    );
+                    return methodResult;
+                }
+                #endregion
+
+
                 #region Update info user when login success
                 appUser.AccessFailedCount = 0;
                 appUser.LastLogin = DateTime.UtcNow;
                 appUser.AccountStatus = EnumAccountStatus.IsOnl;
+                appUser.Status = EnumAccountStatus.Active;
                 if (await _userRepository.UpdateUserAsync(appUser) < 1)
                 {
                     methodResult.StatusCode = StatusCodes.Status400BadRequest;
@@ -162,15 +176,46 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
 
                 #region Return info user was login
                 UserModelResponse resultInforLoginUser = _mapper.Map<UserModelResponse>(appUser);
-                resultInforLoginUser.CreateDate = DateTimeExtensions.TimeStampToDateTime(appUser.CreatedDateTS.GetValueOrDefault()).AddHours(7);
-                resultInforLoginUser.UpdateDate = DateTimeExtensions.TimeStampToDateTime(appUser.UpdatedDateTS.GetValueOrDefault()).AddHours(7);
+                resultInforLoginUser.CreateDate = DateTimeExtensions.TimeStampToDateTime(appUser.CreatedDateTS.GetValueOrDefault()).AddHours(SettingUserDefault.hourAsia);
+                resultInforLoginUser.UpdateDate = DateTimeExtensions.TimeStampToDateTime(appUser.UpdatedDateTS.GetValueOrDefault()).AddHours(SettingUserDefault.hourAsia);
                 MethodResult<BaseUserResponse> userInfo = await _userQueries.GetUserModelByGuidAsync(resultInforLoginUser.Id);
                 resultInforLoginUser.RoleName = userInfo.Result?.RoleName;
                 resultInforLoginUser.GroupName = userInfo.Result?.GroupName;
-                resultInforLoginUser.JwtToken = genarateJwtToken.GenarateJwt(resultInforLoginUser);
+
+                resultInforLoginUser.JwtToken = genarateJwtToken.GenarateJwt(resultInforLoginUser, SettingUserDefault.minuteExpitryLogin);
+                #endregion
+
+#pragma warning disable CS8602
+                UserModelResponse? userGet = await _cache?.GetRecordAsync<UserModelResponse>($"{RefreshTokenDefault.keyUserModelResponse}_{resultInforLoginUser.Id}");
+#pragma warning restore CS8602
+                MethodResult<string> refreshToken = null;
+                #region Check -> genarate refresh token and set cache
+                if (userGet is null)
+                {
+                    TimeSpan expirationTime = RefreshTokenDefault.expirationTime;
+                    TimeSpan slidingExpirationTime = RefreshTokenDefault.slidingExpiration;
+#pragma warning disable CS8602
+                    await _cache?.SetRecordAsync<BaseUserResponse>($"{RefreshTokenDefault.keyUserModelResponse}_{resultInforLoginUser.Id}", resultInforLoginUser, expirationTime, slidingExpirationTime);
+#pragma warning restore CS8602
+                    GennerateRefreshTokenCommand gennerateRefreshToken = new()
+                    {
+                        UserId = resultInforLoginUser.Id,
+                    };
+                    refreshToken = await _mediator.Send(gennerateRefreshToken).ConfigureAwait(false);
+                    if (!refreshToken.IsOK)
+                    {
+                        methodResult.StatusCode = StatusCodes.Status400BadRequest;
+                        methodResult.AddApiErrorMessage(
+                            nameof(EnumUserErrorCodes.USR29C),
+                            new[] { Helpers.GenerateErrorResult(nameof(request.Username), request.Username ?? "") }
+                        );
+                        return methodResult;
+                    }
+                }
+                #endregion
+                resultInforLoginUser.RefreshToken = refreshToken?.Result;
                 methodResult.Result = resultInforLoginUser;
                 methodResult.StatusCode = StatusCodes.Status200OK;
-                #endregion
                 return methodResult;
             }
             catch (Exception ex)

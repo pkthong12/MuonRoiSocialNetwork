@@ -4,9 +4,12 @@ namespace MuonRoiSocialNetwork.Common.Models.Users.Base.Response
 {
     public class BaseUserResponse
     {
+        public string? Name { get; set; }
+        public string? Surname { get; set; }
         public Guid Id { get; set; }
         public string? Username { get; set; }
         public string? Email { get; set; }
+        public bool EmailConfirmed { get; set; }
         public DateTime LastLogin { get; set; }
         public string? Avatar { get; set; }
         public EnumAccountStatus Status { get; set; }
@@ -15,6 +18,7 @@ namespace MuonRoiSocialNetwork.Common.Models.Users.Base.Response
         public int GroupId { get; set; }
         public DateTime CreateDate { get; set; }
         public DateTime UpdateDate { get; set; }
+        public DateTime BirthDate { get; set; }
         public string? RoleName { get; set; }
         public string? GroupName { get; set; }
     }

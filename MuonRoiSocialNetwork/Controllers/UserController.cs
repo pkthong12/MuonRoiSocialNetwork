@@ -150,14 +150,14 @@ namespace MuonRoiSocialNetwork.Controllers
         /// Get user by Guid
         /// </summary>
         /// <returns>UserModel</returns>
-        [HttpGet("{guidUser}")]
+        [HttpGet("{uid}")]
         [ProducesResponseType(typeof(MethodResult<BaseUserResponse>), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetUserByGuid([FromRoute] Guid guidUser)
+        public async Task<IActionResult> GetUserByGuid([FromRoute] Guid uid)
         {
             try
             {
-                MethodResult<BaseUserResponse> methodResult = await _userQueries.GetUserModelByGuidAsync(guidUser).ConfigureAwait(false);
+                MethodResult<BaseUserResponse> methodResult = await _userQueries.GetUserModelByGuidAsync(uid).ConfigureAwait(false);
                 return methodResult.GetActionResult();
             }
             catch (Exception ex)
@@ -171,16 +171,16 @@ namespace MuonRoiSocialNetwork.Controllers
         /// Delete user by Guid
         /// </summary>
         /// <returns>UserModel</returns>
-        [HttpDelete("{guidUser}")]
+        [HttpDelete("{uid}")]
         [ProducesResponseType(typeof(MethodResult<bool>), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> DeleteUserByGuid([FromRoute] Guid guidUser)
+        public async Task<IActionResult> DeleteUserByGuid([FromRoute] Guid uid)
         {
             try
             {
                 DeleteUserCommand cmd = new()
                 {
-                    GuidUser = guidUser
+                    GuidUser = uid
                 };
                 MethodResult<bool> methodResult = await _mediator.Send(cmd).ConfigureAwait(false);
                 return methodResult.GetActionResult();
@@ -197,6 +197,7 @@ namespace MuonRoiSocialNetwork.Controllers
         /// </summary>
         /// <returns>UserModel</returns>
         [HttpPost("forgot-password")]
+        [AllowAnonymous]
         [ProducesResponseType(typeof(MethodResult<bool>), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> FotgotPassword([FromForm] ForgotPasswordUserCommand cmd)

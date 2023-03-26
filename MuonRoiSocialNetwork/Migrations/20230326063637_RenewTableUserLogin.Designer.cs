@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MuonRoiSocialNetwork.Infrastructure;
 
@@ -11,9 +12,10 @@ using MuonRoiSocialNetwork.Infrastructure;
 namespace MuonRoiSocialNetwork.Migrations
 {
     [DbContext(typeof(MuonRoiSocialNetworkDbContext))]
-    partial class MuonRoiSocialNetworkDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230326063637_RenewTableUserLogin")]
+    partial class RenewTableUserLogin
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1017,7 +1019,7 @@ namespace MuonRoiSocialNetwork.Migrations
                             Address = "Hoà trung - ngọc định",
                             Avatar = "avt0",
                             BirthDate = new DateTime(2002, 6, 17, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ConcurrencyStamp = "dd42ec1a-9a80-41c7-876e-d6ab77cf91ed",
+                            ConcurrencyStamp = "0cc36cd5-a477-42b6-a023-03394fa0821b",
                             Email = "leanhphi1706@gmail.com",
                             EmailConfirmed = false,
                             Gender = 0,
@@ -1026,7 +1028,7 @@ namespace MuonRoiSocialNetwork.Migrations
                             IsRenewPass = false,
                             LockoutEnabled = false,
                             Name = "Phi Le",
-                            PasswordHash = "AQAAAAEAACcQAAAAEMwtc7g5XPspL5LGZl0+TZqbPBKotWZ7GzaNM3PAGqAFZPvosm4A4hwJuPX4G/+K5A==",
+                            PasswordHash = "AQAAAAEAACcQAAAAECWmLkIC5/FBDp3CVk9TLgkCtqwzxejtHZaJzzrHTu5YkodwO91JsdiltPajpYrgJA==",
                             PhoneNumber = "093.310.5367",
                             PhoneNumberConfirmed = false,
                             Salt = "12345",
@@ -1043,7 +1045,7 @@ namespace MuonRoiSocialNetwork.Migrations
                             Address = "Hoà trung - ngọc định",
                             Avatar = "avt0",
                             BirthDate = new DateTime(2002, 6, 17, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ConcurrencyStamp = "20b548a6-b54d-40c5-81bd-c67cf4f27d1e",
+                            ConcurrencyStamp = "96548967-1af5-4c8b-9c52-e4075259c1d2",
                             Email = "leanhphi1706@gmail.com",
                             EmailConfirmed = false,
                             Gender = 0,
@@ -1052,7 +1054,7 @@ namespace MuonRoiSocialNetwork.Migrations
                             IsRenewPass = false,
                             LockoutEnabled = false,
                             Name = "Phi Le",
-                            PasswordHash = "AQAAAAEAACcQAAAAEGcPHDPfD5Y4+nfqfPdeExJj3E8LdddLQVCm9yitlBLbaHl3v+Hs02+yvbjDdiNCHg==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEOXdHk+4tOMKe+antADwgvWJBX29NjyzzY5fChD6zw7bgR2NHsp9cq0/e2Ipqs9PWg==",
                             PhoneNumber = "093.310.5367",
                             PhoneNumberConfirmed = false,
                             Salt = "12345",
@@ -1233,6 +1235,9 @@ namespace MuonRoiSocialNetwork.Migrations
                     b.Property<string>("NormalizedName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("RoleName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("GroupId");
@@ -1243,7 +1248,7 @@ namespace MuonRoiSocialNetwork.Migrations
                         new
                         {
                             Id = new Guid("72377426-b057-46ca-98ff-1ca9d33ea0c1"),
-                            ConcurrencyStamp = "bc765304-55a8-4fa7-969c-60dee66d3425",
+                            ConcurrencyStamp = "15287b99-220b-433d-99de-7d0e9dc53c21",
                             Description = "Người quản lý cao nhất",
                             GroupId = 1,
                             IsDeleted = false,
@@ -1252,7 +1257,7 @@ namespace MuonRoiSocialNetwork.Migrations
                         new
                         {
                             Id = new Guid("5ef7d163-8249-445c-8895-4eb97329af7e"),
-                            ConcurrencyStamp = "8d4fd8c2-4955-4038-8cc1-9bc821a387b9",
+                            ConcurrencyStamp = "7119f229-64af-4ed9-a20a-d4bdabe30558",
                             Description = "Người dùng mặc định",
                             GroupId = 2,
                             IsDeleted = false,

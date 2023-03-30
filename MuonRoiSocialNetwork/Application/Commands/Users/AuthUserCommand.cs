@@ -12,8 +12,8 @@ using MuonRoiSocialNetwork.Common.Models.Users.Base.Response;
 using MuonRoiSocialNetwork.Common.Models.Users.Response;
 using MuonRoiSocialNetwork.Common.Settings.RefreshTokenSettings;
 using MuonRoiSocialNetwork.Common.Settings.UserSettings;
-using MuonRoiSocialNetwork.Domains.Interfaces.Commands;
-using MuonRoiSocialNetwork.Domains.Interfaces.Queries;
+using MuonRoiSocialNetwork.Domains.Interfaces.Commands.Users;
+using MuonRoiSocialNetwork.Domains.Interfaces.Queries.Users;
 using MuonRoiSocialNetwork.Infrastructure.Helpers;
 
 namespace MuonRoiSocialNetwork.Application.Commands.Users
@@ -37,7 +37,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
     /// <summary>
     /// Handler login user
     /// </summary>
-    public class AuthUserCommandHandler : BaseCommandHandler, IRequestHandler<AuthUserCommand, MethodResult<UserModelResponse>>
+    public class AuthUserCommandHandler : BaseUserCommandHandler, IRequestHandler<AuthUserCommand, MethodResult<UserModelResponse>>
     {
         private readonly ILogger<AuthUserCommandHandler> _logger;
         private readonly IMediator _mediator;
@@ -223,6 +223,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                 methodResult.StatusCode = StatusCodes.Status400BadRequest;
                 _logger.LogError($" -->(AUTH) STEP {"Exception".ToUpper()} --> EXEPTION: {ex} ---->");
                 methodResult.AddApiErrorMessage(
+
                     nameof(EnumUserErrorCodes.USR29C),
                     new[] { Helpers.GenerateErrorResult(nameof(ex.Message), ex.Message ?? "") }
                 );

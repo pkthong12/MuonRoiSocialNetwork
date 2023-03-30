@@ -9,11 +9,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
 using MuonRoi.Social_Network.Users;
-using MuonRoiSocialNetwork.Application.Queries;
+using MuonRoiSocialNetwork.Application.Queries.Users;
 using MuonRoiSocialNetwork.Common.Settings.Appsettings;
 using MuonRoiSocialNetwork.Infrastructure;
 using MuonRoiSocialNetwork.Infrastructure.Map.Users;
-using MuonRoiSocialNetwork.Infrastructure.Repositories;
+using MuonRoiSocialNetwork.Infrastructure.Repositories.Users;
 using MuonRoiSocialNetwork.Infrastructure.Services;
 
 namespace MuonRoiSocialNetwork.Test

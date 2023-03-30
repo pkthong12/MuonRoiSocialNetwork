@@ -2,7 +2,7 @@
 using MuonRoi.Social_Network.Users;
 using MuonRoiSocialNetwork.Common.Models.Users.Base.Response;
 
-namespace MuonRoiSocialNetwork.Domains.Interfaces.Queries
+namespace MuonRoiSocialNetwork.Domains.Interfaces.Queries.Users
 {
     /// <summary>
     /// Interface UserQuery

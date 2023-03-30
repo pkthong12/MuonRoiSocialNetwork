@@ -8,13 +8,13 @@ using MuonRoiSocialNetwork.Application.Commands.Base;
 using MuonRoiSocialNetwork.Common.Settings.Appsettings;
 using MuonRoiSocialNetwork.Infrastructure.Extentions.Mail;
 using BaseConfig.JWT;
-using MuonRoiSocialNetwork.Domains.Interfaces.Commands;
 using MuonRoiSocialNetwork.Infrastructure.Services;
-using MuonRoiSocialNetwork.Domains.Interfaces.Queries;
 using MuonRoiSocialNetwork.Common.Models.Users.Response;
 using MuonRoiSocialNetwork.Common.Models.Users.Request;
 using MuonRoiSocialNetwork.Common.Settings.UserSettings;
 using MuonRoiSocialNetwork.Common.Models.Users.Base.Response;
+using MuonRoiSocialNetwork.Domains.Interfaces.Commands.Users;
+using MuonRoiSocialNetwork.Domains.Interfaces.Queries.Users;
 
 namespace MuonRoiSocialNetwork.Application.Commands.Users
 {
@@ -32,7 +32,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
     /// <summary>
     /// Handler create user
     /// </summary>
-    public class CreateUserCommandHandler : BaseCommandHandler, IRequestHandler<CreateUserCommand, MethodResult<UserModelResponse>>
+    public class CreateUserCommandHandler : BaseUserCommandHandler, IRequestHandler<CreateUserCommand, MethodResult<UserModelResponse>>
     {
         private readonly IEmailService _emailService;
         private readonly ILogger<CreateUserCommandHandler> _logger;

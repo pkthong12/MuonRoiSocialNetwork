@@ -11,8 +11,8 @@ using MuonRoiSocialNetwork.Common.Models.Users.Response;
 using MuonRoiSocialNetwork.Common.Settings.Appsettings;
 using MuonRoiSocialNetwork.Common.Settings.RefreshTokenSettings;
 using MuonRoiSocialNetwork.Common.Settings.UserSettings;
-using MuonRoiSocialNetwork.Domains.Interfaces.Commands;
-using MuonRoiSocialNetwork.Domains.Interfaces.Queries;
+using MuonRoiSocialNetwork.Domains.Interfaces.Commands.Users;
+using MuonRoiSocialNetwork.Domains.Interfaces.Queries.Users;
 using MuonRoiSocialNetwork.Infrastructure.Extentions.Mail;
 using MuonRoiSocialNetwork.Infrastructure.Helpers;
 using MuonRoiSocialNetwork.Infrastructure.Services;
@@ -32,7 +32,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Email
     /// <summary>
     /// Class handle
     /// </summary>
-    public class ResendMailVeritificationCommandHandler : BaseCommandHandler, IRequestHandler<ResendMailVeritificationCommand, MethodResult<bool>>
+    public class ResendMailVeritificationCommandHandler : BaseUserCommandHandler, IRequestHandler<ResendMailVeritificationCommand, MethodResult<bool>>
     {
         private readonly IEmailService _emailService;
         private readonly ILogger<ResendMailVeritificationCommandHandler> _logger;

@@ -220,5 +220,9 @@
         /// Yêu cầu quá nhiều vui lòng thử lại sau
         /// </summary>
         USRC48C,
+        /// <summary>
+        /// Định dạng đầu vào không hợp lệ
+        /// </summary>
+        USRC49C,
     }
 }

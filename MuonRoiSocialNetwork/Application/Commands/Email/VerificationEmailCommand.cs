@@ -7,8 +7,8 @@ using Microsoft.IdentityModel.Tokens;
 using MuonRoiSocialNetwork.Application.Commands.Base;
 using MuonRoiSocialNetwork.Common.Settings.Appsettings;
 using System.IdentityModel.Tokens.Jwt;
-using MuonRoiSocialNetwork.Domains.Interfaces.Commands;
-using MuonRoiSocialNetwork.Domains.Interfaces.Queries;
+using MuonRoiSocialNetwork.Domains.Interfaces.Commands.Users;
+using MuonRoiSocialNetwork.Domains.Interfaces.Queries.Users;
 
 namespace MuonRoiSocialNetwork.Application.Commands.Email
 {
@@ -30,7 +30,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Email
     /// <summary>
     /// Handle command class
     /// </summary>
-    public class VerificationEmailCommandHandler : BaseCommandHandler, IRequestHandler<VerificationEmailCommand, MethodResult<bool>>
+    public class VerificationEmailCommandHandler : BaseUserCommandHandler, IRequestHandler<VerificationEmailCommand, MethodResult<bool>>
     {
         private readonly ILogger<VerificationEmailCommandHandler> _logger;
         /// <summary>
@@ -60,7 +60,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Email
             {
                 #region Check is exist User
                 AppUser checkUser = await _userQueries.GetByGuidAsync(request.UserGuid);
-                if (checkUser == null)
+                if (checkUser is null)
                 {
                     methodResult.StatusCode = StatusCodes.Status400BadRequest;
                     methodResult.AddApiErrorMessage(

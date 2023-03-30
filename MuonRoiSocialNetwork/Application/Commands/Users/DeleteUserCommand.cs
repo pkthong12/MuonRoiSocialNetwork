@@ -5,8 +5,8 @@ using MediatR;
 using MuonRoi.Social_Network.Users;
 using MuonRoiSocialNetwork.Application.Commands.Base;
 using MuonRoiSocialNetwork.Common.Models.Users.Base.Response;
-using MuonRoiSocialNetwork.Domains.Interfaces.Commands;
-using MuonRoiSocialNetwork.Domains.Interfaces.Queries;
+using MuonRoiSocialNetwork.Domains.Interfaces.Commands.Users;
+using MuonRoiSocialNetwork.Domains.Interfaces.Queries.Users;
 
 namespace MuonRoiSocialNetwork.Application.Commands.Users
 {
@@ -23,7 +23,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
     /// <summary>
     /// Handler delete user
     /// </summary>
-    public class DeleteUserCommandHandler : BaseCommandHandler, IRequestHandler<DeleteUserCommand, MethodResult<bool>>
+    public class DeleteUserCommandHandler : BaseUserCommandHandler, IRequestHandler<DeleteUserCommand, MethodResult<bool>>
     {
         private readonly ILogger<DeleteUserCommandHandler> _logger;
         /// <summary>
@@ -55,8 +55,8 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                 {
                     methodResult.StatusCode = StatusCodes.Status400BadRequest;
                     methodResult.AddApiErrorMessage(
-                        nameof(EnumUserErrorCodes.USR29C),
-                        new[] { Helpers.GenerateErrorResult(nameof(EnumUserErrorCodes.USR29C), nameof(EnumUserErrorCodes.USR29C) ?? "") }
+                        nameof(EnumUserErrorCodes.USRC43C),
+                        new[] { Helpers.GenerateErrorResult(nameof(EnumUserErrorCodes.USRC43C), nameof(EnumUserErrorCodes.USRC43C) ?? "") }
                     );
                     methodResult.Result = false;
                     return methodResult;
@@ -65,11 +65,11 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
 
                 #region Check is exist user
                 MethodResult<BaseUserResponse> appUser = await _userQueries.GetUserModelByGuidAsync(request.GuidUser);
-                if (appUser.Result == null)
+                if (appUser.Result is null)
                 {
                     methodResult.StatusCode = StatusCodes.Status400BadRequest;
                     methodResult.AddApiErrorMessage(
-                        nameof(EnumUserErrorCodes.USR13C),
+                        nameof(EnumUserErrorCodes.USR02C),
                         new[] { Helpers.GenerateErrorResult(nameof(appUser.Result.Username), appUser.Result?.Username ?? "") }
                     );
                     methodResult.Result = false;

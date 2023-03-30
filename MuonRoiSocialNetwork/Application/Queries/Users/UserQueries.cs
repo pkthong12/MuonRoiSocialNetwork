@@ -3,7 +3,6 @@ using BaseConfig.MethodResult;
 using MuonRoi.Social_Network.Roles;
 using MuonRoi.Social_Network.Users;
 using MuonRoiSocialNetwork.Domains.DomainObjects.Groups;
-using MuonRoiSocialNetwork.Domains.Interfaces.Queries;
 using MuonRoiSocialNetwork.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using BaseConfig.EntityObject.Entity;
@@ -12,8 +11,9 @@ using MuonRoiSocialNetwork.Common.Models.Users.Base.Response;
 using BaseConfig.Extentions.Datetime;
 using BaseConfig.Extentions.Image;
 using MuonRoiSocialNetwork.Common.Settings.UserSettings;
+using MuonRoiSocialNetwork.Domains.Interfaces.Queries.Users;
 
-namespace MuonRoiSocialNetwork.Application.Queries
+namespace MuonRoiSocialNetwork.Application.Queries.Users
 {
     /// <summary>
     /// Handle user querys
@@ -102,8 +102,8 @@ namespace MuonRoiSocialNetwork.Application.Queries
             methodResult.Result = _mapper.Map<UserModelResponse>(appUser);
             methodResult.Result.RoleName = userRole?.role.Name ?? "";
             methodResult.Result.GroupName = userRole?.gr.GroupName ?? "";
-            methodResult.Result.CreateDate = DateTimeExtensions.TimeStampToDateTime(appUser.CreatedDateTS ?? 0).AddHours(SettingUserDefault.hourAsia);
-            methodResult.Result.UpdateDate = DateTimeExtensions.TimeStampToDateTime(appUser.UpdatedDateTS ?? 0).AddHours(SettingUserDefault.hourAsia);
+            methodResult.Result.CreateDate = DateTimeExtensions.TimeStampToDateTime(appUser.CreatedDateTS.GetValueOrDefault()).AddHours(SettingUserDefault.hourAsia);
+            methodResult.Result.UpdateDate = DateTimeExtensions.TimeStampToDateTime(appUser.UpdatedDateTS.GetValueOrDefault()).AddHours(SettingUserDefault.hourAsia);
             methodResult.Result.Avatar = HandlerImg.GetLinkImg(_configuration, methodResult.Result.Avatar ?? "");
             return methodResult;
         }
@@ -152,8 +152,8 @@ namespace MuonRoiSocialNetwork.Application.Queries
             methodResult.Result = _mapper.Map<UserModelResponse>(appUser);
             methodResult.Result.RoleName = userRole?.role.Name ?? "";
             methodResult.Result.GroupName = userRole?.gr.GroupName ?? "";
-            methodResult.Result.CreateDate = DateTimeExtensions.TimeStampToDateTime(appUser.CreatedDateTS ?? 0).AddHours(SettingUserDefault.hourAsia);
-            methodResult.Result.UpdateDate = DateTimeExtensions.TimeStampToDateTime(appUser.UpdatedDateTS ?? 0).AddHours(SettingUserDefault.hourAsia);
+            methodResult.Result.CreateDate = DateTimeExtensions.TimeStampToDateTime(appUser.CreatedDateTS.GetValueOrDefault()).AddHours(SettingUserDefault.hourAsia);
+            methodResult.Result.UpdateDate = DateTimeExtensions.TimeStampToDateTime(appUser.UpdatedDateTS.GetValueOrDefault()).AddHours(SettingUserDefault.hourAsia);
             methodResult.Result.Avatar = HandlerImg.GetLinkImg(_configuration, methodResult.Result.Avatar ?? "");
             return methodResult;
         }

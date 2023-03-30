@@ -1,6 +1,6 @@
 ﻿using MuonRoiSocialNetwork.Domains.DomainObjects.Users;
 
-namespace MuonRoiSocialNetwork.Domains.Interfaces.Commands
+namespace MuonRoiSocialNetwork.Domains.Interfaces.Commands.Token
 {
     /// <summary>
     /// Interface decalare function handle refresh token table

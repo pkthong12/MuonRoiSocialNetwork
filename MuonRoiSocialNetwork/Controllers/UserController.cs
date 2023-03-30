@@ -5,11 +5,11 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using MuonRoiSocialNetwork.Application.Commands.Users;
 using MuonRoiSocialNetwork.Application.Commands.Email;
-using MuonRoiSocialNetwork.Domains.Interfaces.Queries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using MuonRoiSocialNetwork.Common.Models.Users.Response;
 using MuonRoiSocialNetwork.Common.Models.Users.Base.Response;
+using MuonRoiSocialNetwork.Domains.Interfaces.Queries.Users;
 
 namespace MuonRoiSocialNetwork.Controllers
 {
@@ -80,7 +80,7 @@ namespace MuonRoiSocialNetwork.Controllers
             }
         }
         /// <summary>
-        /// Verification email
+        /// Verification email API
         /// </summary>
         /// <returns></returns>
         [HttpPatch("mail/{uid}/{token}")]
@@ -106,7 +106,7 @@ namespace MuonRoiSocialNetwork.Controllers
             }
         }
         /// <summary>
-        /// Update informations for user
+        /// Update informations for user API
         /// </summary>
         /// <returns></returns>
         [HttpPut]
@@ -126,8 +126,8 @@ namespace MuonRoiSocialNetwork.Controllers
                 return errCommandResult.GetActionResult();
             }
         }
-        /// <summary>
-        /// Delete user by Guid
+        /// <summary> 
+        /// Delete user by Guid API
         /// </summary>
         /// <returns>UserModel</returns>
         [HttpDelete("{uid}")]
@@ -152,7 +152,7 @@ namespace MuonRoiSocialNetwork.Controllers
             }
         }
         /// <summary>
-        /// User forgot password
+        /// User forgot password API
         /// </summary>
         /// <returns>UserModel</returns>
         [HttpPost("forgot-password")]
@@ -174,7 +174,7 @@ namespace MuonRoiSocialNetwork.Controllers
             }
         }
         /// <summary>
-        /// User change password
+        /// User change password API
         /// </summary>
         /// <returns>UserModel</returns>
         [HttpPatch("change-passoword")]
@@ -195,7 +195,7 @@ namespace MuonRoiSocialNetwork.Controllers
             }
         }
         /// <summary>
-        /// Change status account ( lock | active )
+        /// Change status account ( lock | active ) API
         /// </summary>
         /// <returns>UserModel</returns>
         [HttpPatch("statusAccount")]
@@ -216,7 +216,7 @@ namespace MuonRoiSocialNetwork.Controllers
             }
         }
         /// <summary>
-        /// Resend veritifycation mail
+        /// Resend veritifycation mail API
         /// </summary>
         /// <returns>UserModel</returns>
         [HttpPost("mail/resend")]
@@ -236,11 +236,37 @@ namespace MuonRoiSocialNetwork.Controllers
                 return errCommandResult.GetActionResult();
             }
         }
+        /// <summary>
+        /// Assign user to group
+        /// </summary>
+        /// <returns></returns>
+        [HttpPatch("{userGuid}/{groupId}")]
+        [ProducesResponseType(typeof(MethodResult<bool>), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(VoidMethodResult), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> AssignRoleToGroup([FromRoute] Guid userGuid, int groupId)
+        {
+            try
+            {
+                AssignUserToGroupCommand cmd = new()
+                {
+                    UserGuid = userGuid,
+                    GroupId = groupId
+                };
+                MethodResult<bool> methodResult = await _mediator.Send(cmd).ConfigureAwait(false);
+                return methodResult.GetActionResult();
+            }
+            catch (Exception ex)
+            {
+                var errCommandResult = new VoidMethodResult();
+                errCommandResult.AddErrorMessage(Helpers.GetExceptionMessage(ex), ex.StackTrace ?? "");
+                return errCommandResult.GetActionResult();
+            }
+        }
         #endregion
 
         #region Queries
-        /// <summary>
-        /// Get user by username
+        /// <summary> 
+        /// Get user by username API
         /// </summary>
         /// <returns>UserModel</returns>
         [HttpGet("default/{username}")]
@@ -261,7 +287,7 @@ namespace MuonRoiSocialNetwork.Controllers
             }
         }
         /// <summary>
-        /// Get user by Guid
+        /// Get user by Guid API
         /// </summary>
         /// <returns>UserModel</returns>
         [HttpGet("{uid}")]

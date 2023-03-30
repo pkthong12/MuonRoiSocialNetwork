@@ -1,11 +1,11 @@
 ﻿using MuonRoi.Social_Network.Users;
 using Microsoft.EntityFrameworkCore;
-using MuonRoiSocialNetwork.Domains.Interfaces.Commands;
 using MuonRoi.Social_Network.Roles;
 using BaseConfig.Extentions.Datetime;
 using BaseConfig.Extentions.String;
+using MuonRoiSocialNetwork.Domains.Interfaces.Commands.Users;
 
-namespace MuonRoiSocialNetwork.Infrastructure.Repositories
+namespace MuonRoiSocialNetwork.Infrastructure.Repositories.Users
 {
     /// <summary>
     /// Handler user
@@ -60,7 +60,7 @@ namespace MuonRoiSocialNetwork.Infrastructure.Repositories
                 FormatString.WithRegex(newUser.Surname ?? "");
                 FormatString.WithRegex(newUser.Address ?? "");
                 newUser.Status = EnumAccountStatus.UnConfirm;
-                CheckDateTime.IsValidDateTime(newUser.BirthDate);
+                newUser.BirthDate.IsValidDateTime();
                 newUser.Avatar ??= newUser.Avatar ?? "".Trim();
                 newUser.GroupId = (int)EnumStaff.Staff;
                 DateTime utcNow = DateTime.UtcNow;
@@ -114,14 +114,10 @@ namespace MuonRoiSocialNetwork.Infrastructure.Repositories
             {
                 DateTime utcNow = DateTime.UtcNow;
                 user.UpdatedDateTS = utcNow.GetTimeStamp(includedTimeValue: true);
-                if (salt != null && passwordHash != null)
+                if (salt is not null && passwordHash is not null)
                 {
                     user.Salt = salt;
                     user.PasswordHash = passwordHash;
-#pragma warning disable CS8602
-                    _dbcontext.AppUsers.Update(user);
-#pragma warning restore CS8602
-                    return await _dbcontext.SaveChangesAsync();
                 }
 #pragma warning disable CS8602
                 _dbcontext.AppUsers.Update(user);
@@ -146,7 +142,7 @@ namespace MuonRoiSocialNetwork.Infrastructure.Repositories
 #pragma warning disable CS8604
                 AppUser? userDelete = await _dbcontext.AppUsers.Where(x => x.Id.Equals(userGuid) && !x.IsDeleted).FirstOrDefaultAsync();
 #pragma warning restore CS8604
-                if (userDelete == null)
+                if (userDelete is null)
                 {
                     return -1;
                 }
@@ -174,7 +170,7 @@ namespace MuonRoiSocialNetwork.Infrastructure.Repositories
 #pragma warning disable CS8604
             AppUser? appUser = await _dbcontext.AppUsers.FirstOrDefaultAsync(x => x.Id.Equals(userGuid)).ConfigureAwait(false);
 #pragma warning restore CS8604
-            if (appUser == null)
+            if (appUser is null || salt is null || passwordHash is null)
             {
                 return false;
             }

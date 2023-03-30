@@ -4,8 +4,9 @@ using BaseConfig.MethodResult;
 using MediatR;
 using MuonRoi.Social_Network.Users;
 using MuonRoiSocialNetwork.Application.Commands.Base;
-using MuonRoiSocialNetwork.Domains.Interfaces.Commands;
-using MuonRoiSocialNetwork.Domains.Interfaces.Queries;
+using MuonRoiSocialNetwork.Domains.Interfaces.Commands.Token;
+using MuonRoiSocialNetwork.Domains.Interfaces.Commands.Users;
+using MuonRoiSocialNetwork.Domains.Interfaces.Queries.Users;
 
 namespace MuonRoiSocialNetwork.Application.Commands.RefreshToken
 {
@@ -22,7 +23,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.RefreshToken
     /// <summary>
     /// Class handler
     /// </summary>
-    public class RevokeRefreshTokenCommandHandler : BaseCommandHandler, IRequestHandler<RevokeRefreshTokenCommand, MethodResult<bool>>
+    public class RevokeRefreshTokenCommandHandler : BaseUserCommandHandler, IRequestHandler<RevokeRefreshTokenCommand, MethodResult<bool>>
     {
         private readonly IRefreshtokenRepository _refreshtokenRepository;
         private readonly ILogger<RevokeRefreshTokenCommandHandler> _logger;
@@ -56,7 +57,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.RefreshToken
             {
                 #region Check is exist User
                 AppUser checkUser = await _userQueries.GetByGuidAsync(request.UserId);
-                if (checkUser == null)
+                if (checkUser is null)
                 {
                     methodResult.StatusCode = StatusCodes.Status400BadRequest;
                     methodResult.AddApiErrorMessage(

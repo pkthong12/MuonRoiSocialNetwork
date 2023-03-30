@@ -11,8 +11,9 @@ using MuonRoiSocialNetwork.Common.Models.Users.Base.Response;
 using MuonRoiSocialNetwork.Common.Models.Users.Response;
 using MuonRoiSocialNetwork.Common.Settings.RefreshTokenSettings;
 using MuonRoiSocialNetwork.Common.Settings.UserSettings;
-using MuonRoiSocialNetwork.Domains.Interfaces.Commands;
-using MuonRoiSocialNetwork.Domains.Interfaces.Queries;
+using MuonRoiSocialNetwork.Domains.Interfaces.Commands.Token;
+using MuonRoiSocialNetwork.Domains.Interfaces.Commands.Users;
+using MuonRoiSocialNetwork.Domains.Interfaces.Queries.Users;
 using MuonRoiSocialNetwork.Infrastructure.Helpers;
 
 namespace MuonRoiSocialNetwork.Application.Commands.RefreshToken
@@ -34,7 +35,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.RefreshToken
     /// <summary>
     /// Class handler
     /// </summary>
-    public class RenewAccessTokenCommandHandler : BaseCommandHandler, IRequestHandler<RenewAccessTokenCommand, MethodResult<string>>
+    public class RenewAccessTokenCommandHandler : BaseUserCommandHandler, IRequestHandler<RenewAccessTokenCommand, MethodResult<string>>
     {
         private readonly IRefreshtokenRepository _refreshtokenRepository;
         private readonly IDistributedCache _cache;
@@ -73,7 +74,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.RefreshToken
             {
                 #region Check is exist User
                 AppUser checkUser = await _userQueries.GetByGuidAsync(request.UserId);
-                if (checkUser == null)
+                if (checkUser is null)
                 {
                     methodResult.StatusCode = StatusCodes.Status400BadRequest;
                     methodResult.AddApiErrorMessage(
@@ -128,7 +129,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.RefreshToken
                 #region Get cache
                 UserModelResponse? resultInforLoginUser = await _cache.GetRecordAsync<UserModelResponse>($"{RefreshTokenDefault.keyUserModelResponseRegister}_{request.UserId}");
                 MethodResult<BaseUserResponse> userResponse = new();
-                if (resultInforLoginUser == null)
+                if (resultInforLoginUser is null)
                 {
                     userResponse = await _userQueries.GetUserModelByGuidAsync(request.UserId);
                 }

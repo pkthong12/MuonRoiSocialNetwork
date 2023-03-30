@@ -7,8 +7,8 @@ using MuonRoi.Social_Network.Users;
 using MuonRoiSocialNetwork.Application.Commands.Base;
 using MuonRoiSocialNetwork.Common.Models.Users.Base.Response;
 using MuonRoiSocialNetwork.Common.Models.Users.Request;
-using MuonRoiSocialNetwork.Domains.Interfaces.Commands;
-using MuonRoiSocialNetwork.Domains.Interfaces.Queries;
+using MuonRoiSocialNetwork.Domains.Interfaces.Commands.Users;
+using MuonRoiSocialNetwork.Domains.Interfaces.Queries.Users;
 
 namespace MuonRoiSocialNetwork.Application.Commands.Users
 {
@@ -20,7 +20,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
     /// <summary>
     /// Handler command
     /// </summary>
-    public class ChangeStatusCommandHandler : BaseCommandHandler, IRequestHandler<ChangeStatusCommand, MethodResult<bool>>
+    public class ChangeStatusCommandHandler : BaseUserCommandHandler, IRequestHandler<ChangeStatusCommand, MethodResult<bool>>
     {
         private readonly ILogger<ChangePasswordCommandHandler> _logger;
         /// <summary>
@@ -48,12 +48,12 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
             try
             {
                 #region Check valid request
-                if (request == null)
+                if (request is null)
                 {
                     methodResult.StatusCode = StatusCodes.Status400BadRequest;
                     methodResult.AddApiErrorMessage(
-                        nameof(EnumUserErrorCodes.USR29C),
-                        new[] { Helpers.GenerateErrorResult(nameof(EnumUserErrorCodes.USR29C), nameof(EnumUserErrorCodes.USR29C) ?? "") }
+                        nameof(EnumUserErrorCodes.USRC49C),
+                        new[] { Helpers.GenerateErrorResult(nameof(EnumUserErrorCodes.USRC49C), nameof(EnumUserErrorCodes.USRC49C) ?? "") }
                     );
                     methodResult.Result = false;
                     return methodResult;
@@ -62,7 +62,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
 
                 #region Check is exist user
                 MethodResult<BaseUserResponse> baseUserResponse = await _userQueries.GetUserModelByGuidAsync(request.Id);
-                if (baseUserResponse.Result == null)
+                if (baseUserResponse.Result is null)
                 {
                     methodResult.StatusCode = StatusCodes.Status400BadRequest;
                     methodResult.AddApiErrorMessage(

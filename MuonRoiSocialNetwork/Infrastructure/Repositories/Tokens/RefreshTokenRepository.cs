@@ -2,9 +2,9 @@
 using Microsoft.EntityFrameworkCore;
 using MuonRoiSocialNetwork.Common.Settings.UserSettings;
 using MuonRoiSocialNetwork.Domains.DomainObjects.Users;
-using MuonRoiSocialNetwork.Domains.Interfaces.Commands;
+using MuonRoiSocialNetwork.Domains.Interfaces.Commands.Token;
 
-namespace MuonRoiSocialNetwork.Infrastructure.Repositories
+namespace MuonRoiSocialNetwork.Infrastructure.Repositories.Token
 {
     /// <summary>
     /// Repository of refresh Token

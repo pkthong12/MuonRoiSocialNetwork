@@ -8,8 +8,8 @@ using MuonRoi.Social_Network.Users;
 using MuonRoiSocialNetwork.Application.Commands.Base;
 using MuonRoiSocialNetwork.Common.Models.Users.Base.Request;
 using MuonRoiSocialNetwork.Common.Models.Users.Base.Response;
-using MuonRoiSocialNetwork.Domains.Interfaces.Commands;
-using MuonRoiSocialNetwork.Domains.Interfaces.Queries;
+using MuonRoiSocialNetwork.Domains.Interfaces.Commands.Users;
+using MuonRoiSocialNetwork.Domains.Interfaces.Queries.Users;
 
 namespace MuonRoiSocialNetwork.Application.Commands.Users
 {
@@ -42,7 +42,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
     /// <summary>
     /// Handler update infor user
     /// </summary>
-    public class UpdateInformationCommandHandler : BaseCommandHandler, IRequestHandler<UpdateInformationCommand, MethodResult<BaseUserResponse>>
+    public class UpdateInformationCommandHandler : BaseUserCommandHandler, IRequestHandler<UpdateInformationCommand, MethodResult<BaseUserResponse>>
     {
         private readonly ILogger<UpdateInformationCommandHandler> _logger;
         /// <summary>
@@ -72,7 +72,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
             {
                 #region Check is exist user
                 AppUser userIsExist = await _userQueries.GetByUsernameAsync(request.UserName ?? "");
-                if (userIsExist == null)
+                if (userIsExist is null)
                 {
                     methodResult.StatusCode = StatusCodes.Status400BadRequest;
                     methodResult.AddApiErrorMessage(
@@ -89,7 +89,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
                     AppUser existingUser = await _userQueries
                     .GetUserByEmailAsync(request.Email ?? "")
                     .ConfigureAwait(false);
-                    if (existingUser != null)
+                    if (existingUser is not null)
                     {
                         methodResult.StatusCode = StatusCodes.Status400BadRequest;
                         methodResult.AddApiErrorMessage(

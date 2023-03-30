@@ -36,7 +36,6 @@ namespace MuonRoiSocialNetwork.Infrastructure.Extentions
                     Rating = 0,
                     Slug = "ta-co-mot-toa-khi-van-te-dan",
                     CreatedDateTS = new DateTime(2023, 01, 01).GetTimeStamp(),
-                    CreatedUserId = 1,
                     IsDeleted = false,
                     CreatedUserName = "muonroi",
                     CategoryId = 1,
@@ -55,12 +54,10 @@ namespace MuonRoiSocialNetwork.Infrastructure.Extentions
                     Rating = 0,
                     Slug = "nhan-sinh-tuy-tien-bat-dau-tu-tuoi-ba-muoi",
                     CreatedDateTS = new DateTime(2023, 01, 01).GetTimeStamp(),
-                    CreatedUserId = 1,
                     IsDeleted = false,
                     CreatedUserName = "muonroi",
                     CategoryId = 1,
                 });
-            var hashPassword = new PasswordHasher<AppUser>();
             modelBuilder.Entity<AppUser>().HasData(new AppUser()
             {
                 Id = new Guid("E0223A03-2945-49DB-976E-736433465B7F"),
@@ -68,7 +65,7 @@ namespace MuonRoiSocialNetwork.Infrastructure.Extentions
                 Name = "Phi Le",
                 Surname = "Anh",
                 Email = "leanhphi1706@gmail.com",
-                PasswordHash = hashPassword.HashPassword(null, "0967442142Az*"),
+                PasswordHash = "0967442142Az*",
                 PhoneNumber = "093.310.5367",
                 Status = EnumAccountStatus.Active,
                 Salt = "12345",
@@ -86,7 +83,7 @@ namespace MuonRoiSocialNetwork.Infrastructure.Extentions
                 Name = "Phi Le",
                 Surname = "Anh",
                 Email = "leanhphi1706@gmail.com",
-                PasswordHash = hashPassword.HashPassword(null, "123456z*"),
+                PasswordHash = "123456Az*",
                 PhoneNumber = "093.310.5367",
                 Status = EnumAccountStatus.Active,
                 Salt = "12345",
@@ -104,8 +101,7 @@ namespace MuonRoiSocialNetwork.Infrastructure.Extentions
                 IsActive = true,
                 CreatedDateTS = new DateTime(2023, 01, 01).GetTimeStamp(),
                 CreatedUserName = "muonroi",
-                IsDeleted = false,
-                CreatedUserId = 1
+                IsDeleted = false
             },
             new Category()
             {
@@ -114,8 +110,7 @@ namespace MuonRoiSocialNetwork.Infrastructure.Extentions
                 IsActive = true,
                 CreatedDateTS = new DateTime(2023, 01, 01).GetTimeStamp(),
                 CreatedUserName = "muonroi",
-                IsDeleted = false,
-                CreatedUserId = 1
+                IsDeleted = false
             });
             modelBuilder.Entity<Tag>().HasData(new Tag()
             {
@@ -124,8 +119,7 @@ namespace MuonRoiSocialNetwork.Infrastructure.Extentions
                 Details = "Truyện đã hoàn thành xong",
                 CreatedDateTS = new DateTime(2023, 01, 01).GetTimeStamp(),
                 CreatedUserName = "muonroi",
-                IsDeleted = false,
-                CreatedUserId = 1
+                IsDeleted = false
             },
             new Tag()
             {
@@ -134,8 +128,7 @@ namespace MuonRoiSocialNetwork.Infrastructure.Extentions
                 Details = "Truyện chưa hoàn thành xong",
                 CreatedDateTS = new DateTime(2023, 01, 01).GetTimeStamp(),
                 CreatedUserName = "muonroi",
-                IsDeleted = false,
-                CreatedUserId = 1
+                IsDeleted = false
             });
             modelBuilder.Entity<AppRole>().HasData(new AppRole()
             {
@@ -155,19 +148,15 @@ namespace MuonRoiSocialNetwork.Infrastructure.Extentions
             {
                 Id = 1,
                 GroupName = "Administratior",
-                AppRoleKey = new Guid("72377426-B057-46CA-98FF-1CA9D33EA0C1"),
                 CreatedDateTS = new DateTime(2023, 01, 01).GetTimeStamp(),
                 CreatedUserName = "muonroi",
-                CreatedUserId = 1
             });
             modelBuilder.Entity<GroupUserMember>().HasData(new GroupUserMember()
             {
                 Id = 2,
                 GroupName = "Default User",
-                AppRoleKey = new Guid("5EF7D163-8249-445C-8895-4EB97329AF7E"),
                 CreatedDateTS = new DateTime(2023, 01, 01).GetTimeStamp(),
                 CreatedUserName = "muonroi",
-                CreatedUserId = 1
             });
             modelBuilder.Entity<Chapter>().HasData(
                 new Chapter()
@@ -182,7 +171,6 @@ namespace MuonRoiSocialNetwork.Infrastructure.Extentions
                     CreatedDateTS = new DateTime(2023, 01, 01).GetTimeStamp(),
                     CreatedUserName = "muonroi",
                     IsDeleted = false,
-                    CreatedUserId = 1
                 }
                 , new Chapter()
                 {
@@ -196,7 +184,6 @@ namespace MuonRoiSocialNetwork.Infrastructure.Extentions
                     CreatedDateTS = new DateTime(2023, 01, 01).GetTimeStamp(),
                     CreatedUserName = "muonroi",
                     IsDeleted = false,
-                    CreatedUserId = 1
                 });
         }
     }

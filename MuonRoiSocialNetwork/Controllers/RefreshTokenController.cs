@@ -26,7 +26,7 @@ namespace MuonRoiSocialNetwork.Controllers
 
         #region Repository
         /// <summary>
-        /// Genarate refresh token
+        /// Genarate refresh token API
         /// </summary>
         /// <returns></returns>
         [HttpPost("{userid}")]
@@ -51,7 +51,7 @@ namespace MuonRoiSocialNetwork.Controllers
             }
         }
         /// <summary>
-        /// Revoke refresh token | logout
+        /// Revoke refresh token | logout API
         /// </summary>
         /// <returns></returns>
         [HttpPost("logout/{userid}")]
@@ -76,7 +76,7 @@ namespace MuonRoiSocialNetwork.Controllers
             }
         }
         /// <summary>
-        /// Renew access token
+        /// Renew access token API
         /// </summary>
         /// <returns></returns>
         [HttpPost("{userid}/{refreshToken}")]

@@ -4,12 +4,12 @@ using BaseConfig.MethodResult;
 using MediatR;
 using MuonRoi.Social_Network.Users;
 using MuonRoiSocialNetwork.Application.Commands.Base;
-using MuonRoiSocialNetwork.Domains.Interfaces.Commands;
-using MuonRoiSocialNetwork.Domains.Interfaces.Queries;
 using MuonRoiSocialNetwork.Infrastructure.Extentions.Mail;
 using MuonRoiSocialNetwork.Infrastructure.Services;
 using MuonRoiSocialNetwork.Common.Models.Users.Base.Response;
 using MuonRoiSocialNetwork.Common.Settings.UserSettings;
+using MuonRoiSocialNetwork.Domains.Interfaces.Commands.Users;
+using MuonRoiSocialNetwork.Domains.Interfaces.Queries.Users;
 
 namespace MuonRoiSocialNetwork.Application.Commands.Users
 {
@@ -26,7 +26,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
     /// <summary>
     /// Handler forgot password
     /// </summary>
-    public class ForgotPasswordUserCommandHandler : BaseCommandHandler, IRequestHandler<ForgotPasswordUserCommand, MethodResult<bool>>
+    public class ForgotPasswordUserCommandHandler : BaseUserCommandHandler, IRequestHandler<ForgotPasswordUserCommand, MethodResult<bool>>
     {
         private readonly IMediator _mediator;
         private readonly IEmailService _emailService;
@@ -60,7 +60,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
             try
             {
                 #region Check vaild username
-                if (request.Username == null)
+                if (request.Username is null)
                 {
                     methodResult.StatusCode = StatusCodes.Status400BadRequest;
                     methodResult.AddApiErrorMessage(
@@ -74,7 +74,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
 
                 #region Check user is exist by username
                 AppUser existUser = await _userQueries.GetByUsernameAsync(request.Username);
-                if (existUser == null)
+                if (existUser is null)
                 {
                     methodResult.StatusCode = StatusCodes.Status400BadRequest;
                     methodResult.AddApiErrorMessage(

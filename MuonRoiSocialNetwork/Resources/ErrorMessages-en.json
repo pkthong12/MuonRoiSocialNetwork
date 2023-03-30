@@ -85,13 +85,29 @@
   "USRC46C": "Nhóm không tồn tại",
   "USRC47C": "Vui lòng đăng nhập lại",
   "USRC48C": "Yêu cầu quá nhiều vui lòng thử lại sau",
+  "USRC49C": "Định dạng đầu vào không hợp lệ",
   //--------------------\
 
   //Role
-
-  "RL00": "Vui lòng chọn người dùng",
-  "RL01": "Vui lòng chọn nhóm quyền",
+  "ROL01C": "Danh sách quyền không được null",
+  "ROL02C": "Quyền không tồn tại",
+  "ROL03C": "Tên quyền không đúng",
+  "ROL04C": "Tên quyền bắt buộc nhập",
+  "ROL05C": "Tên quyền tối đa 100 kí tự",
+  "ROL06C": "Mô tả quyền không quá 1000 kí tự",
+  "ROL07C": "Tên quyền đã tồn tại",
   //--------------------\
+
+  //Group
+  "GRP01C": "Tên nhóm không được bỏ trống",
+  "GRP02C": "Mô tả nhóm không được quá 500 kí tự",
+  "GRP04C": "Nhóm không tồn tại",
+  "GRP06C": "Tên nhóm không quá 100 kí tự",
+  "GRP09C": "Mã nhóm không được trống",
+  "GRP10C": "Mã nhóm không quá 100 kí tự",
+  "GRP13C": "Nhóm đã tồn tại",
+  //--------------------\
+
 
   //Chapter
   "CT00": "Tiêu đề chương không được để trống",

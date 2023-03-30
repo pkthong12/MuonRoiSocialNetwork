@@ -1,6 +1,5 @@
 ﻿using BaseConfig.BaseDbContext.BaseRepository;
 using BaseConfig.Infrashtructure;
-using Microsoft.EntityFrameworkCore;
 using MuonRoi.Social_Network.Roles;
 using MuonRoiSocialNetwork.Domains.Interfaces.Commands.GroupAndRoles;
 

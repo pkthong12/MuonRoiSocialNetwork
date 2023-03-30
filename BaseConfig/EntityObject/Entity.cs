@@ -22,17 +22,17 @@ namespace BaseConfig.EntityObject.Entity
 
         [Column(Order = 101)]
         [Required(AllowEmptyStrings = true)]
-        public int? CreatedUserId { get; set; }
+        public Guid? CreatedUserGuid { get; set; } = Guid.Empty;
 
         [Column(Order = 102)]
-        public int? UpdatedUserId { get; set; }
+        public Guid? UpdatedUserGuid { get; set; }
 
         [Column(Order = 103)]
-        public int? DeletedUserId { get; set; }
+        public Guid? DeletedUserGuid { get; set; }
 
         [Column(Order = 104)]
         [MaxLength(100)]
-        public string CreatedUserName { get; set; }
+        public string? CreatedUserName { get; set; }
 
         [Column(Order = 105)]
         [MaxLength(100)]

@@ -6,14 +6,14 @@ using MuonRoiSocialNetwork.Application.Commands.Users;
 using Shouldly;
 using BaseConfig.MethodResult;
 using MuonRoi.Social_Network.Users;
-using MuonRoiSocialNetwork.Infrastructure.Repositories;
 using BaseConfig.EntityObject.Entity;
 using Microsoft.AspNetCore.Http;
 using MuonRoiSocialNetwork.Infrastructure.Services;
-using MuonRoiSocialNetwork.Application.Queries;
 using MuonRoiSocialNetwork.Common.Models.Users.Response;
 using BaseConfig.Extentions.ObjectHandle;
 using Microsoft.Extensions.Logging;
+using MuonRoiSocialNetwork.Infrastructure.Repositories.Users;
+using MuonRoiSocialNetwork.Application.Queries.Users;
 
 namespace TestProject1
 {

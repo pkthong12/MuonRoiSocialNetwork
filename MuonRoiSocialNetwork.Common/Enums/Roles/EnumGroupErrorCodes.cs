@@ -39,36 +39,6 @@
         /// Tên quyền đã tồn tại
         /// </summary>
         ROL07C,
-
-        /// <summary>
-        /// Mã EnumCode là bắt buộc
-        /// </summary>
-        ROL08C,
-
-        /// <summary>
-        /// Mã EnumCode tối đa 20 kí tự
-        /// </summary>
-        ROL09C,
-
-        /// <summary>
-        /// Vai trò cha không tồn tại
-        /// </summary>
-        ROL10C,
-
-        /// <summary>
-        /// Vai trò cha không được là cha của vai trò hiện tại
-        /// </summary>
-        ROL11C,
-
-        /// <summary>
-        /// Mã quyền bắt buộc nhập
-        /// </summary>
-        ROL12C,
-
-        /// <summary>
-        /// Mã quyền đã tồn tại
-        /// </summary>
-        ROL13C
     }
 
     /// <summary>
@@ -137,7 +107,7 @@
         GRP12C,
 
         /// <summary>
-        /// Nhóm đã tồn tại theo enum và enumCode
+        /// Nhóm đã tồn tại
         /// </summary>
         GRP13C,
 

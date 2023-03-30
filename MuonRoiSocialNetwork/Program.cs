@@ -9,18 +9,24 @@ using MuonRoiSocialNetwork.Domains.DomainObjects.Groups;
 using MuonRoiSocialNetwork.Infrastructure;
 using MuonRoiSocialNetwork.Infrastructure.Extentions.Mail;
 using MuonRoiSocialNetwork.Infrastructure.Map.Users;
-using MuonRoiSocialNetwork.Infrastructure.Repositories;
-using MuonRoiSocialNetwork.Domains.Interfaces.Commands;
 using MuonRoiSocialNetwork.Infrastructure.Services;
-using MuonRoiSocialNetwork.Domains.Interfaces.Queries;
-using MuonRoiSocialNetwork.Application.Queries;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.IdentityModel.Tokens;
 using Autofac;
 using BaseConfig.BaseStartUp;
 using Autofac.Extensions.DependencyInjection;
-using System.Net.Http.Headers;
+using MuonRoiSocialNetwork.Infrastructure.Repositories.Token;
+using MuonRoiSocialNetwork.Infrastructure.Repositories.Users;
+using MuonRoiSocialNetwork.Domains.Interfaces.Commands.Users;
+using MuonRoiSocialNetwork.Domains.Interfaces.Commands.Token;
+using MuonRoiSocialNetwork.Domains.Interfaces.Queries.Users;
+using MuonRoiSocialNetwork.Application.Queries.Users;
+using MuonRoiSocialNetwork.Infrastructure.Map.GroupAndRoles;
+using MuonRoiSocialNetwork.Domains.Interfaces.Commands.GroupAndRoles;
+using MuonRoiSocialNetwork.Infrastructure.Repositories.GroupAndRoles;
+using MuonRoiSocialNetwork.Domains.Interfaces.Queries.GroupAndRoles;
+using MuonRoiSocialNetwork.Application.Queries.GroupAndRoles;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
@@ -89,6 +95,7 @@ IConfiguration configuration = new ConfigurationBuilder().AddJsonFile($"{NameApp
 var mapperCfg = new MapperConfiguration(x =>
 {
     x.AddProfile(new UserProfile());
+    x.AddProfile(new GroupAndRoleProfile());
 });
 IMapper mapper = mapperCfg.CreateMapper();
 #endregion
@@ -97,6 +104,10 @@ IMapper mapper = mapperCfg.CreateMapper();
 builder.Services.AddTransient<IUserRepository, UserRepository>();
 builder.Services.AddTransient<IUserQueries, UserQueries>();
 builder.Services.AddTransient<IRefreshtokenRepository, RefreshTokenRepository>();
+builder.Services.AddTransient<IRoleRepository, RoleRepository>();
+builder.Services.AddTransient<IGroupRepository, GroupRepository>();
+builder.Services.AddTransient<IRoleQueries, RoleQueries>();
+builder.Services.AddTransient<IGroupQueries, GroupQueries>();
 #endregion
 
 #region scoped

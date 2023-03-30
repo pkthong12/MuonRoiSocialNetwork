@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using MuonRoiSocialNetwork.Common.Settings.UserSettings;
-using MuonRoiSocialNetwork.Domains.Interfaces.Commands;
-using MuonRoiSocialNetwork.Domains.Interfaces.Queries;
+using MuonRoiSocialNetwork.Domains.Interfaces.Commands.Users;
+using MuonRoiSocialNetwork.Domains.Interfaces.Queries.Users;
 using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Text;
@@ -12,7 +12,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Base
     /// <summary>
     /// Handler base
     /// </summary>
-    public class BaseCommandHandler
+    public class BaseUserCommandHandler
     {
         /// <summary>
         /// property _mapper
@@ -38,7 +38,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Base
         /// <param name="configuration"></param>
         /// <param name="userQueries"></param>
         /// <param name="userRepository"></param>
-        protected BaseCommandHandler(IMapper mapper, IConfiguration configuration, IUserQueries userQueries, IUserRepository userRepository)
+        protected BaseUserCommandHandler(IMapper mapper, IConfiguration configuration, IUserQueries userQueries, IUserRepository userRepository)
         {
             _mapper = mapper;
             _configuration = configuration;

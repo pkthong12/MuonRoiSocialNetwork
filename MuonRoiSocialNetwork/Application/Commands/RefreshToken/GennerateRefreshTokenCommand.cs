@@ -7,8 +7,9 @@ using MuonRoi.Social_Network.Users;
 using MuonRoiSocialNetwork.Application.Commands.Base;
 using MuonRoiSocialNetwork.Common.Settings.UserSettings;
 using MuonRoiSocialNetwork.Domains.DomainObjects.Users;
-using MuonRoiSocialNetwork.Domains.Interfaces.Commands;
-using MuonRoiSocialNetwork.Domains.Interfaces.Queries;
+using MuonRoiSocialNetwork.Domains.Interfaces.Commands.Token;
+using MuonRoiSocialNetwork.Domains.Interfaces.Commands.Users;
+using MuonRoiSocialNetwork.Domains.Interfaces.Queries.Users;
 
 namespace MuonRoiSocialNetwork.Application.Commands.RefreshToken
 {
@@ -25,7 +26,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.RefreshToken
     /// <summary>
     /// Class handler
     /// </summary>
-    public class GennerateRefreshTokenCommandHandler : BaseCommandHandler, IRequestHandler<GennerateRefreshTokenCommand, MethodResult<string>>
+    public class GennerateRefreshTokenCommandHandler : BaseUserCommandHandler, IRequestHandler<GennerateRefreshTokenCommand, MethodResult<string>>
     {
         private readonly IRefreshtokenRepository _refreshtokenRepository;
         private readonly ILogger<GennerateRefreshTokenCommandHandler> _logger;
@@ -60,7 +61,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.RefreshToken
             {
                 #region Check is exist User
                 AppUser checkUser = await _userQueries.GetByGuidAsync(request.UserId);
-                if (checkUser == null)
+                if (checkUser is null)
                 {
                     methodResult.StatusCode = StatusCodes.Status400BadRequest;
                     methodResult.AddApiErrorMessage(
@@ -97,7 +98,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.RefreshToken
                 #endregion
 
                 #region Check refresh token is exist
-                if (refreshToken != null)
+                if (refreshToken is not null)
                 {
                     methodResult.StatusCode = StatusCodes.Status200OK;
                     methodResult.Result = refreshToken;

@@ -8,23 +8,23 @@ namespace BaseConfig.Infrashtructure
 {
     public class AuthContext
     {
-        public string CurrentUserId { get; set; }
+        public string CurrentUserId { get; set; } = string.Empty;
 
-        public string CurrentNameUser { get; set; }
+        public string CurrentNameUser { get; set; } = string.Empty;
 
-        public string CurrentUsername { get; set; }
+        public string CurrentUsername { get; set; } = string.Empty;
 
-        public string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
 
         public int GroupId { get; set; }
 
-        public string Guid { get; set; }
+        public string Guid { get; set; } = string.Empty;
 
-        public string AccessToken { get; set; }
+        public string AccessToken { get; set; } = string.Empty;
 
-        public string ApiKey { get; set; }
+        public string ApiKey { get; set; } = string.Empty;
 
-        public string SiteKey { get; set; }
+        public string SiteKey { get; set; } = string.Empty;
 
         public List<string> Roles { get; set; }
 

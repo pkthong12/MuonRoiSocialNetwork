@@ -1,6 +1,6 @@
 ﻿using MuonRoi.Social_Network.Users;
 
-namespace MuonRoiSocialNetwork.Domains.Interfaces.Commands
+namespace MuonRoiSocialNetwork.Domains.Interfaces.Commands.Users
 {
     /// <summary>
     /// UserRepository Interface

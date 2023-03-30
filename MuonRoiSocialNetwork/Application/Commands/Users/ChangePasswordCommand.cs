@@ -5,8 +5,8 @@ using MediatR;
 using Microsoft.IdentityModel.Tokens;
 using MuonRoi.Social_Network.Users;
 using MuonRoiSocialNetwork.Application.Commands.Base;
-using MuonRoiSocialNetwork.Domains.Interfaces.Commands;
-using MuonRoiSocialNetwork.Domains.Interfaces.Queries;
+using MuonRoiSocialNetwork.Domains.Interfaces.Commands.Users;
+using MuonRoiSocialNetwork.Domains.Interfaces.Queries.Users;
 using System.Text.RegularExpressions;
 
 namespace MuonRoiSocialNetwork.Application.Commands.Users
@@ -32,7 +32,7 @@ namespace MuonRoiSocialNetwork.Application.Commands.Users
     /// <summary>
     /// Handler command
     /// </summary>
-    public class ChangePasswordCommandHandler : BaseCommandHandler, IRequestHandler<ChangePasswordCommand, MethodResult<bool>>
+    public class ChangePasswordCommandHandler : BaseUserCommandHandler, IRequestHandler<ChangePasswordCommand, MethodResult<bool>>
     {
         private readonly ILogger<ChangePasswordCommandHandler> _logger;
         /// <summary>

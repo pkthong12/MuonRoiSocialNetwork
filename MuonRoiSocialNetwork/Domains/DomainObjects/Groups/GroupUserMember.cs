@@ -16,11 +16,7 @@ namespace MuonRoi.Social_Network.Roles
         /// <summary>
         /// Name of groups
         /// </summary>
-        public string? GroupName { get; set; }
-        /// <summary>
-        /// AppRoleKey
-        /// </summary>
-        public Guid AppRoleKey { get; set; }
+        public string GroupName { get; set; } = string.Empty;
         /// <summary>
         /// UserMember
         /// </summary>

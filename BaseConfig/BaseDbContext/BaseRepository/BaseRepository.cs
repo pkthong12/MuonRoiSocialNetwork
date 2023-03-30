@@ -64,6 +64,8 @@ namespace BaseConfig.BaseDbContext.BaseRepository
                 newEntity.CreatedDateTS = utcNow.GetTimeStamp(includedTimeValue: true);
                 newEntity.UpdatedDateTS = utcNow.GetTimeStamp(includedTimeValue: true);
                 newEntity.CreatedUserName = _authContext.CurrentUsername;
+                newEntity.UpdatedUserName = _authContext.CurrentUsername;
+                newEntity.UpdatedUserGuid = new Guid(_authContext.Guid);
                 newEntity.Guid = Guid.NewGuid();
                 newEntity.AddDomainEvent(new EntityCreatedEvent<T>(newEntity));
                 _dbBaseContext.TrackEntity(newEntity);
@@ -106,6 +108,7 @@ namespace BaseConfig.BaseDbContext.BaseRepository
                 deleteEntity.IsDeleted = true;
                 deleteEntity.DeletedDateTS = DateTime.UtcNow.GetTimeStamp(includedTimeValue: true);
                 deleteEntity.DeletedUserName = _authContext.CurrentUsername;
+                deleteEntity.UpdatedUserGuid = new Guid(_authContext.Guid);
                 deleteEntity.AddDomainEvent(new EntityDeletedEvent<T>(deleteEntity));
                 _dbBaseContext.TrackEntity(deleteEntity);
                 return Task.FromResult(result: true);
@@ -122,6 +125,7 @@ namespace BaseConfig.BaseDbContext.BaseRepository
             {
                 updateEntity.UpdatedDateTS = DateTime.UtcNow.GetTimeStamp(includedTimeValue: true);
                 updateEntity.UpdatedUserName = _authContext.CurrentUsername;
+                updateEntity.UpdatedUserGuid = new Guid(_authContext.Guid);
                 updateEntity.AddDomainEvent(new EntityChangedEvent<T>(updateEntity));
                 _dbBaseContext.TrackEntity(updateEntity);
                 return _dbSet.Update(updateEntity).Entity;

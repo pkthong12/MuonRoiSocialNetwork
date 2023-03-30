@@ -6,15 +6,15 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using MuonRoi.Social_Network.Users;
 using MuonRoiSocialNetwork.Application.Commands.Users;
-using MuonRoiSocialNetwork.Application.Queries;
 using MuonRoiSocialNetwork.Common.Models.Users.Response;
-using MuonRoiSocialNetwork.Infrastructure.Repositories;
 using NPOI.SS.Formula.Functions;
 using Shouldly;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Caching.Distributed;
 using MediatR;
 using Moq;
+using MuonRoiSocialNetwork.Infrastructure.Repositories.Users;
+using MuonRoiSocialNetwork.Application.Queries.Users;
 
 namespace MuonRoiSocialNetwork.Test.Command
 {

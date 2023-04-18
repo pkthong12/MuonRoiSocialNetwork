@@ -12,7 +12,6 @@ using Shouldly;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Caching.Distributed;
 using MediatR;
-using Moq;
 using MuonRoiSocialNetwork.Infrastructure.Repositories.Users;
 using MuonRoiSocialNetwork.Application.Queries.Users;
 

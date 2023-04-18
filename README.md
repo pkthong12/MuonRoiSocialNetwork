@@ -1,5 +1,5 @@
 # Personal project
-This is repo is for Muonroi social network
+This repo is for Muonroi social network
 # Author
 Phi Le (MuonRoi)
 ## Development Setup
